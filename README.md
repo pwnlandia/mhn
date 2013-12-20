@@ -6,9 +6,7 @@ Modern Honey Net Framework
 
 Build a multi-snort and honeypot management sensor
 
-Each VM will need to run honeypot and snort within 1G of memory.
-Server needs to run
- 
+Each VM will need to run honeypot servers and snort within 1G of memory.
 
 Snort tips for small memory footprint:
 http://www.instructables.com/id/Raspberry-Pi-Firewall-and-Intrusion-Detection-Syst/step13/SNORT/
