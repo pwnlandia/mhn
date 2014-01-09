@@ -1,42 +1,27 @@
-MHN
-===
-
 Modern Honey Net Framework
+==========================
+
+Multi-snort and honeypot sensor management, uses a network of VMs, small footprint SNORT installations, stealthy dionaeas, and a centralized server for management.
+
+### HONEYPOT
+
+Deployed sensors with intrusion detection software installed: SNORT, Dionaea. Uses the client application to take information from the IDS and communicate with the Management Server using the HTTP API.
+
+The honeypot reads the IDS output to generate attack reports and communicates them to the server using the client application.
 
 
-Build a multi-snort and honeypot management sensor
+### MANAGEMENT SERVER
 
-Each VM will need to run honeypot servers and snort within 1G of memory.
+Flask application that exposes an HTTP API that honeypots can use to:
+- Download a deploy script
+- Connect and register
+- Download snort rules
+- Send intrusion detection logs
 
-Snort tips for small memory footprint:
-http://www.instructables.com/id/Raspberry-Pi-Firewall-and-Intrusion-Detection-Syst/step13/SNORT/
+It also allows systems administrators to:
+- View a list of new attacks
+- Manage snort rules: enable, disable, download
 
-Make Dionaea stealthy
-http://blog.sbarbeau.fr/2012/06/make-dionaea-stealthier-for-fun-and-no.html
-
-Possibilities for Snort Sensor management
-https://github.com/davhenriksen/bringhomethebacon
-https://bitbucket.org/onelson/django-clu
-https://github.com/stianja/SnortManager
-
-Honeypot setup Script:
-https://github.com/andrewmichaelsmith/honeypot-setup-script
-
-Snort setup Script:
-https://github.com/da667/Autosnort
-
-Project definition:
-1. bash script which you supply a management server IP/DNS and password to the command line, ie:
-
-wget http://mgmt.srvr.com/deploy/script.bash -O /tmp/deploy.bash && bash /tmp/deploy.bash mgmt.srvr.com mypassword123
-
-connects to http://mgmt.srvr.com/register/, registers the IP, hostname and creates a new sensor ID.
-
-Snort rules downloaded from http://mgmt.srvr.com/rules/download
-
-all honeypot and IDS logs sent to > http://mgmt.srver.com/log
-
-show a list of new attacks http://mgmt.srver.com/dashboard
-
-manage rules (enable, disable, download) http://mgmt.srvr.com/rules/
-
+Supports two kinds of users, administrator and user:
+- *User*: Has read permissions to rules, attacks and maybe logs.
+- *Admin*: Has read/write permissions to all the resources.
