@@ -1,4 +1,4 @@
-from mhn import mhn
+from mhn import create_app
 
 
-mhn.run(debug=True)
+create_app().run(debug=True)

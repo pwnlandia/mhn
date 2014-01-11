@@ -1,11 +1,21 @@
 from flask import Flask
+from flask.ext.sqlalchemy import SQLAlchemy
 
-mhn = Flask(__name__)
 
+db = SQLAlchemy()
 
-# Registering blueprints.
-from api.views import api
-mhn.register_blueprint(api)
+def create_app():
+    mhn = Flask(__name__)
+    mhn.config.from_object('config')
 
-from ui.views import ui
-mhn.register_blueprint(ui)
+    # Registering app on db instance.
+    db.init_app(mhn)
+
+    # Registering blueprints.
+    from api.views import api
+    mhn.register_blueprint(api)
+
+    from ui.views import ui
+    mhn.register_blueprint(ui)
+
+    return mhn
