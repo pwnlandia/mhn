@@ -1,0 +1,13 @@
+"""
+Template to create config.py file.
+Do not add 'config.py' to SCM.
+"""
+
+import os
+
+
+_basedir = os.path.abspath(os.path.dirname(__file__))
+
+# DEBUG = True
+# SECRET_KEY = ''
+# SQLALCHEMY_DATABASE_URI = 'postgres://username:password@server/dbname'
