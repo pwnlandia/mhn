@@ -1,0 +1,82 @@
+from itertools import groupby
+from datetime import datetime
+
+from mhn import db
+
+
+class APIModel(object):
+    @classmethod
+    def fields(cls):
+        return cls.all_fields.keys()
+
+    @classmethod
+    def editable_fields(cls):
+        return cls._make_field_list('editable')
+
+    @classmethod
+    def required_fields(cls):
+        return cls._make_field_list('required')
+
+    @classmethod
+    def _make_field_list(cls, prop):
+        """
+        Returns a list of field names that have the property
+        `prop` in the `all_fields` dictionary defined at
+        class level.
+        """
+        return [f for f, e in cls.all_fields.items() if e.get(prop, False)]
+
+    @classmethod
+    def check_required(cls, payload):
+        """
+        Returns a list of required fields that are
+        missing from the dictionary object `payload`.
+        """
+        missing = []
+        for field in cls.required_fields():
+            if field not in payload:
+                missing.append(field)
+        return missing
+
+
+class Sensor(db.Model, APIModel):
+
+    # Defines some properties on the fields:
+    # required: Is required for creating object via
+    #           a POST request.
+    # editable: Can be edited via a PUT request.
+    all_fields = {
+        'uuid': {'required': False, 'editable': False},
+        'name': {'required': True, 'editable': True},
+        'created_date': {'required': False, 'editable': False},
+        'ip': {'required': False, 'editable': False},
+        'hostname': {'required': False, 'editable': True}
+    }
+
+    __tablename__ = 'sensor'
+
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(36), unique=True)
+    name = db.Column(db.String(50), unique=True)
+    created_date = db.Column(
+            db.DateTime(),default=datetime.utcnow)
+    ip = db.Column(db.String(15))
+    hostname = db.Column(db.String(50))
+
+    def __init__(
+          self, uuid=None, name=None, created_date=None,
+          ip=None, hostname=None):
+        self.uuid = uuid
+        self.name = name
+        self.created_date = created_date
+        self.ip = ip
+        self.hostname = hostname
+
+    def __repr__(self):
+        return '<Sensor>{}'.format(self.to_dict())
+
+    def to_dict(self):
+        return dict(
+            uuid=self.uuid, name=self.name,
+            created_date=self.created_date, ip=self.ip,
+            hostname=self.hostname)
