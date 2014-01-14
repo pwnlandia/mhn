@@ -8,6 +8,7 @@ Options:
 """
 import json
 import time
+import logging
 from os import path
 from itertools import groupby
 from datetime import datetime
@@ -19,6 +20,9 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 
+logger = logging.getLogger('mhnclient')
+
+
 class MHNClient(object):
 
     def __init__(self, **kwargs):
@@ -28,8 +32,8 @@ class MHNClient(object):
         self.session.auth = (self.sensor_uuid, self.sensor_uuid)
 
         def on_new_alerts(new_alerts):
-            print "Detected {} new alerts. Posting to '{}'.".format(
-                    len(new_alerts), self.alert_url)
+            logger.info("Detected {} new alerts. Posting to '{}'.".format(
+                    len(new_alerts), self.alert_url))
             for al in new_alerts:
                 self.post_alert(al)
         self.alerter = AlertEventHandler(
@@ -37,8 +41,8 @@ class MHNClient(object):
 
     def connect_sensor(self):
         connresp = self.session.post(self.connect_url)
-        print "Started Honeypot '{}' on {}.".format(
-                connresp.json().get('hostname'), connresp.json().get('ip'))
+        logger.info("Started Honeypot '{}' on {}.".format(
+                connresp.json().get('hostname'), connresp.json().get('ip')))
         self.alerter.observer.start()
 
     def post_alert(self, alert):
@@ -180,6 +184,23 @@ class AlertEventHandler(FileSystemEventHandler):
                 self._on_new_alerts(alerts)
 
 
+def config_logger(logfile):
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s  -  %(name)s - %(message)s')
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    console.setFormatter(formatter)
+    logger.addHandler(console)
+    if logfile:
+        from logging.handlers import RotatingFileHandler
+
+        rotatelog = RotatingFileHandler(
+                logfile, maxBytes=10240, backupCount=5)
+        rotatelog.setLevel(logging.INFO)
+        rotatelog.setFormatter(formatter)
+        logger.addHandler(rotatelog)
+
+
 if __name__ ==  '__main__':
     args = docopt(__doc__, version='MHNClient 0.0.1')
     with open(args.get('-c')) as config:
@@ -187,6 +208,7 @@ if __name__ ==  '__main__':
             configdict = json.loads(config.read())
         except ValueError:
             raise SystemExit("Error parsing config file.")
+    config_logger(configdict.get('log_file'))
     honeypot = MHNClient(**configdict)
     honeypot.connect_sensor()
     try:
