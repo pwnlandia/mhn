@@ -1,2 +1,4 @@
 *.pyc
 server/config.py
+
+honeypot/mhnclient.conf
