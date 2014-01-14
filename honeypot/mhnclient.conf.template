@@ -1,0 +1,5 @@
+{
+    "api_url": "",
+    "sensor_uuid": ""
+    "alert_file": "/var/log/snort/alert"
+}
