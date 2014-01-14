@@ -30,14 +30,15 @@ class MHNClient(object):
         self.sensor_uuid = kwargs.get('sensor_uuid')
         self.session = requests.Session()
         self.session.auth = (self.sensor_uuid, self.sensor_uuid)
+        self.session.headers = {'Content-Type': 'application/json'}
 
         def on_new_alerts(new_alerts):
             logger.info("Detected {} new alerts. Posting to '{}'.".format(
-                    len(new_alerts), self.alert_url))
+                    len(new_alerts), self.attack_url))
             for al in new_alerts:
-                self.post_alert(al)
+                self.post_attack(al)
         self.alerter = AlertEventHandler(
-                kwargs.get('alert_file'), on_new_alerts)
+                self.sensor_uuid, kwargs.get('alert_file'), on_new_alerts)
 
     def connect_sensor(self):
         connresp = self.session.post(self.connect_url)
@@ -45,12 +46,12 @@ class MHNClient(object):
                 connresp.json().get('hostname'), connresp.json().get('ip')))
         self.alerter.observer.start()
 
-    def post_alert(self, alert):
-        self.session.post(self.alert_url, data=alert.to_dict())
+    def post_attack(self, alert):
+        self.session.post(self.attack_url, data=alert.to_json())
 
     @property
-    def alert_url(self):
-        return '{}/alert/'.format(self.api_url)
+    def attack_url(self):
+        return '{}/attack/'.format(self.api_url)
 
     @property
     def connect_url(self):
@@ -73,7 +74,7 @@ class Alert(object):
         'destination_port'
     )
 
-    def __init__(self, *args):
+    def __init__(self, sensor_uuid, *args):
         try:
             assert len(args) == 7
         except:
@@ -91,6 +92,7 @@ class Alert(object):
             self.source_ip = args[4]
             self.destination_ip = args[5]
             self.destination_port = args[6]
+            self.sensor = sensor_uuid
 
     def __repr__(self):
         return str(self.__dict__)
@@ -98,8 +100,13 @@ class Alert(object):
     def to_dict(self):
         return self.__dict__
 
+    def to_json(self):
+        _dict = self.to_dict().copy()
+        _dict.update({'date': self.date.strftime("%Y-%m-%dT%H:%M:%S.%f%z")})
+        return json.dumps(_dict)
+
     @classmethod
-    def from_log(cls, logfile, mindate=None):
+    def from_log(cls, sensor_uuid, logfile, mindate=None):
         """
         Reads the file logfile and parses out Snort alerts
         from the given alert format.
@@ -146,8 +153,8 @@ class Alert(object):
                     content = ''.join(grp)
                     fields = bnf.searchString(content)
                     if fields:
-                        alert = cls(*fields[0])
-                        if (mindate and alert.date >= mindate) or not mindate:
+                        alert = cls(sensor_uuid, *fields[0])
+                        if (mindate and alert.date > mindate) or not mindate:
                             # If mindate parameter is passed, only newer
                             # alters will be appended.
                             alerts.append(alert)
@@ -156,7 +163,7 @@ class Alert(object):
 
 class AlertEventHandler(FileSystemEventHandler):
 
-    def __init__(self, alert_file, on_new_alerts):
+    def __init__(self, sensor_uuid, alert_file, on_new_alerts):
         """
         Initializes a filesytem watcher that will watch
         the specified file for changes.
@@ -171,11 +178,13 @@ class AlertEventHandler(FileSystemEventHandler):
         self.observer = Observer()
         self.observer.schedule(self, alert_dir, False)
         self._on_new_alerts = on_new_alerts
+        self.sensor_uuid = sensor_uuid
 
     def on_any_event(self, event):
         if (not event.event_type == 'deleted') and\
            (event.src_path == self.alert_file):
-            alerts = Alert.from_log(self.alert_file, self.latest_date)
+            alerts = Alert.from_log(
+                    self.sensor_uuid, self.alert_file, self.latest_date)
             if alerts:
                 # latest_date is used as a mechanism to
                 # prevent processing alerts more than once.
