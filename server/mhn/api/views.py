@@ -16,13 +16,11 @@ api = Blueprint('api', __name__, url_prefix='/api')
 def create_sensor():
     missing = Sensor.check_required(request.json)
     if missing:
-        print missing
         return error_response(
                 errors.FIELDS_MISSING.format(missing), 400)
     else:
         sensor = Sensor(**request.json)
         sensor.uuid = str(uuid1())
-        sensor.ip = request.remote_addr
         db.session.add(sensor)
         db.session.commit()
         return jsonify(sensor.to_dict())
@@ -44,3 +42,11 @@ def update_sensor(uuid):
     else:
         db.session.commit()
         return jsonify(sensor.to_dict())
+
+
+@api.route('/sensor/<uuid>/connect/', methods=['POST'])
+def connect_sensor(uuid):
+    sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()
+    sensor.ip = request.remote_addr
+    db.session.commit()
+    return jsonify(sensor.to_dict())
