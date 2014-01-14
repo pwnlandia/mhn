@@ -2,6 +2,17 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
 
+"""
+To create the database, run the following commands
+on a python shell:
+
+from mhn import create_app
+from mhn import db
+mhn = create_app()
+mhn.test_request_context().push()
+db.create_all()
+
+"""
 db = SQLAlchemy()
 
 def create_app():
