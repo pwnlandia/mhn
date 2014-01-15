@@ -1,7 +1,8 @@
-from flask.ext.security import SQLAlchemyUserDatastore, login_required
+from flask.ext.security import login_required
 from flask_security.core import current_user
+from flask_security.decorators import roles_accepted
 
 
 def get_datastore():
-    from mhn.auth import user_datastore
+    from mhn import user_datastore
     return user_datastore
