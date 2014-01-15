@@ -6,7 +6,7 @@ from dateutil.parser import parse
 from mhn import db
 from mhn.api import errors
 from mhn.api.models import Sensor, Attack
-from mhn.api.errors import error_response
+from mhn.common.utils import error_response
 
 
 api = Blueprint('api', __name__, url_prefix='/api')
