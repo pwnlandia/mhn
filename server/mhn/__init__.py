@@ -29,6 +29,9 @@ def create_app():
     from ui.views import ui
     mhn.register_blueprint(ui)
 
+    from auth.views import auth
+    mhn.register_blueprint(auth)
+
     return mhn
 
 
@@ -39,6 +42,9 @@ def create_clean_db():
     mhn = create_app()
     mhn.test_request_context().push()
     db.create_all()
-    user_datastore.create_user(email=mhn.config.get('SUPERUSER_EMAIL'),
-                               password=encrypt(mhn.config.get('SUPERUSER_PASSWORD')))
+    superuser = user_datastore.create_user(
+            email=mhn.config.get('SUPERUSER_EMAIL'),
+            password=encrypt(mhn.config.get('SUPERUSER_PASSWORD')))
+    adminrole = user_datastore.create_role(name='admin', description='')
+    user_datastore.add_role_to_user(superuser, adminrole)
     db.session.commit()
