@@ -22,3 +22,8 @@ class User(db.Model, UserMixin):
     confirmed_at = db.Column(db.DateTime())
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
+
+    def to_dict(self):
+        return dict(
+                email=self.email, roles=[r.name for r in self.roles],
+                active=self.active)
