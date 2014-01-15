@@ -23,13 +23,13 @@ def create_app():
     Security(mhn, user_datastore)
 
     # Registering blueprints.
-    from api.views import api
+    from mhn.api.views import api
     mhn.register_blueprint(api)
 
-    from ui.views import ui
+    from mhn.ui.views import ui
     mhn.register_blueprint(ui)
 
-    from auth.views import auth
+    from mhn.auth.views import auth
     mhn.register_blueprint(auth)
 
     return mhn
