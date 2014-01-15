@@ -1,4 +1,3 @@
-from itertools import groupby
 from datetime import datetime
 
 from mhn import db

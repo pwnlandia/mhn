@@ -6,7 +6,7 @@ from dateutil.parser import parse
 from mhn import db
 from mhn.api import errors
 from mhn.api.models import Sensor, Attack
-from mhn.api.errors import error_response
+from mhn.common.utils import error_response
 
 
 api = Blueprint('api', __name__, url_prefix='/api')
@@ -17,7 +17,7 @@ def create_sensor():
     missing = Sensor.check_required(request.json)
     if missing:
         return error_response(
-                errors.FIELDS_MISSING.format(missing), 400)
+                errors.API_FIELDS_MISSING.format(missing), 400)
     else:
         sensor = Sensor(**request.json)
         sensor.uuid = str(uuid1())
@@ -34,10 +34,10 @@ def update_sensor(uuid):
             setattr(sensor, field, request.json[field])
         elif field in Sensor.fields():
             return error_response(
-                    errors.FIELD_NOT_EDITABLE.format(field), 400)
+                    errors.API_FIELD_NOT_EDITABLE.format(field), 400)
         else:
             return error_response(
-                    errors.FIELD_INVALID.format(field), 400)
+                    errors.API_FIELD_INVALID.format(field), 400)
     else:
         db.session.commit()
         return jsonify(sensor.to_dict())
@@ -57,7 +57,7 @@ def create_attack():
     missing = Attack.check_required(request.json)
     if missing:
         return error_response(
-                errors.FIELDS_MISSING.format(missing), 400)
+                errors.API_FIELDS_MISSING.format(missing), 400)
     else:
         sensor = Sensor.query.filter_by(
                 uuid=request.json.get('sensor')).first_or_404()
