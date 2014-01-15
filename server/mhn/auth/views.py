@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import IntegrityError
 from flask_security.utils import (
-        login_user as login, verify_and_update_password, encrypt_password)
+        login_user as login, verify_and_update_password,
+        encrypt_password, logout_user as logout)
 
 from mhn import db
 from mhn.common.utils import error_response
@@ -32,6 +33,12 @@ def login_user():
         return jsonify(user.to_dict())
     else:
         return error_response(errors.AUTH_INCORRECT_CREDENTIALS, 401)
+
+
+@auth.route('/logout/', methods=['GET'])
+def logout_user():
+    logout()
+    return jsonify({})
 
 
 @auth.route('/register/', methods=['POST'])
