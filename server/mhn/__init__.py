@@ -32,6 +32,10 @@ def create_app():
     from mhn.auth.views import auth
     mhn.register_blueprint(auth)
 
+    # Trigger templatetag register.
+    from mhn.common.templatetags import format_date
+    mhn.jinja_env.filters['fdate'] = format_date
+
     return mhn
 
 
