@@ -27,3 +27,9 @@ def get_attacks():
     attacks = attacks.order_by(desc(Attack.date))
     return render_template('ui/attacks.html', attacks=attacks,
                            sensors=Sensor.query.all(), **request.args.to_dict())
+
+
+@ui.route('/add-sensor/', methods=['GET'])
+@login_required
+def add_sensor():
+    return render_template('ui/add-sensor.html')
