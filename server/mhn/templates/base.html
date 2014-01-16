@@ -1,0 +1,11 @@
+<!doctype html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <title>{% block extra_head %}{% endblock %}</title>
+        <link rel="stylesheet" href="/static/css/foundation.min.css">
+        <link rel="stylesheet" href="/static/css/normalize.css">
+    </head>
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+</html>
