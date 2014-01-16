@@ -107,6 +107,7 @@ class Attack(db.Model, APIModel):
     destination_port = db.Column(db.Integer)
     priority = db.Column(db.Integer)
     date = db.Column(db.DateTime())
+    classification = db.Column(db.String(80))
     sensor_id = db.Column(db.Integer,
                           db.ForeignKey('sensors.id'))
 
