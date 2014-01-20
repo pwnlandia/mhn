@@ -53,8 +53,7 @@ class MHNClient(object):
         self.alerter.observer.start()
 
     def post_attack(self, alert):
-        #self.session.post(self.attack_url, data=alert.to_json())
-        pass
+        self.session.post(self.attack_url, data=alert.to_json())
 
     @property
     def attack_url(self):
