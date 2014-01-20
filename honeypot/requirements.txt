@@ -1,3 +1,4 @@
 docopt
 pyparsing
 requests
+sqlalchemy
