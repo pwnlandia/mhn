@@ -11,7 +11,7 @@ import time
 import logging
 from os import path
 from itertools import groupby
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import requests
 import pyparsing as pyp
@@ -37,14 +37,14 @@ class MHNClient(object):
         self.session.auth = (self.sensor_uuid, self.sensor_uuid)
         self.session.headers = {'Content-Type': 'application/json'}
 
-        def on_new_alerts(new_alerts):
+        def on_new_attacks(new_alerts):
             logger.info("Detected {} new alerts. Posting to '{}'.".format(
                     len(new_alerts), self.attack_url))
             for al in new_alerts:
                 self.post_attack(al)
         self.alerter = AlertEventHandler(
                 self.sensor_uuid, kwargs.get('alert_file'),
-                kwargs.get('dionaea_db'), on_new_alerts)
+                kwargs.get('dionaea_db'), on_new_attacks)
 
     def connect_sensor(self):
         connresp = self.session.post(self.connect_url)
@@ -53,7 +53,8 @@ class MHNClient(object):
         self.alerter.observer.start()
 
     def post_attack(self, alert):
-        self.session.post(self.attack_url, data=alert.to_json())
+        #self.session.post(self.attack_url, data=alert.to_json())
+        pass
 
     @property
     def attack_url(self):
@@ -93,11 +94,34 @@ class Connection(Base):
                     remote_host=self.remote_host, remote_port=self.remote_port,
                     remote_hostname=self.remote_hostname)
 
+    @property
+    def datetime(self):
+        return datetime.utcfromtimestamp(self.connection_timestamp)
+
     def to_json(self):
-        date = datetime.utcfromtimestamp(self.connection_timestamp)
+        date = self.datetime
         _dict = self.to_dict()
         _dict['date'] = date.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
         return json.dumps(_dict)
+
+    def is_alert(self, alert):
+        """
+        Compares a connection database entry from dionaea with an
+        alert log from snort, and determines whether they are the
+        same event.
+        A snort alert and a dionaea connection are the same iff:
+        * Attacker's ip address is equal
+        * Target's ip address is equal
+        * Target port is the same
+        * Logged within the same second.
+        """
+        if alert.destination_ip == self.local_host and\
+           alert.destination_port == self.local_port and\
+           alert.source_ip == self.remote_host and\
+           abs((alert.date - self.datetime).total_seconds()) <= 1:
+               return True
+        else:
+            return False
 
     def __repr__(self):
         return str(self.to_dict())
@@ -204,18 +228,24 @@ class Alert(object):
                             alerts.append(alert)
         return alerts
 
+    @classmethod
+    def from_connection(cls, sensor_uuid, conn):
+        return Alert(sensor_uuid, '', '', '',
+                     conn.datetime.strftime('%m/%d-%H:%M:%S.%f'),
+                     conn.remote_host, conn.local_host, conn.local_port)
+
 
 class AlertEventHandler(FileSystemEventHandler):
 
     def __init__(self, sensor_uuid, alert_file,
-                 dbpath, on_new_alerts):
+                 dbpath, on_new_attacks):
         """
         Initializes a filesytem watcher that will watch
         the specified file for changes.
         `alert_file` is the absolute path of the snort alert file.
         `dbpath` is the absolute path of the dionaea sqlite file
         that will be watched.
-        `on_new_alerts` is a callback that will get called
+        `on_new_attacks` is a callback that will get called
         once new alerts are found.
         """
         db_dir = path.dirname(dbpath)
@@ -224,12 +254,12 @@ class AlertEventHandler(FileSystemEventHandler):
         self.latest_date = None
         self.observer = Observer()
         self.observer.schedule(self, db_dir, False)
-        self._on_new_alerts = on_new_alerts
+        self._on_new_attacks = on_new_attacks
         self.sensor_uuid = sensor_uuid
         self.engine = create_engine(
                 'sqlite:///{}'.format(self.dbpath), echo=False)
         self.session = sessionmaker(bind=self.engine)()
-        self.latest_conn_id = 0
+        self.mindate = None
 
     def query_connections(self, mindate=None):
         conns = self.session.query(Connection)
@@ -238,6 +268,7 @@ class AlertEventHandler(FileSystemEventHandler):
             mindatestamp = (mindate - datetime(1970, 1, 1)).total_seconds()
             conns.filter(
                 Connection.connection_timestamp > mindatestamp)
+        conns = conns.order_by(Connection.connection)
         return conns
 
     def on_any_event(self, event):
@@ -245,15 +276,32 @@ class AlertEventHandler(FileSystemEventHandler):
            (event.src_path == self.dbpath):
             alerts = Alert.from_log(
                     self.sensor_uuid, self.alert_file, self.latest_date)
-            conns = self.query_connections()
+            conns = self.query_connections(self.mindate)
             if conns:
-                pass
-            if alerts:
-                # latest_date is used as a mechanism to
-                # prevent processing alerts more than once.
-                alerts.sort(key=lambda e: e.date)
-                self.latest_date = alerts[-1].date
-                self._on_new_alerts(alerts)
+                latest_conn = self.session.query(Connection).order_by(
+                     Connection.connection_timestamp.desc()).first()
+                self.latest_date = latest_conn.datetime
+                # attacks will be a list of merged conns and alerts.
+                attacks = []
+                for conn in conns:
+                    matched_alert = None
+                    for al in alerts:
+                        if conn.is_alert(al):
+                            matched_alert = al
+                            # Alert is a more complete object, so it will
+                            # be used as our attack model.
+                            attacks.append(al)
+                            break
+                    else:
+                        # Connection didn't match any alerts, will be appended as is.
+                        attacks.append(Alert.from_connection(self.sensor_uuid, conn))
+                    if matched_alert:
+                        # Popping matched items to eliminate alert iterations
+                        # on next cycle.
+                        alerts.pop(matched_alert)
+                    # Finally append any alerts that didn't match.
+                attacks.extend(alerts)
+                self._on_new_attacks(attacks)
 
 
 def config_logger(logfile):
