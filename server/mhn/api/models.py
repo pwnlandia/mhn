@@ -33,7 +33,7 @@ class APIModel(object):
         """
         missing = []
         for field in cls.required_fields():
-            if field not in payload:
+            if (field not in payload) or payload.get(field) == '':
                 missing.append(field)
         return missing
 
@@ -49,7 +49,7 @@ class Sensor(db.Model, APIModel):
         'name': {'required': True, 'editable': True},
         'created_date': {'required': False, 'editable': False},
         'ip': {'required': False, 'editable': False},
-        'hostname': {'required': False, 'editable': True}
+        'hostname': {'required': True, 'editable': True}
     }
 
     __tablename__ = 'sensors'
