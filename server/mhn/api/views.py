@@ -1,5 +1,6 @@
 from uuid import uuid1
 
+from sqlalchemy.exc import IntegrityError
 from flask import Blueprint, request, jsonify
 from dateutil.parser import parse
 
@@ -69,6 +70,13 @@ def create_attack():
         attack.date = parse(request.json.get('date'))
         attack.classification = request.json.get('classification')
         attack.sensor = sensor
-        db.session.add(attack)
-        db.session.commit()
-        return jsonify(attack.to_dict())
+        # Doing this before add/commit to prevent `InvalidRequestError`.
+        attackdict = attack.to_dict()
+        try:
+            db.session.add(attack)
+            db.session.commit()
+        except IntegrityError:
+            # Silently ignoring attack repost.
+            pass
+        finally:
+            return jsonify(attackdict)
