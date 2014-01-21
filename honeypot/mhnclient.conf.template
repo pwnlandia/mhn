@@ -1,6 +1,7 @@
 {
     "api_url": "",
-    "sensor_uuid": ""
-    "alert_file": "/var/log/snort/alert"
-    "log_file": "mhnclient.log"
+    "sensor_uuid": "",
+    "alert_file": "/var/log/snort/alert",
+    "log_file": "mhnclient.log",
+    "dionaea_db": "/var/dionaea/logsql.sqlite"
 }
