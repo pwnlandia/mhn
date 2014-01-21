@@ -265,7 +265,7 @@ class AlertEventHandler(FileSystemEventHandler):
         if mindate:
             # Calculate UNIX timestamp of mindate.
             mindatestamp = (mindate - datetime(1970, 1, 1)).total_seconds()
-            conns.filter(
+            conns = conns.filter(
                 Connection.connection_timestamp > mindatestamp)
         conns = conns.order_by(Connection.connection)
         return conns
