@@ -220,6 +220,19 @@ class Alert(object):
                     content = ''.join(grp)
                     fields = bnf.searchString(content)
                     if fields:
+                        if abs(datetime.utcnow() -  datetime.now()).total_seconds() > 1:
+                            # Since snort doesn't log in UTC, a correction is needed to
+                            # convert the logged time to UTC. The following code calculates
+                            # the delta between local time and UTC and uses it to convert
+                            # the logged time to UTC. Additional time formatting  makes
+                            # sure the previous code doesn't break.
+                            date = datetime.strptime(fields[0][3], '%m/%d-%H:%M:%S.%f')
+                            date = datetime(
+                               datetime.now().year, date.month, date.day,
+                               date.hour, date.minute, date.second, date.microsecond)
+                            toutc = datetime.utcnow() - datetime.now()
+                            date = date + toutc
+                            fields[0][3] = date.strftime('%m/%d-%H:%M:%S.%f')
                         alert = cls(sensor_uuid, *fields[0])
                         if (mindate and alert.date > mindate) or not mindate:
                             # If mindate parameter is passed, only newer
