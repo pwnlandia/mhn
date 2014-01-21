@@ -8,6 +8,7 @@ Options:
 """
 import json
 import time
+import pickle
 import logging
 from os import path
 from itertools import groupby
@@ -249,6 +250,11 @@ class Alert(object):
 
 class AlertEventHandler(FileSystemEventHandler):
 
+    # Names for the files that will be used to persist
+    # the latest connection and alert dates.
+    CONN_DATE_FILE = 'conn_date'
+    ALERT_DATE_FILE = 'alert_date'
+
     def __init__(self, sensor_uuid, alert_file,
                  dbpath, on_new_attacks):
         """
@@ -263,8 +269,6 @@ class AlertEventHandler(FileSystemEventHandler):
         db_dir = path.dirname(dbpath)
         self.alert_file = alert_file
         self.dbpath = dbpath
-        self.latest_alert_date = None
-        self.latest_conn_date = None
         self.observer = Observer()
         self.observer.schedule(self, db_dir, False)
         self._on_new_attacks = on_new_attacks
@@ -272,6 +276,35 @@ class AlertEventHandler(FileSystemEventHandler):
         self.engine = create_engine(
                 'sqlite:///{}'.format(self.dbpath), echo=False)
         self.session = sessionmaker(bind=self.engine)()
+
+    @staticmethod
+    def _unpickle(dfile):
+        try:
+            return pickle.load(open(dfile, 'r'))
+        except IOError:
+            return None
+
+    @staticmethod
+    def _pickle(dfile, date):
+        pickle.dump(date, open(dfile, 'w'))
+
+    @property
+    def latest_alert_date(self):
+        return AlertEventHandler._unpickle(AlertEventHandler.ALERT_DATE_FILE)
+
+    @latest_alert_date.setter
+    def latest_alert_date(self, date):
+        AlertEventHandler._pickle(
+                AlertEventHandler.ALERT_DATE_FILE, date)
+
+    @property
+    def latest_conn_date(self):
+        return AlertEventHandler._unpickle(AlertEventHandler.CONN_DATE_FILE)
+
+    @latest_conn_date.setter
+    def latest_conn_date(self, date):
+        AlertEventHandler._pickle(
+                AlertEventHandler.CONN_DATE_FILE, date)
 
     def query_connections(self, mindate=None):
         conns = self.session.query(Connection)
@@ -296,6 +329,7 @@ class AlertEventHandler(FileSystemEventHandler):
                 latest_conn = self.session.query(Connection).order_by(
                      Connection.connection_timestamp.desc()).first()
                 self.latest_conn_date = latest_conn.datetime
+
                 # attacks will be a list of merged conns and alerts.
                 attacks = []
                 for conn in conns:
