@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Attacks{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="small-4 large-centered columns">
+            <h2>Attacks Report</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-4 columns">
+            <h4>Search Filters</h4>
+        </div>
+    </div>
+    <form id="attack-filter" action="" method="get">
+        <div class="row">
+            <div class="small-3 columns">
+                <label>Sensor</label>
+            </div>
+            <div class="small-3 pull-6 columns">
+                <label>Date</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-3 columns">
+                <select name="sensor">
+                    <option value="">All</option>
+                    {% for s in sensors %}
+                    <option {% if s.uuid == sensor %}selected{% endif %} value="{{ s.uuid }}">{{ s.hostname }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="small-3 columns">
+                <input type="text" name="date" value="{{ date }}" placeholder="MM/DD/YY" />
+            </div>
+            <div class="small-6 columns">
+                <input class="tiny button" type="submit" value="SEARCH" />
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="small-12 large-centered columns">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Classification</th>
+                        <th>Source IP</th>
+                        <th>Destination IP</th>
+                        <th>Destination port</th>
+                        <th>Priority</th>
+                        <th>Sensor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for at in attacks %}
+                    <tr>
+                        <td>{{ at.date|fdate }}</td>
+                        <td>{{ at.classification }}</td>
+                        <td>{{ at.source_ip }}</td>
+                        <td>{{ at.destination_ip }}</td>
+                        <td>{{ at.destination_port }}</td>
+                        <td>{{ at.priority }}</td>
+                        <td>{{ at.sensor.hostname }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,4 +1,5 @@
-from mhn import mhn
+import config
+from mhn import create_app
 
 
-mhn.run(debug=True)
+create_app().run(debug=config.DEBUG)
