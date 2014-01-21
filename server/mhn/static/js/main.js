@@ -16,8 +16,9 @@ $(document).ready(function() {
                 },
                 contentType: 'application/json',
                 error: function(resp) {
+                    $('#sensor-info').hide();
                     $('#alert-row').show();
-                    $('#alert-text').html(resp.responseJSON.error);
+                    $('#error-txt').html(resp.responseJSON.error);
                 }
             });
         });

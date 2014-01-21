@@ -2,12 +2,18 @@
     <head>
         <title>{% block title %}{% endblock %}</title>
         <title>{% block extra_head %}{% endblock %}</title>
+        <script src="/static/js/vendor/jquery.js"></script>
         <link rel="stylesheet" href="/static/css/foundation.min.css">
         <link rel="stylesheet" href="/static/css/normalize.css">
-        <script src="/static/js/vendor/jquery.js"></script>
+        <script src="/static/js/vendor/foundation.min.js"></script>
+        <script src="/static/js/vendor/modernizr.js"></script>
         <script src="/static/js/main.js"></script>
     </head>
     <body>
         {% block content %}{% endblock %}
+        <script src="/static/js/vendor/fastclick.js"></script>
+        <script>
+            $(document).foundation();
+        </script>
     </body>
 </html>
