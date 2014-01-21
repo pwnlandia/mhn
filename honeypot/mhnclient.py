@@ -263,7 +263,8 @@ class AlertEventHandler(FileSystemEventHandler):
         db_dir = path.dirname(dbpath)
         self.alert_file = alert_file
         self.dbpath = dbpath
-        self.latest_date = None
+        self.latest_alert_date = None
+        self.latest_conn_date = None
         self.observer = Observer()
         self.observer.schedule(self, db_dir, False)
         self._on_new_attacks = on_new_attacks
@@ -271,7 +272,6 @@ class AlertEventHandler(FileSystemEventHandler):
         self.engine = create_engine(
                 'sqlite:///{}'.format(self.dbpath), echo=False)
         self.session = sessionmaker(bind=self.engine)()
-        self.mindate = None
 
     def query_connections(self, mindate=None):
         conns = self.session.query(Connection)
@@ -286,13 +286,16 @@ class AlertEventHandler(FileSystemEventHandler):
     def on_any_event(self, event):
         if (not event.event_type == 'deleted') and\
            (event.src_path == self.dbpath):
-            alerts = Alert.from_log(
-                    self.sensor_uuid, self.alert_file, self.latest_date)
-            conns = self.query_connections(self.mindate)
-            if conns:
+            alerts = Alert.from_log(self.sensor_uuid, self.alert_file,
+                                    self.latest_alert_date)
+            conns = self.query_connections(self.latest_conn_date)
+            if alerts:
+                alerts.sort(key=lambda e: e.date)
+                self.latest_alert_date = alerts[-1].date
+            if conns.count() > 0:
                 latest_conn = self.session.query(Connection).order_by(
                      Connection.connection_timestamp.desc()).first()
-                self.latest_date = latest_conn.datetime
+                self.latest_conn_date = latest_conn.datetime
                 # attacks will be a list of merged conns and alerts.
                 attacks = []
                 for conn in conns:
