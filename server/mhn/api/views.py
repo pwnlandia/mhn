@@ -22,9 +22,15 @@ def create_sensor():
     else:
         sensor = Sensor(**request.json)
         sensor.uuid = str(uuid1())
-        db.session.add(sensor)
-        db.session.commit()
-        return jsonify(sensor.to_dict())
+        try:
+            db.session.add(sensor)
+            db.session.commit()
+        except IntegrityError:
+            return error_response(
+                    errors.API_SENSOR_EXISTS.format(request.json['name']), 400)
+        else:
+            return jsonify(sensor.to_dict())
+
 
 
 @api.route('/sensor/<uuid>/', methods=['PUT'])
