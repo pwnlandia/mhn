@@ -5,6 +5,7 @@ $(document).ready(function() {
                 name: $('#name').val(),
                 hostname: $('#hostname').val()
             }
+            $('#alert-row').hide();
             $.ajax({
                 type: 'POST',
                 url: '/api/sensor/',
@@ -15,7 +16,8 @@ $(document).ready(function() {
                 },
                 contentType: 'application/json',
                 error: function(resp) {
-                    console.log(resp);
+                    $('#alert-row').show();
+                    $('#alert-text').html(resp.responseJSON.error);
                 }
             });
         });
