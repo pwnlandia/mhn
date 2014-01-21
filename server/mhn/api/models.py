@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from sqlalchemy import UniqueConstraint
+
 from mhn import db
 
 
@@ -110,6 +112,8 @@ class Attack(db.Model, APIModel):
     classification = db.Column(db.String(80))
     sensor_id = db.Column(db.Integer,
                           db.ForeignKey('sensors.id'))
+    __table_args__ = (UniqueConstraint(source_ip, destination_ip,
+                                       destination_port, date, sensor_id),)
 
     def __init__(
             self, source_ip=None, destination_ip=None,
