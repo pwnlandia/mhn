@@ -60,7 +60,7 @@ class Sensor(db.Model, APIModel):
     uuid = db.Column(db.String(36), unique=True)
     name = db.Column(db.String(50), unique=True)
     created_date = db.Column(
-            db.DateTime(),default=datetime.utcnow)
+            db.DateTime(), default=datetime.utcnow)
     ip = db.Column(db.String(15))
     hostname = db.Column(db.String(50))
     attacks = db.relationship(
@@ -135,3 +135,45 @@ class Attack(db.Model, APIModel):
             destination_port=self.destination_port, priority=self.priority,
             date=self.date, classification=self.classification,
             sensor=self.sensor.hostname)
+
+
+class Rule(db.Model, APIModel):
+
+    __tablename__ = 'rules'
+
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.String(140))
+    references = db.relationship(
+            'Reference', backref='rule', lazy='dynamic')
+    classtype = db.Column(db.String(50))
+    sid = db.Column(db.Integer)
+    rev = db.Column(db.Integer)
+    date = db.Column(db.DateTime(), default=datetime.utcnow)
+    rule_format = db.Column(db.String(500))
+    is_active = db.Column(db.Boolean)
+
+    def render(self):
+        """
+        Takes Rule model and renders itself to plain text.
+        """
+        msg = 'msg:"{}"'.format(self.message)
+        classtype = 'classtype:{}'.format(self.classtype)
+        sid = 'sid:{}'.format(self.sid)
+        rev = 'rev:{}'.format(self.rev)
+        reference = ''
+        for r in self.references:
+            reference += 'reference:{}; '.format(r.text)
+        # Remove trailing '; ' from references.
+        reference = reference[:-2]
+        return self.rule_format(msg=msg, sid=sid, rev=rev,
+                                classtype=classtype,reference=reference)
+
+
+class Reference(db.Model):
+
+    __tablename__ = 'rule_references'
+
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(140))
+    rule_id = db.Column(db.Integer,
+                        db.ForeignKey('rules.id'))
