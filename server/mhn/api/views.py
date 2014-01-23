@@ -32,7 +32,6 @@ def create_sensor():
             return jsonify(sensor.to_dict())
 
 
-
 @api.route('/sensor/<uuid>/', methods=['PUT'])
 def update_sensor(uuid):
     sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()

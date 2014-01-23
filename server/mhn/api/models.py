@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import UniqueConstraint
+from sqlalchemy import UniqueConstraint, func
 
 from mhn import db
 
@@ -153,6 +153,23 @@ class Rule(db.Model, APIModel):
     is_active = db.Column(db.Boolean)
     __table_args__ = (UniqueConstraint(sid, rev),)
 
+    def __init__(self, msg=None, classtype=None, sid=None,
+                 rev=None, date=None, rule_format=None, **args):
+        self.message = msg
+        self.classtype = classtype
+        self.sid = sid
+        self.rev = rev
+        self.rule_format = rule_format
+        self.is_active = True
+
+    def insert_refs(self, refs):
+        for r in refs:
+            ref = Reference()
+            ref.rule = self
+            ref.text = r
+            db.session.add(ref)
+            db.session.commit()
+
     def render(self):
         """
         Takes Rule model and renders itself to plain text.
@@ -166,8 +183,44 @@ class Rule(db.Model, APIModel):
             reference += 'reference:{}; '.format(r.text)
         # Remove trailing '; ' from references.
         reference = reference[:-2]
-        return self.rule_format(msg=msg, sid=sid, rev=rev,
-                                classtype=classtype,reference=reference)
+        return self.rule_format.format(msg=msg, sid=sid, rev=rev,
+                                classtype=classtype, reference=reference)
+
+    @classmethod
+    def renderall(cls):
+        """
+        Renders latest revision of active rules.
+        This method must be called within a Flask app
+        context.
+        """
+        rules = cls.query.filter_by(is_active=True).group_by(
+                cls.sid).having(func.max(cls.rev))
+        return '\n'.join([ru.render() for ru in rules])
+
+    @classmethod
+    def bulk_import(cls, rulelist):
+        """
+        Imports rules into the database.
+        This method must be called within a Flask app
+        context.
+        """
+        for ru in rulelist:
+            # Checking for rules with this sid.
+            if cls.query.\
+                   filter_by(sid=ru['sid']).\
+                   filter(cls.rev >= ru['rev']).count() == 0:
+                # All rules with this sid have lower rev number that
+                # the incoming one, or this is a new sid altogether.
+                rule = cls(**ru)
+                rule.insert_refs(ru['references'])
+                db.session.add(rule)
+                # Disabling older rules.
+                olderrules = cls.query.\
+                                 filter_by(sid=ru['sid']).\
+                                 filter(cls.rev < ru['rev'])
+                for oru in olderrules:
+                    oru.is_active = False
+        db.session.commit()
 
 
 class Reference(db.Model):
