@@ -139,6 +139,22 @@ class Attack(db.Model, APIModel):
 
 class Rule(db.Model, APIModel):
 
+    # Defines some properties on the fields:
+    # required: Is required for creating object via
+    #           a POST request.
+    # editable: Can be edited via a PUT request.
+    # Defaults to False.
+    all_fields = {
+        'message': {'required': True, 'editable': True},
+        'references': {'required': True, 'editable': False},
+        'classtype': {'required': True, 'editable': True},
+        'sid': {'required': True, 'editable': False},
+        'rev': {'required': True, 'editable': True},
+        'date': {'required': False, 'editable': False},
+        'rule_format': {'required': True, 'editable': False},
+        'is_active': {'required': False, 'editable': True},
+    }
+
     __tablename__ = 'rules'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -175,7 +191,7 @@ class Rule(db.Model, APIModel):
                     classtype=self.classtype, is_active=self.is_active)
 
     def __repr__(self):
-        return str(self.to_dict())
+        return '<Rule>{}'.format(self.to_dict())
 
     def render(self):
         """
