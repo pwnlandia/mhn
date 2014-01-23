@@ -168,7 +168,14 @@ class Rule(db.Model, APIModel):
             ref.rule = self
             ref.text = r
             db.session.add(ref)
-            db.session.commit()
+        db.session.commit()
+
+    def to_dict(self):
+        return dict(sid=self.sid, rev=self.rev, msg=self.message,
+                    classtype=self.classtype, is_active=self.is_active)
+
+    def __repr__(self):
+        return str(self.to_dict())
 
     def render(self):
         """
@@ -193,8 +200,9 @@ class Rule(db.Model, APIModel):
         This method must be called within a Flask app
         context.
         """
-        rules = cls.query.filter_by(is_active=True).group_by(
-                cls.sid).having(func.max(cls.rev))
+        rules = cls.query.filter_by(is_active=True).\
+                    group_by(cls.sid).\
+                    having(func.max(cls.rev))
         return '\n'.join([ru.render() for ru in rules])
 
     @classmethod
@@ -209,17 +217,17 @@ class Rule(db.Model, APIModel):
             if cls.query.\
                    filter_by(sid=ru['sid']).\
                    filter(cls.rev >= ru['rev']).count() == 0:
+                print 'new', ru
                 # All rules with this sid have lower rev number that
                 # the incoming one, or this is a new sid altogether.
                 rule = cls(**ru)
                 rule.insert_refs(ru['references'])
                 db.session.add(rule)
                 # Disabling older rules.
-                olderrules = cls.query.\
-                                 filter_by(sid=ru['sid']).\
-                                 filter(cls.rev < ru['rev'])
-                for oru in olderrules:
-                    oru.is_active = False
+                cls.query.\
+                    filter_by(sid=ru['sid']).\
+                    filter(cls.rev < ru['rev']).\
+                    update({'is_active': False}, False)
         db.session.commit()
 
 
