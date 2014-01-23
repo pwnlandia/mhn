@@ -151,6 +151,7 @@ class Rule(db.Model, APIModel):
     date = db.Column(db.DateTime(), default=datetime.utcnow)
     rule_format = db.Column(db.String(500))
     is_active = db.Column(db.Boolean)
+    __table_args__ = (UniqueConstraint(sid, rev),)
 
     def render(self):
         """
