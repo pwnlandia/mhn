@@ -11,6 +11,7 @@ import time
 import pickle
 import logging
 from os import path
+from threading import Timer
 from itertools import groupby
 from datetime import datetime
 
@@ -34,9 +35,13 @@ class MHNClient(object):
     def __init__(self, **kwargs):
         self.api_url = kwargs.get('api_url')
         self.sensor_uuid = kwargs.get('sensor_uuid')
+        self.snort_rules = kwargs.get('snort_rules')
         self.session = requests.Session()
         self.session.auth = (self.sensor_uuid, self.sensor_uuid)
         self.session.headers = {'Content-Type': 'application/json'}
+        self.download_time = kwargs.get('download_time')
+        self.rules_timer = Timer(1, self._checktime)
+        self.rules_timer.start()
 
         def on_new_attacks(new_alerts):
             logger.info("Detected {} new alerts. Posting to '{}'.".format(
@@ -47,11 +52,34 @@ class MHNClient(object):
                 self.sensor_uuid, kwargs.get('alert_file'),
                 kwargs.get('dionaea_db'), on_new_attacks)
 
+    def _checktime(self):
+        timenow  = datetime.now().strftime('%H:%M')
+        if timenow == self.download_time:
+            self.download_rules()
+        self.rules_timer = Timer(1, self._checktime)
+        self.rules_timer.start()
+
+    def cleanup(self):
+        self.rules_timer.cancel()
+
     def connect_sensor(self):
         connresp = self.session.post(self.connect_url)
         logger.info("Started Honeypot '{}' on {}.".format(
                 connresp.json().get('hostname'), connresp.json().get('ip')))
         self.alerter.observer.start()
+
+    def download_rules(self):
+        rules = self.session.get(
+                self.rule_url, params={'plaintext': 'true'}, stream=True)
+        logger.info("Downloaded rules from '{}'. Status code: {}".format(
+                self.rule_url, rules.status_code))
+        if not rules.status_code == 200:
+            return
+        with open(self.snort_rules, 'wb') as f:
+            for chunk in rules.iter_content(chunk_size=1024):
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+                    f.flush()
 
     def post_attack(self, alert):
         self.session.post(self.attack_url, data=alert.to_json())
@@ -64,6 +92,10 @@ class MHNClient(object):
     def connect_url(self):
         return '{}/sensor/{}/connect/'.format(self.api_url,
                                               self.sensor_uuid)
+
+    @property
+    def rule_url(self):
+        return '{}/rule/'.format(self.api_url)
 
 
 # SQLAlchemy's built-in declarative base class.
@@ -380,9 +412,11 @@ if __name__ ==  '__main__':
     config_logger(configdict.get('log_file'))
     honeypot = MHNClient(**configdict)
     honeypot.connect_sensor()
+    honeypot.download_rules()
     try:
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
+        honeypot.cleanup()
         honeypot.alerter.observer.stop()
         honeypot.alerter.observer.join()
