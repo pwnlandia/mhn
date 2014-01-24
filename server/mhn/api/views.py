@@ -1,7 +1,9 @@
+import json
 from uuid import uuid1
 
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from dateutil.parser import parse
 
 from mhn import db
@@ -102,3 +104,21 @@ def update_rule(rule_id):
     else:
         db.session.commit()
         return jsonify(rule.to_dict())
+
+
+@api.route('/rule/', methods=['GET'])
+def get_rules():
+    # Getting active rules.
+    if request.args.get('plaintext') in ['1', 'true']:
+        # Requested rendered rules in plaintext.
+        resp = make_response(Rule.renderall())
+        resp.headers['Content-Disposition'] = "attachment; filename=mhn.rules"
+        return resp
+    else:
+        # Responding with active rules.
+        rules = Rule.query.filter_by(is_active=True).\
+                    group_by(Rule.sid).\
+                    having(func.max(Rule.rev))
+        resp = make_response(json.dumps([ru.to_dict() for ru in rules]))
+        resp.headers['Content-Type'] = "application/json"
+        return resp

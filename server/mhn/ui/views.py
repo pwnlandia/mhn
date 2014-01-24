@@ -28,6 +28,7 @@ def get_attacks():
     return render_template('ui/attacks.html', attacks=attacks,
                            sensors=Sensor.query.all(), **request.args.to_dict())
 
+
 @ui.route('/rules/', methods=['GET'])
 @login_required
 def get_rules():

@@ -219,7 +219,7 @@ class Rule(db.Model, APIModel):
         rules = cls.query.filter_by(is_active=True).\
                     group_by(cls.sid).\
                     having(func.max(cls.rev))
-        return '\n'.join([ru.render() for ru in rules])
+        return '\n\n'.join([ru.render() for ru in rules])
 
     @classmethod
     def bulk_import(cls, rulelist):
