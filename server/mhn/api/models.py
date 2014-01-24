@@ -233,7 +233,6 @@ class Rule(db.Model, APIModel):
             if cls.query.\
                    filter_by(sid=ru['sid']).\
                    filter(cls.rev >= ru['rev']).count() == 0:
-                print 'new', ru
                 # All rules with this sid have lower rev number that
                 # the incoming one, or this is a new sid altogether.
                 rule = cls(**ru)
