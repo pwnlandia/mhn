@@ -1,20 +1,23 @@
 """Modern Honeypot Network - Client version.
 
 Usage:
-    mhnclient.py -c <config_path>
+    mhnclient.py -c <config_path> [-D]
 
 Options:
     -c <config_path>                Path to config file to use.
+    -D                              Daemonize flag.
 """
 import json
 import time
 import pickle
+import lockfile
 import logging
-from os import path
+from os import path, makedirs
 from threading import Timer
 from itertools import groupby
 from datetime import datetime
 
+import daemon
 import requests
 import pyparsing as pyp
 from docopt import docopt
@@ -61,6 +64,8 @@ class MHNClient(object):
 
     def cleanup(self):
         self.rules_timer.cancel()
+        self.alerter.observer.stop()
+        self.alerter.observer.join()
 
     def connect_sensor(self):
         connresp = self.session.post(self.connect_url)
@@ -385,13 +390,14 @@ class AlertEventHandler(FileSystemEventHandler):
                 self._on_new_attacks(attacks)
 
 
-def config_logger(logfile):
+def config_logger(logfile, daemon):
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s  -  %(name)s - %(message)s')
-    console = logging.StreamHandler()
-    console.setLevel(logging.INFO)
-    console.setFormatter(formatter)
-    logger.addHandler(console)
+    if not daemon:
+        console = logging.StreamHandler()
+        console.setLevel(logging.INFO)
+        console.setFormatter(formatter)
+        logger.addHandler(console)
     if logfile:
         from logging.handlers import RotatingFileHandler
 
@@ -402,15 +408,7 @@ def config_logger(logfile):
         logger.addHandler(rotatelog)
 
 
-if __name__ ==  '__main__':
-    args = docopt(__doc__, version='MHNClient 0.0.1')
-    with open(args.get('-c')) as config:
-        try:
-            configdict = json.loads(config.read())
-        except ValueError:
-            raise SystemExit("Error parsing config file.")
-    config_logger(configdict.get('log_file'))
-    honeypot = MHNClient(**configdict)
+def run(honeypot):
     honeypot.connect_sensor()
     honeypot.download_rules()
     try:
@@ -418,5 +416,33 @@ if __name__ ==  '__main__':
             time.sleep(1)
     except KeyboardInterrupt:
         honeypot.cleanup()
-        honeypot.alerter.observer.stop()
-        honeypot.alerter.observer.join()
+
+
+if __name__ ==  '__main__':
+    args = docopt(__doc__, version='MHNClient 0.0.1')
+    daemonize = args.get('-D')
+    with open(args.get('-c')) as config:
+        try:
+            configdict = json.loads(config.read())
+        except ValueError:
+            raise SystemExit("Error parsing config file.")
+    app_dir = configdict.get('app_dir')
+    log_file = path.join(app_dir, 'var/log/mhnclient.log')
+    pid_file = path.join(app_dir, 'var/run/mhn.pid')
+    honeypot = MHNClient(**configdict)
+    for fpath in map(path.dirname, [log_file, pid_file]):
+        if not path.exists(fpath):
+            # Create needed directories.
+            makedirs(fpath)
+    config_logger(log_file, daemonize)
+    if daemonize:
+        context = daemon.DaemonContext(
+            working_directory=app_dir,
+            pidfile=lockfile.FileLock(pid_file),
+            files_preserve=[logger.handlers[-1].stream]
+        )
+        with context:
+            logger.info('Running daemonized')
+            run(honeypot)
+    else:
+        run(honeypot)
