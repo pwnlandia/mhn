@@ -46,6 +46,12 @@ class MHNClient(object):
         self.rules_timer = Timer(1, self._checktime)
         self.rules_timer.start()
 
+        def on_response(r, *args, **kwargs):
+            if r.status_code != 200:
+                logger.info("Bad HTTP status code: {} for '{}'".format(
+                    r.status_code, r.url))
+        self.session.hooks = dict(response=on_response)
+
         def on_new_attacks(new_alerts):
             logger.info("Detected {} new alerts. Posting to '{}'.".format(
                     len(new_alerts), self.attack_url))
@@ -54,6 +60,30 @@ class MHNClient(object):
         self.alerter = AlertEventHandler(
                 self.sensor_uuid, kwargs.get('alert_file'),
                 kwargs.get('dionaea_db'), on_new_attacks)
+
+    @staticmethod
+    def _safe_request(request, *args, **kwargs):
+        try:
+            return request(*args, **kwargs)
+        except Exception as e:
+            logger.error('Caught exception:\n{}'.format(e))
+
+    @staticmethod
+    def _read_resp(resp):
+        if not resp:
+            return {}
+        try:
+            return resp.json()
+        except ValueError:
+            logger.info("Bad response format (No JSON) for {}:\n{}".format(
+                     resp.url, resp.text))
+            return {}
+
+    def post(self, *args, **kwargs):
+        return self._safe_request(self.session.post, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        return self._safe_request(self.session.get, *args, **kwargs)
 
     def _checktime(self):
         timenow  = datetime.now().strftime('%H:%M')
@@ -64,20 +94,28 @@ class MHNClient(object):
 
     def cleanup(self):
         self.rules_timer.cancel()
-        self.alerter.observer.stop()
-        self.alerter.observer.join()
+        if self.alerter.observer.isAlive():
+            self.alerter.observer.stop()
+            self.alerter.observer.join()
 
     def connect_sensor(self):
-        connresp = self.session.post(self.connect_url)
-        logger.info("Started Honeypot '{}' on {}.".format(
-                connresp.json().get('hostname'), connresp.json().get('ip')))
-        self.alerter.observer.start()
+        connresp = self.post(self.connect_url)
+        jsresp = self._read_resp(connresp)
+        if jsresp:
+            logger.info("Started Honeypot '{}' on {}.".format(
+                    jsresp.get('hostname'), connresp.json().get('ip')))
+            self.alerter.observer.start()
+        else:
+            # Try connecting again in 10.0 seconds.
+            self.conn_timer = Timer(10.0, self.connect_sensor)
+            self.conn_timer.start()
 
     def download_rules(self):
-        rules = self.session.get(
+        logger.info("Downloading rules from '{}'.".format(self.rule_url))
+        rules = self.get(
                 self.rule_url, params={'plaintext': 'true'}, stream=True)
-        logger.info("Downloaded rules from '{}'. Status code: {}".format(
-                self.rule_url, rules.status_code))
+        if  not rules:
+            return
         if not rules.status_code == 200:
             return
         with open(self.snort_rules, 'wb') as f:
@@ -87,7 +125,7 @@ class MHNClient(object):
                     f.flush()
 
     def post_attack(self, alert):
-        self.session.post(self.attack_url, data=alert.to_json())
+        self.post(self.attack_url, data=alert.to_json())
 
     @property
     def attack_url(self):
