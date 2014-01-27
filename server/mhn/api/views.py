@@ -1,12 +1,14 @@
+import json
 from uuid import uuid1
 
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from dateutil.parser import parse
 
 from mhn import db
 from mhn.api import errors
-from mhn.api.models import Sensor, Attack
+from mhn.api.models import Sensor, Attack, Rule
 from mhn.common.utils import error_response
 
 
@@ -30,7 +32,6 @@ def create_sensor():
                     errors.API_SENSOR_EXISTS.format(request.json['name']), 400)
         else:
             return jsonify(sensor.to_dict())
-
 
 
 @api.route('/sensor/<uuid>/', methods=['PUT'])
@@ -86,3 +87,38 @@ def create_attack():
             pass
         finally:
             return jsonify(attackdict)
+
+
+@api.route('/rule/<rule_id>/', methods=['PUT'])
+def update_rule(rule_id):
+    rule = Rule.query.filter_by(id=rule_id).first_or_404()
+    for field in request.json.keys():
+        if field in Rule.editable_fields():
+            setattr(rule, field, request.json[field])
+        elif field in Rule.fields():
+            return error_response(
+                    errors.API_FIELD_NOT_EDITABLE.format(field), 400)
+        else:
+            return error_response(
+                    errors.API_FIELD_INVALID.format(field), 400)
+    else:
+        db.session.commit()
+        return jsonify(rule.to_dict())
+
+
+@api.route('/rule/', methods=['GET'])
+def get_rules():
+    # Getting active rules.
+    if request.args.get('plaintext') in ['1', 'true']:
+        # Requested rendered rules in plaintext.
+        resp = make_response(Rule.renderall())
+        resp.headers['Content-Disposition'] = "attachment; filename=mhn.rules"
+        return resp
+    else:
+        # Responding with active rules.
+        rules = Rule.query.filter_by(is_active=True).\
+                    group_by(Rule.sid).\
+                    having(func.max(Rule.rev))
+        resp = make_response(json.dumps([ru.to_dict() for ru in rules]))
+        resp.headers['Content-Type'] = "application/json"
+        return resp

@@ -1,10 +1,10 @@
 from dateutil.parser import parse as parse_date
 from flask import Blueprint, render_template, request
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 
-from mhn.api.models import Attack
-from mhn.api.models import Sensor
+from mhn.api.models import Attack, Sensor, Rule
 from mhn.auth import login_required
+from mhn import db
 
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
@@ -27,6 +27,15 @@ def get_attacks():
     attacks = attacks.order_by(desc(Attack.date))
     return render_template('ui/attacks.html', attacks=attacks,
                            sensors=Sensor.query.all(), **request.args.to_dict())
+
+
+@ui.route('/rules/', methods=['GET'])
+@login_required
+def get_rules():
+    rules = db.session.query(Rule, func.count(Rule.rev).label('nrevs')).\
+               group_by(Rule.sid).\
+               order_by(desc(Rule.date))
+    return render_template('ui/rules.html', rules=rules)
 
 
 @ui.route('/add-sensor/', methods=['GET'])

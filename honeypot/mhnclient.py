@@ -1,19 +1,23 @@
 """Modern Honeypot Network - Client version.
 
 Usage:
-    mhnclient.py -c <config_path>
+    mhnclient.py -c <config_path> [-D]
 
 Options:
     -c <config_path>                Path to config file to use.
+    -D                              Daemonize flag.
 """
 import json
 import time
 import pickle
+import lockfile
 import logging
-from os import path
+from os import path, makedirs
+from threading import Timer
 from itertools import groupby
 from datetime import datetime
 
+import daemon
 import requests
 import pyparsing as pyp
 from docopt import docopt
@@ -34,9 +38,19 @@ class MHNClient(object):
     def __init__(self, **kwargs):
         self.api_url = kwargs.get('api_url')
         self.sensor_uuid = kwargs.get('sensor_uuid')
+        self.snort_rules = kwargs.get('snort_rules')
         self.session = requests.Session()
         self.session.auth = (self.sensor_uuid, self.sensor_uuid)
         self.session.headers = {'Content-Type': 'application/json'}
+        self.download_time = kwargs.get('download_time')
+        self.rules_timer = Timer(1, self._checktime)
+        self.rules_timer.start()
+
+        def on_response(r, *args, **kwargs):
+            if r.status_code != 200:
+                logger.info("Bad HTTP status code: {} for '{}'".format(
+                    r.status_code, r.url))
+        self.session.hooks = dict(response=on_response)
 
         def on_new_attacks(new_alerts):
             logger.info("Detected {} new alerts. Posting to '{}'.".format(
@@ -47,14 +61,71 @@ class MHNClient(object):
                 self.sensor_uuid, kwargs.get('alert_file'),
                 kwargs.get('dionaea_db'), on_new_attacks)
 
+    @staticmethod
+    def _safe_request(request, *args, **kwargs):
+        try:
+            return request(*args, **kwargs)
+        except Exception as e:
+            logger.error('Caught exception:\n{}'.format(e))
+
+    @staticmethod
+    def _read_resp(resp):
+        if not resp:
+            return {}
+        try:
+            return resp.json()
+        except ValueError:
+            logger.info("Bad response format (No JSON) for {}:\n{}".format(
+                     resp.url, resp.text))
+            return {}
+
+    def post(self, *args, **kwargs):
+        return self._safe_request(self.session.post, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        return self._safe_request(self.session.get, *args, **kwargs)
+
+    def _checktime(self):
+        timenow  = datetime.now().strftime('%H:%M')
+        if timenow == self.download_time:
+            self.download_rules()
+        self.rules_timer = Timer(1, self._checktime)
+        self.rules_timer.start()
+
+    def cleanup(self):
+        self.rules_timer.cancel()
+        if self.alerter.observer.isAlive():
+            self.alerter.observer.stop()
+            self.alerter.observer.join()
+
     def connect_sensor(self):
-        connresp = self.session.post(self.connect_url)
-        logger.info("Started Honeypot '{}' on {}.".format(
-                connresp.json().get('hostname'), connresp.json().get('ip')))
-        self.alerter.observer.start()
+        connresp = self.post(self.connect_url)
+        jsresp = self._read_resp(connresp)
+        if jsresp:
+            logger.info("Started Honeypot '{}' on {}.".format(
+                    jsresp.get('hostname'), connresp.json().get('ip')))
+            self.alerter.observer.start()
+        else:
+            # Try connecting again in 10.0 seconds.
+            self.conn_timer = Timer(10.0, self.connect_sensor)
+            self.conn_timer.start()
+
+    def download_rules(self):
+        logger.info("Downloading rules from '{}'.".format(self.rule_url))
+        rules = self.get(
+                self.rule_url, params={'plaintext': 'true'}, stream=True)
+        if  not rules:
+            return
+        if not rules.status_code == 200:
+            return
+        with open(self.snort_rules, 'wb') as f:
+            for chunk in rules.iter_content(chunk_size=1024):
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+                    f.flush()
 
     def post_attack(self, alert):
-        self.session.post(self.attack_url, data=alert.to_json())
+        self.post(self.attack_url, data=alert.to_json())
 
     @property
     def attack_url(self):
@@ -64,6 +135,10 @@ class MHNClient(object):
     def connect_url(self):
         return '{}/sensor/{}/connect/'.format(self.api_url,
                                               self.sensor_uuid)
+
+    @property
+    def rule_url(self):
+        return '{}/rule/'.format(self.api_url)
 
 
 # SQLAlchemy's built-in declarative base class.
@@ -353,13 +428,14 @@ class AlertEventHandler(FileSystemEventHandler):
                 self._on_new_attacks(attacks)
 
 
-def config_logger(logfile):
+def config_logger(logfile, daemon):
     logger.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s  -  %(name)s - %(message)s')
-    console = logging.StreamHandler()
-    console.setLevel(logging.INFO)
-    console.setFormatter(formatter)
-    logger.addHandler(console)
+    if not daemon:
+        console = logging.StreamHandler()
+        console.setLevel(logging.INFO)
+        console.setFormatter(formatter)
+        logger.addHandler(console)
     if logfile:
         from logging.handlers import RotatingFileHandler
 
@@ -370,19 +446,41 @@ def config_logger(logfile):
         logger.addHandler(rotatelog)
 
 
+def run(honeypot):
+    honeypot.connect_sensor()
+    honeypot.download_rules()
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        honeypot.cleanup()
+
+
 if __name__ ==  '__main__':
     args = docopt(__doc__, version='MHNClient 0.0.1')
+    daemonize = args.get('-D')
     with open(args.get('-c')) as config:
         try:
             configdict = json.loads(config.read())
         except ValueError:
             raise SystemExit("Error parsing config file.")
-    config_logger(configdict.get('log_file'))
+    app_dir = configdict.get('app_dir')
+    log_file = path.join(app_dir, 'var/log/mhnclient.log')
+    pid_file = path.join(app_dir, 'var/run/mhn.pid')
     honeypot = MHNClient(**configdict)
-    honeypot.connect_sensor()
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        honeypot.alerter.observer.stop()
-        honeypot.alerter.observer.join()
+    for fpath in map(path.dirname, [log_file, pid_file]):
+        if not path.exists(fpath):
+            # Create needed directories.
+            makedirs(fpath)
+    config_logger(log_file, daemonize)
+    if daemonize:
+        context = daemon.DaemonContext(
+            working_directory=app_dir,
+            pidfile=lockfile.FileLock(pid_file),
+            files_preserve=[logger.handlers[-1].stream]
+        )
+        with context:
+            logger.info('Running daemonized')
+            run(honeypot)
+    else:
+        run(honeypot)
