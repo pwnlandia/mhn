@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """Modern Honeypot Network - Client version.
 
 Usage:
