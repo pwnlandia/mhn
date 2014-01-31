@@ -74,4 +74,30 @@ $(document).ready(function() {
             );
         });
     }
+
+    if ($('#login-form').length >= 1) {
+        $('#log-btn').click(function() {
+            var email = $('#email').val();
+            var passwd = $('#passwd').val();
+            var data = {
+                email: email,
+                password: passwd
+            };
+            $('#alert-text').hide();
+
+            $.ajax({
+                type: 'POST',
+                url: '/auth/login/',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function() {
+                    window.location.href = '/ui/dashboard/';
+                },
+                error: function(resp) {
+                    $('#alert-text').show();
+                    $('#error-txt').html(resp.responseJSON.error);
+                },
+            });
+        });
+    }
 });

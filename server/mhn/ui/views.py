@@ -10,6 +10,11 @@ from mhn import db
 ui = Blueprint('ui', __name__, url_prefix='/ui')
 
 
+@ui.route('/login/', methods=['GET'])
+def login_user():
+    return render_template('ui/login.html')
+
+
 @ui.route('/attacks/', methods=['GET'])
 @login_required
 def get_attacks():
