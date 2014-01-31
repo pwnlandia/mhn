@@ -10,6 +10,33 @@
         <script src="/static/js/main.js"></script>
     </head>
     <body>
+        {% if user.is_authenticated() %}
+        <nav class="top-bar" style="margin-bottom: 30px;"  data-topbar>
+            <ul class="title-area">
+                <li class="name">
+                    <h1><a href="{{ url_for('ui.dashboard') }}">MHN Server</a></h1>
+                </li>
+            </ul>
+            <section class="top-bar-section">
+                <!-- Left Nav Section -->
+                <ul class="left">
+                    <li><a href="{{ url_for('ui.get_attacks') }}">Attacks</a></li>
+                    <li><a href="{{ url_for('ui.get_rules') }}">Rules</a></li>
+                    <li class="has-dropdown">
+                        <a href="{{ url_for('ui.get_sensors') }}">Sensors</a>
+                        <ul class="dropdown">
+                            <li><a href="{{ url_for('ui.get_sensors') }}">View sensors</a></li>
+                            <li><a href="{{ url_for('ui.add_sensor') }}">Add sensor</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- Right Nav Section -->
+                <ul class="right">
+                    <li class="active"><a id="out-btn" href="#">LOGOUT</a></li>
+                </ul>
+            </section>
+        </nav>
+        {% endif %}
         {% block content %}{% endblock %}
         <script src="/static/js/vendor/fastclick.js"></script>
         <script>

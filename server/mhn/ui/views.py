@@ -1,9 +1,10 @@
 from dateutil.parser import parse as parse_date
-from flask import Blueprint, render_template, request
+from flask import (
+        Blueprint, render_template, request, url_for, redirect)
 from sqlalchemy import desc, func
 
 from mhn.api.models import Attack, Sensor, Rule
-from mhn.auth import login_required
+from mhn.auth import login_required, current_user
 from mhn import db
 
 
@@ -12,7 +13,14 @@ ui = Blueprint('ui', __name__, url_prefix='/ui')
 
 @ui.route('/login/', methods=['GET'])
 def login_user():
-    return render_template('ui/login.html')
+    if current_user.is_authenticated():
+        return redirect(url_for('ui.dashboard'))
+    return render_template('security/login_user.html')
+
+
+@ui.route('/dashboard/', methods=['GET'])
+def dashboard():
+    return render_template('ui/dashboard.html')
 
 
 @ui.route('/attacks/', methods=['GET'])

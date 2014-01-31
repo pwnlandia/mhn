@@ -15,3 +15,4 @@ _basedir = os.path.abspath(os.path.dirname(__file__))
 # SUPERUSER_PASSWORD = 'superpassword'
 # SECURITY_PASSWORD_HASH = 'bcrypt'
 # SECURITY_PASSWORD_SALT = SECRET_KEY
+# SECURITY_LOGIN_URL = '/ui/login/'

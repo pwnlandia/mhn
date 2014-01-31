@@ -100,4 +100,11 @@ $(document).ready(function() {
             });
         });
     }
+
+    $('#out-btn').click(function(e) {
+        e.preventDefault();
+        $.get('/auth/logout/', function() {
+            window.location.href = '/ui/login/';
+        });
+    });
 });
