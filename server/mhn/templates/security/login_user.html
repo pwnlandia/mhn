@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+    <div class="row" style="margin-top: 15%;">
+        <div class="small-6 columns">
+            <h1>Welcome to the Modern Honeypot Network Server</h1>
+        </div>
+        <div class="small-6 columns">
+            <form id="login-form">
+                <fieldset>
+                    <legend>Log In</legend>
+                    <label>Email</label>
+                    <input id="email" name="email" type="text" />
+                    <label>Password</label>
+                    <input id="passwd" name="passwd" type="password" />
+                    <div class="row">
+                        <div class="small-8 columns">
+                            <div style="display:none;" id="alert-text" data-alert class="alert-box warning round">
+                                <div id="error-txt"></div>
+                            </div>
+                        </div>
+                        <div class="small-4 columns">
+                            <div style="float:right;" class="small button" id="log-btn">LOGIN</div>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+{% endblock %}

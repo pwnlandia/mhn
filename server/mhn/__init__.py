@@ -36,6 +36,9 @@ def create_app():
     from mhn.common.templatetags import format_date
     mhn.jinja_env.filters['fdate'] = format_date
 
+    from mhn.auth.contextprocessors import user_ctx
+    mhn.context_processor(user_ctx)
+
     return mhn
 
 

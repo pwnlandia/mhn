@@ -1,13 +1,26 @@
 from dateutil.parser import parse as parse_date
-from flask import Blueprint, render_template, request
-from sqlalchemy import desc
+from flask import (
+        Blueprint, render_template, request, url_for, redirect)
+from sqlalchemy import desc, func
 
-from mhn.api.models import Attack
-from mhn.api.models import Sensor
-from mhn.auth import login_required
+from mhn.api.models import Attack, Sensor, Rule
+from mhn.auth import login_required, current_user
+from mhn import db
 
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
+
+
+@ui.route('/login/', methods=['GET'])
+def login_user():
+    if current_user.is_authenticated():
+        return redirect(url_for('ui.dashboard'))
+    return render_template('security/login_user.html')
+
+
+@ui.route('/dashboard/', methods=['GET'])
+def dashboard():
+    return render_template('ui/dashboard.html')
 
 
 @ui.route('/attacks/', methods=['GET'])
@@ -26,7 +39,23 @@ def get_attacks():
         attacks = attacks.join(Sensor).filter(Sensor.uuid == sensor)
     attacks = attacks.order_by(desc(Attack.date))
     return render_template('ui/attacks.html', attacks=attacks,
-                           sensors=Sensor.query.all(), **request.args.to_dict())
+                           sensors=Sensor.query, **request.args.to_dict())
+
+
+@ui.route('/rules/', methods=['GET'])
+@login_required
+def get_rules():
+    rules = db.session.query(Rule, func.count(Rule.rev).label('nrevs')).\
+               group_by(Rule.sid).\
+               order_by(desc(Rule.date))
+    return render_template('ui/rules.html', rules=rules)
+
+
+@ui.route('/sensors/', methods=['GET'])
+@login_required
+def get_sensors():
+    return render_template('ui/sensors.html',
+                           sensors=Sensor.query)
 
 
 @ui.route('/add-sensor/', methods=['GET'])

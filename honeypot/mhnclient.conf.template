@@ -1,7 +1,9 @@
 {
     "api_url": "",
     "sensor_uuid": "",
+    "app_dir": "/opt/threatstream/mhn",
     "alert_file": "/var/log/snort/alert",
-    "log_file": "mhnclient.log",
-    "dionaea_db": "/var/dionaea/logsql.sqlite"
+    "dionaea_db": "/var/dionaea/logsql.sqlite",
+    "snort_rules": "/usr/local/snort/mhn-rules/mhn.rules",
+    "download_time": "00:00"
 }
