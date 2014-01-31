@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Sensors{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="small-4 large-centered columns">
+            <h2>Sensors</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 large-centered columns">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Hostname</th>
+                        <th>IP</th>
+                        <th>Attacks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sr in sensors %}
+                    <tr>
+                        <td>{{ sr.name }}</td>
+                        <td>{{ sr.hostname }}</td>
+                        <td>{{ sr.ip}}</td>
+                        <td><a href="{{ url_for('ui.get_attacks', sensor=sr.uuid) }}">{{ sr.attacks.all()|count }}</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -26,7 +26,7 @@ def get_attacks():
         attacks = attacks.join(Sensor).filter(Sensor.uuid == sensor)
     attacks = attacks.order_by(desc(Attack.date))
     return render_template('ui/attacks.html', attacks=attacks,
-                           sensors=Sensor.query.all(), **request.args.to_dict())
+                           sensors=Sensor.query, **request.args.to_dict())
 
 
 @ui.route('/rules/', methods=['GET'])
@@ -36,6 +36,13 @@ def get_rules():
                group_by(Rule.sid).\
                order_by(desc(Rule.date))
     return render_template('ui/rules.html', rules=rules)
+
+
+@ui.route('/sensors/', methods=['GET'])
+@login_required
+def get_sensors():
+    return render_template('ui/sensors.html',
+                           sensors=Sensor.query)
 
 
 @ui.route('/add-sensor/', methods=['GET'])
