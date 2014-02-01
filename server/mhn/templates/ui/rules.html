@@ -22,7 +22,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for ru in rules %}
+                    {% for ru in rules.items %}
                     <tr>
                         <td>{{ ru.Rule.date|fdate }}</td>
                         <td>{{ ru.Rule.sid }}</td>
@@ -46,6 +46,8 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% from "pagination.html" import render_pagination %}
+            {{ render_pagination(rules, view, request.args.to_dict()) }}
         </div>
     </div>
 {% endblock %}

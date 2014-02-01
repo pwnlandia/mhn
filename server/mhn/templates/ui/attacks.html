@@ -52,7 +52,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for at in attacks %}
+                    {% for at in attacks.items %}
                     <tr>
                         <td>{{ at.date|fdate }}</td>
                         <td>{{ at.classification }}</td>
@@ -65,6 +65,8 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% from "pagination.html" import render_pagination %}
+            {{ render_pagination(attacks, view, request.args.to_dict()) }}
         </div>
     </div>
 {% endblock %}
