@@ -11,6 +11,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Name</th>
                         <th>Hostname</th>
                         <th>IP</th>
@@ -21,6 +22,7 @@
                 <tbody>
                     {% for sr in sensors.items %}
                     <tr>
+                        <td>{{ loop.index }}</td>
                         <td>{{ sr.name }}</td>
                         <td>{{ sr.hostname }}</td>
                         <td>{{ sr.ip}}</td>

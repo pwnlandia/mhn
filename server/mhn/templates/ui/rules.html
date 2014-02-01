@@ -11,6 +11,7 @@
             <table id="rule-table">
                 <thead>
                     <tr>
+                        <th></th>
                         <th width="170">Date</th>
                         <th>SID</th>
                         <th>Rev</th>
@@ -24,6 +25,7 @@
                 <tbody>
                     {% for ru in rules.items %}
                     <tr>
+                        <td>{{ loop.index }}</td>
                         <td>{{ ru.Rule.date|fdate }}</td>
                         <td>{{ ru.Rule.sid }}</td>
                         <td>{{ ru.Rule.rev }}</td>

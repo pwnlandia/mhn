@@ -42,6 +42,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Date</th>
                         <th>Classification</th>
                         <th>Source IP</th>
@@ -54,6 +55,7 @@
                 <tbody>
                     {% for at in attacks.items %}
                     <tr>
+                        <td>{{ loop.index }}</td>
                         <td>{{ at.date|fdate }}</td>
                         <td>{{ at.classification }}</td>
                         <td>{{ at.source_ip }}</td>
