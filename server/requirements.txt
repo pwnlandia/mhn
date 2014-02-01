@@ -1,5 +1,6 @@
 flask
 flask-sqlalchemy
 flask-security
+flask-migrate
 py-bcrypt
 python-dateutil
