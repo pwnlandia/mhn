@@ -153,6 +153,7 @@ class Rule(db.Model, APIModel):
         'date': {'required': False, 'editable': False},
         'rule_format': {'required': True, 'editable': False},
         'is_active': {'required': False, 'editable': True},
+        'notes': {'required': False, 'editable': True}
     }
 
     __tablename__ = 'rules'
@@ -167,6 +168,7 @@ class Rule(db.Model, APIModel):
     date = db.Column(db.DateTime(), default=datetime.utcnow)
     rule_format = db.Column(db.String(500))
     is_active = db.Column(db.Boolean)
+    notes = db.Column(db.String(140))
     __table_args__ = (UniqueConstraint(sid, rev),)
 
     def __init__(self, msg=None, classtype=None, sid=None,
