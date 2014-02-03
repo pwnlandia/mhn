@@ -32,7 +32,8 @@ def _parse_plain(r):
         % "|".join(actions))
     rule = {}
     rule['references'] = []
-    rule_format = r
+    # 'Escaping' brackets for safe string formatting.
+    rule_format = r.replace('{', '{{').replace('}', '}}')
     for p in option_patterns:
         m = rule_pattern.match(r)
         options = m.group('options')
