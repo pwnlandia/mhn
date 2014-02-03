@@ -210,7 +210,7 @@ class Rule(db.Model, APIModel):
         # Remove trailing '; ' from references.
         reference = reference[:-2]
         return self.rule_format.format(msg=msg, sid=sid, rev=rev,
-                                classtype=classtype, reference=reference)
+                                       classtype=classtype, reference=reference)
 
     @classmethod
     def renderall(cls):
