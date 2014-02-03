@@ -47,7 +47,11 @@ def update_sensor(uuid):
             return error_response(
                     errors.API_FIELD_INVALID.format(field), 400)
     else:
-        db.session.commit()
+        try:
+            db.session.commit()
+        except IntegrityError:
+            return error_response(
+                    errors.API_SENSOR_EXISTS.format(request.json['name']), 400)
         return jsonify(sensor.to_dict())
 
 

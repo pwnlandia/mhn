@@ -62,7 +62,7 @@ class Sensor(db.Model, APIModel):
     created_date = db.Column(
             db.DateTime(), default=datetime.utcnow)
     ip = db.Column(db.String(15))
-    hostname = db.Column(db.String(50))
+    hostname = db.Column(db.String(50), unique=True)
     attacks = db.relationship(
             'Attack', backref='sensor', lazy='dynamic')
 
