@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy import UniqueConstraint, func
 
 from mhn import db
+from mhn.auth.models import User
 
 
 class APIModel(object):
@@ -256,3 +257,32 @@ class Reference(db.Model):
     text = db.Column(db.String(140))
     rule_id = db.Column(db.Integer,
                         db.ForeignKey('rules.id'))
+
+
+class DeployScript(db.Model, APIModel):
+    all_fields = {
+        'script': {'required': True, 'editable': True},
+        'date': {'required': False, 'editable': False},
+        'notes': {'required': True, 'editable': True},
+    }
+
+    __tablename__ = 'deploy_scripts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    script = db.Column(db.String(102400))
+    date = db.Column(
+             db.DateTime(), default=datetime.utcnow)
+    notes = db.Column(db.String(140))
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    user = db.relationship(User, uselist=False)
+
+    def __init__(self, script=None, notes=None):
+        self.script = script
+        self.notes = notes
+
+    def __repr__(self):
+        return '<DeployScript>{}'.format(self.to_dict())
+
+    def to_dict(self):
+        return dict(script=self.script, date=self.date, notes=self.notes,
+                    user=self.user.email)
