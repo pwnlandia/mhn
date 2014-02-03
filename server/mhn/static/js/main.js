@@ -107,4 +107,32 @@ $(document).ready(function() {
             window.location.href = '/ui/login/';
         });
     });
+
+    $('#submit-script').click(function(e) {
+        e.preventDefault();
+
+        var script = $('#script-edit').val();
+        var notes = $('#notes-edit').val();
+
+        $('#alert-text').hide();
+        $.ajax({
+            type: 'POST',
+            url: '/api/script/',
+            data: JSON.stringify({
+                script: script,
+                notes: notes
+            }),
+            contentType: 'application/json',
+            success: function() {
+                $('#alert-text').removeClass('warning').addClass('success');
+                $('#error-txt').html('Script updated OK!');
+                $('#alert-text').show();
+            },
+            error: function(resp) {
+                $('#alert-text').removeClass('success').addClass('warning');
+                $('#error-txt').html(resp.responseJSON.error);
+                $('#alert-text').show();
+            }
+        });
+    });
 });

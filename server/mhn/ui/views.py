@@ -4,7 +4,8 @@ from flask import (
         redirect, g)
 from sqlalchemy import desc, func
 
-from mhn.api.models import Attack, Sensor, Rule
+from mhn.api.models import (
+        Attack, Sensor, Rule, DeployScript as Script)
 from mhn.auth import login_required, current_user
 from mhn import db
 from mhn.common.utils import paginate
@@ -92,3 +93,9 @@ def get_sensors():
 @login_required
 def add_sensor():
     return render_template('ui/add-sensor.html')
+
+
+@ui.route('/script/', methods=['GET'])
+def get_script():
+    return render_template('ui/script.html',
+                           script=Script.query.order_by(Script.date.desc()).first())
