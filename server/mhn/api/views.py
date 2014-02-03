@@ -8,8 +8,10 @@ from dateutil.parser import parse
 
 from mhn import db
 from mhn.api import errors
-from mhn.api.models import Sensor, Attack, Rule
+from mhn.api.models import (
+        Sensor, Attack, Rule, DeployScript as Script)
 from mhn.common.utils import error_response
+from mhn.auth import current_user
 
 
 api = Blueprint('api', __name__, url_prefix='/api')
@@ -126,3 +128,17 @@ def get_rules():
         resp = make_response(json.dumps([ru.to_dict() for ru in rules]))
         resp.headers['Content-Type'] = "application/json"
         return resp
+
+
+@api.route('/script/', methods=['POST'])
+def create_script():
+    missing = Script.check_required(request.json)
+    if missing:
+        return error_response(
+                errors.API_FIELDS_MISSING.format(missing), 400)
+    else:
+        script = Script(**request.json)
+        script.user = current_user
+        db.session.add(script)
+        db.session.commit()
+        return jsonify(script.to_dict())
