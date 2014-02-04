@@ -114,8 +114,7 @@ class MHNClient(object):
 
     def download_rules(self):
         logger.info("Downloading rules from '{}'.".format(self.rule_url))
-        rules = self.get(
-                self.rule_url, params={'plaintext': 'true'}, stream=True)
+        rules = self.get(self.rule_url, stream=True)
         if  not rules:
             return
         if not rules.status_code == 200:
@@ -140,7 +139,8 @@ class MHNClient(object):
 
     @property
     def rule_url(self):
-        return '{}/rule/'.format(self.api_url)
+        server_url = path.dirname(self.api_url)
+        return '{}/static/mhn.rules'.format(server_url)
 
 
 # SQLAlchemy's built-in declarative base class.
