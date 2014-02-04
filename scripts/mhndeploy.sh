@@ -1,15 +1,27 @@
-# User input.
-read -p "Sensor's UUID: " uuid
-read -p "Server's API URL: " api_url
+if [ $# -ne 2 ]
+    then
+        echo "Wrong number of arguments supplied."
+        echo "Usage: sh mhndeploy.sh <api_url> <deploy_key>."
+        exit 1
+fi
+
+api_url=$1
+deploy_key=$2
+mhnclient_url=$api_url/static/mhnclient.latest.tar.gz
+
+echo 'Downloading latest client version from: '$mhnclient_url
 
 # Add ppa to apt sources (Needed for Dionaea).
 sudo apt-get install -y python-software-properties
-sudo add-apt-repository ppa:honeynet/nightly
+sudo add-apt-repository -y ppa:honeynet/nightly
 sudo apt-get update
 
 # Installing Snort and Dionaea.
-sudo apt-get install -y snort
-sudo apt-get install --force-yes dionaea
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y snort
+sudo apt-get install -y dionaea
+
+# Editing configuration for Snort.
+sudo sed -i 's,RULE_PATH /etc/snort/rules,RULE_PATH /opt/threatstream/mhn/rules,1' /etc/snort/snort.conf
 
 # Editing configuration for Dionaea.
 sudo mkdir -p /var/dionaea/wwwroot
@@ -21,7 +33,13 @@ sudo sed -i 's/var\/dionaea\///g' /etc/dionaea/dionaea.conf
 sudo sed -i 's/log\//\/var\/dionaea\/log\//g' /etc/dionaea/dionaea.conf
 sudo sed -i 's/levels = "all"/levels = "warning,error"/1' /etc/dionaea/dionaea.conf
 sudo sed -i 's/mode = "getifaddrs"/mode = "manual"/1' /etc/dionaea/dionaea.conf
-#dionaea -c /etc/dionaea/dionaea.conf -w /var/dionaea -u nobody -g nogroup -D
+
+# Appends dionaea command to rc.local
+run_dionaea='dionaea -c /etc/dionaea/dionaea.conf -w /var/dionaea -u nobody -g nogroup -D'
+dionaea_startup="sudo sed -i 's,exit 0,"$run_dionaea"\nexit 0,1' /etc/rc.local"
+eval $dionaea_startup
+
+# Enables p0f.
 #sudo sed -i 's/\/\/\s*"p0f"/"p0f"/g' /etc/dionaea/dionaea.conf
 
 # Preparing Python environment.
@@ -39,6 +57,7 @@ sudo useradd -u 333 -d /home/mhn -g mhn -m mhn
 sudo mkdir -p /opt/threatstream/mhn/var/log
 sudo mkdir -p /opt/threatstream/mhn/var/run
 sudo mkdir -p /opt/threatstream/mhn/bin
+sudo mkdir -p /opt/threatstream/mhn/rules
 sudo mkdir -p /etc/mhnclient
 
 # Installing init.d script for mhn.
@@ -60,8 +79,6 @@ sudo chown -R mhn:mhn /etc/mhnclient
 configfile="/etc/mhnclient/mhnclient.conf"
 cmd="sudo sed -i 's/\"sensor_uuid\": \"\"/\"sensor_uuid\": \"$uuid\"/1' $configfile"
 cmd2="sudo sed -i 's,\"api_url\": \"\",\"api_url\": \"$api_url\",1' $configfile"
-echo $cmd
-echo $cmd2
 eval $cmd
 eval $cmd2
 
