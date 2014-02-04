@@ -1,11 +1,12 @@
 from dateutil.parser import parse as parse_date
 from flask import (
         Blueprint, render_template, request, url_for,
-        redirect, g)
+        redirect, g, current_app)
 from sqlalchemy import desc, func
 
 from mhn.api.models import (
-        Attack, Sensor, Rule, DeployScript as Script)
+        Attack, Sensor, Rule, DeployScript as Script,
+        TarUpload)
 from mhn.auth import login_required, current_user
 from mhn import db
 from mhn.common.utils import paginate
@@ -95,7 +96,22 @@ def add_sensor():
     return render_template('ui/add-sensor.html')
 
 
-@ui.route('/script/', methods=['GET'])
-def get_script():
+@ui.route('/manage-deploy/', methods=['POST'])
+def tar_mgmt():
+    tar = request.files.get('client_tar')
+    if tar:
+        tar.save(current_app.config['CLIENT_TAR_PATH'])
+        tupload = TarUpload()
+        tupload.user = current_user
+        db.session.add(tupload)
+        db.session.commit()
     return render_template('ui/script.html',
-                           script=Script.query.order_by(Script.date.desc()).first())
+                           script=Script.query.order_by(Script.date.desc()).first(),
+                           tar=TarUpload.query.order_by(TarUpload.date.desc()).first())
+
+
+@ui.route('/manage-deploy/', methods=['GET'])
+def deploy_mgmt():
+    return render_template('ui/script.html',
+                           script=Script.query.order_by(Script.date.desc()).first(),
+                           tar=TarUpload.query.order_by(TarUpload.date.desc()).first())

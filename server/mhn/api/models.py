@@ -286,3 +286,13 @@ class DeployScript(db.Model, APIModel):
     def to_dict(self):
         return dict(script=self.script, date=self.date, notes=self.notes,
                     user=self.user.email)
+
+
+class TarUpload(db.Model):
+
+    __tablename__ = 'tar_uploads'
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(
+             db.DateTime(), default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    user = db.relationship(User, uselist=False)

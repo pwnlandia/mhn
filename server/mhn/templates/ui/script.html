@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Script{% endblock %}
+{% block title %}Manage Deploy{% endblock %}
 {% block content %}
     <div class="row">
         <div class="small-4 columns">
@@ -41,11 +41,11 @@
         </div>
     </div>
     <div class="row">
-        <div class="small-4 columns">
-            <h3>New Client Tarball</h3>
+        <div class="small-6 columns">
+            <h3>New Client Tarball <small>({% if tar %}Latest: {{ tar.date|fdate }}{% else %}No uploads yet.{% endif %})</small></h3>
         </div>
     </div>
-    <form>
+    <form enctype="multipart/form-data" action="{{ url_for('ui.tar_mgmt') }}" method="post">
         <div class="row">
             <div class="small-4 push-4 columns">
                 <input type="file" name="client_tar"/>
