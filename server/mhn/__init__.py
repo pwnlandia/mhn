@@ -37,6 +37,9 @@ mhn.jinja_env.filters['fdate'] = format_date
 from mhn.auth.contextprocessors import user_ctx
 mhn.context_processor(user_ctx)
 
+from mhn.common.contextprocessors import config_ctx
+mhn.context_processor(config_ctx)
+
 
 def create_clean_db():
     """

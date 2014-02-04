@@ -35,4 +35,39 @@
             </div>
         </div>
     </form>
+    <div class="row">
+        <div class="small-12 columns">
+            <hr>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-4 columns">
+            <h3>New Client Tarball</h3>
+        </div>
+    </div>
+    <form>
+        <div class="row">
+            <div class="small-4 push-4 columns">
+                <input type="file" name="client_tar"/>
+            </div>
+            <div class="small-4 columns">
+                <input style="float:right;" type="submit" class="small button" id="submit-script" value="UPLOAD"/>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="small-12 columns">
+            <hr>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-4 columns">
+            <h3>Deploy Command</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 small-centered columns">
+            <p><kbd>wget {{ settings.server_url }}/api/script/?latest=true -O deploy.sh && sh deploy.sh {{ settings.server_url }} {{ settings.deploy_key }}</kbd></p>
+        </div>
+    </div>
 {% endblock %}
