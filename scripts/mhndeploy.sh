@@ -22,6 +22,8 @@ sudo apt-get install -y dionaea
 
 # Editing configuration for Snort.
 sudo sed -i 's,RULE_PATH /etc/snort/rules,RULE_PATH /opt/threatstream/mhn/rules,1' /etc/snort/snort.conf
+sudo sed -i 's,include \$RULE_PATH,#include \$RULE_PATH,g' /etc/snort/snort.conf
+sudo sed -i 's,# site specific rules,# site specific rules\ninclude \$RULE_PATH/mhn.rules,1' /etc/snort/snort.conf
 
 # Editing configuration for Dionaea.
 sudo mkdir -p /var/dionaea/wwwroot
