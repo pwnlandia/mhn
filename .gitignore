@@ -1,5 +1,6 @@
 *.pyc
 server/config.py
 server/mhn/static/mhn.rules
+server/mhn/static/mhnclient.latest.tar.gz
 
 honeypot/mhnclient.conf
