@@ -119,7 +119,8 @@ class MHNClient(object):
             return
         if not rules.status_code == 200:
             return
-        with open(self.snort_rules, 'wb') as f:
+        rulespath = path.join(self.snort_rules, 'mhn.rules')
+        with open(rulespath, 'wb') as f:
             for chunk in rules.iter_content(chunk_size=1024):
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
