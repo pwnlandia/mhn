@@ -4,6 +4,7 @@ Do not add 'config.py' to SCM.
 """
 
 import os
+from celery.schedules import crontab
 
 
 _basedir = os.path.abspath(os.path.dirname(__file__))
@@ -24,7 +25,7 @@ CELERYBEAT_SCHEDULE = {
     'fetch-emerging-rules': {
             'task': 'mhn.tasks.rules.fetch_source',
             'schedule': crontab(hour=12),
-            'args': ('http://rules.emergingthreats.net/open/snort-2.9.0/emerging-all.rules')
+            'args': ()
     }
 }
 """
