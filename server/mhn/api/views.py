@@ -9,7 +9,8 @@ from dateutil.parser import parse
 from mhn import db
 from mhn.api import errors
 from mhn.api.models import (
-        Sensor, Attack, Rule, DeployScript as Script)
+        Sensor, Attack, Rule, DeployScript as Script,
+        RuleSource)
 from mhn.common.utils import error_response
 from mhn.auth import current_user
 
@@ -128,6 +129,24 @@ def get_rules():
         resp = make_response(json.dumps([ru.to_dict() for ru in rules]))
         resp.headers['Content-Type'] = "application/json"
         return resp
+
+
+@api.route('/rulesources/', methods=['POST'])
+def create_rule_source():
+    missing = RuleSource.check_required(request.json)
+    if missing:
+        return error_response(
+                errors.API_FIELDS_MISSING.format(missing), 400)
+    else:
+        rsource = RuleSource(**request.json)
+        try:
+            db.session.add(rsource)
+            db.session.commit()
+        except IntegrityError:
+            return error_response(
+                    errors.API_SOURCE_EXISTS.format(request.json['uri']), 400)
+        else:
+            return jsonify(rsource.to_dict())
 
 
 @api.route('/script/', methods=['POST'])

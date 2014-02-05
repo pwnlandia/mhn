@@ -249,6 +249,27 @@ class Rule(db.Model, APIModel):
         db.session.commit()
 
 
+class RuleSource(db.Model, APIModel):
+
+    all_fields = {
+        'uri': {'required': True, 'editable': True},
+        'note': {'required': False, 'editable': True},
+        'name': {'required': True, 'editable': True},
+    }
+
+    __tablename__ = 'rule_sources'
+    id = db.Column(db.Integer, primary_key=True)
+    uri = db.Column(db.String(140))
+    note = db.Column(db.String(140))
+    name = db.Column(db.String(40))
+
+    def  __repr__(self):
+        return '<RuleSource>{}'.format(self.to_dict())
+
+    def to_dict(self):
+        return dict(name=self.name, uri=self.uri, note=self.note)
+
+
 class Reference(db.Model):
 
     __tablename__ = 'rule_references'
