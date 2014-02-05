@@ -5,4 +5,5 @@ flask-migrate
 py-bcrypt
 python-dateutil
 celery
+redis
 requests
