@@ -135,4 +135,32 @@ $(document).ready(function() {
             }
         });
     });
+
+    if ($('#src-form').length >= 1) {
+        $('#add-src').click(function(e) {
+            e.preventDefault();
+            var name = $('#name').val();
+            var uri = $('#uri').val();
+            var note = $('#note').val();
+
+            $('#alert-text').hide();
+            $.ajax({
+                type: 'POST',
+                url: '/api/rulesources/',
+                data: JSON.stringify({
+                    name: name,
+                    uri: uri,
+                    note: note
+                }),
+                contentType: 'application/json',
+                success: function() {
+                    window.location.reload();
+                },
+                error: function(resp) {
+                    $('#error-txt').html(resp.responseJSON.error);
+                    $('#alert-text').show();
+                }
+            });
+        });
+    }
 });

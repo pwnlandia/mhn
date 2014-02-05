@@ -25,7 +25,9 @@
                     <li class="has-dropdown">
                         <a href="{{ url_for('ui.get_rules') }}">Rules</a>
                         <ul class="dropdown">
-                            <li><a href="{{ url_for('ui.get_rules') }}">Manage</a></li>
+                            <li><label>Manage</label></li>
+                            <li><a href="{{ url_for('ui.get_rules') }}">Activate/Deactivate</a></li>
+                            <li><a href="{{ url_for('ui.rule_sources_mgmt') }}">Sources</a></li>
                             <li><label>Download</label></li>
                             <li><a href="{{ url_for('api.get_rules', plaintext=true) }}">Live Render</a></li>
                             <li><a href="/static/mhn.rules">Pre-Rendered</a></li>

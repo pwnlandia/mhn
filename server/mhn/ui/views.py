@@ -6,7 +6,7 @@ from sqlalchemy import desc, func
 
 from mhn.api.models import (
         Attack, Sensor, Rule, DeployScript as Script,
-        TarUpload)
+        TarUpload, RuleSource)
 from mhn.auth import login_required, current_user
 from mhn import db
 from mhn.common.utils import paginate
@@ -69,6 +69,13 @@ def get_rules():
                order_by(desc(Rule.date))
     rules = paginate(rules)
     return render_template('ui/rules.html', rules=rules, view='ui.get_rules')
+
+
+@ui.route('/rule-sources/', methods=['GET'])
+@login_required
+def rule_sources_mgmt():
+    sources = RuleSource.query
+    return render_template('ui/rule_sources_mgmt.html', sources=sources)
 
 
 @ui.route('/sensors/', methods=['GET'])
