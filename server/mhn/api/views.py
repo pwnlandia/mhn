@@ -11,14 +11,17 @@ from mhn.api import errors
 from mhn.api.models import (
         Sensor, Attack, Rule, DeployScript as Script,
         DeployScript, RuleSource)
+from mhn.api.decorators import deploy_auth
 from mhn.common.utils import error_response
 from mhn.auth import current_user
 
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
+
 # Endpoints for the Sensor resource.
 @api.route('/sensor/', methods=['POST'])
+@deploy_auth
 def create_sensor():
     missing = Sensor.check_required(request.json)
     if missing:

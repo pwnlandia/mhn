@@ -69,7 +69,7 @@ class Sensor(db.Model, APIModel):
 
     def __init__(
           self, uuid=None, name=None, created_date=None,
-          ip=None, hostname=None):
+          ip=None, hostname=None, **args):
         self.uuid = uuid
         self.name = name
         self.created_date = created_date
