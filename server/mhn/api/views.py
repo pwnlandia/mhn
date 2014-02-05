@@ -10,7 +10,7 @@ from mhn import db
 from mhn.api import errors
 from mhn.api.models import (
         Sensor, Attack, Rule, DeployScript as Script,
-        RuleSource)
+        DeployScript, RuleSource)
 from mhn.common.utils import error_response
 from mhn.auth import current_user
 
@@ -160,4 +160,15 @@ def create_script():
         script.user = current_user
         db.session.add(script)
         db.session.commit()
+        return jsonify(script.to_dict())
+
+
+@api.route('/script/', methods=['GET'])
+def get_script():
+    script = DeployScript.query.order_by(DeployScript.date.desc()).first()
+    if request.args.get('latest') in ['1', 'true']:
+        resp = make_response(script.script)
+        resp.headers['Content-Disposition'] = "attachment; filename=deploy.sh"
+        return resp
+    else:
         return jsonify(script.to_dict())
