@@ -1,10 +1,14 @@
+from datetime import datetime, timedelta
+
 from dateutil.parser import parse as parse_date
 from flask import (
         Blueprint, render_template, request, url_for,
-        redirect, g)
+        redirect, g, current_app)
 from sqlalchemy import desc, func
 
-from mhn.api.models import Attack, Sensor, Rule
+from mhn.api.models import (
+        Attack, Sensor, Rule, DeployScript as Script,
+        TarUpload, RuleSource)
 from mhn.auth import login_required, current_user
 from mhn import db
 from mhn.common.utils import paginate
@@ -34,8 +38,37 @@ def login_user():
 
 
 @ui.route('/dashboard/', methods=['GET'])
+@login_required
 def dashboard():
-    return render_template('ui/dashboard.html')
+    # Number of attacks in the last 24 hours.
+    attackcount = Attack.query.filter(
+            Attack.date >= datetime.utcnow() - timedelta(hours=24)).count()
+    # TOP 5 attacker ips.
+    worst_ips = db.session.query(Attack.source_ip.label('ip'),
+                                 func.count(Attack.source_ip).label('count')).\
+                           group_by(Attack.source_ip).\
+                           order_by(Attack.source_ip.desc()).\
+                           limit(5)
+    # TOP 5 more frequent attack signatures.
+    freq_signs = db.session.query(Attack.classification.label('classification'),
+                                  func.count(Attack.classification).label('count')).\
+                            filter(Attack.classification != '').\
+                            group_by(Attack.classification).\
+                            order_by(desc('count')).\
+                            limit(5)
+    # TOP 5 attacked ports.)
+    top_ports = db.session.query(Attack.destination_port.label('port'),
+                                  func.count(Attack.destination_port).label('count')).\
+                            group_by(Attack.destination_port).\
+                            order_by(desc('count')).\
+                            limit(5)
+
+
+    return render_template('ui/dashboard.html',
+                           attackcount=attackcount,
+                           worst_ips=worst_ips,
+                           freq_signs=freq_signs,
+                           top_ports=top_ports)
 
 
 @ui.route('/attacks/', methods=['GET'])
@@ -69,6 +102,13 @@ def get_rules():
     return render_template('ui/rules.html', rules=rules, view='ui.get_rules')
 
 
+@ui.route('/rule-sources/', methods=['GET'])
+@login_required
+def rule_sources_mgmt():
+    sources = RuleSource.query
+    return render_template('ui/rule_sources_mgmt.html', sources=sources)
+
+
 @ui.route('/sensors/', methods=['GET'])
 @login_required
 def get_sensors():
@@ -92,3 +132,26 @@ def get_sensors():
 @login_required
 def add_sensor():
     return render_template('ui/add-sensor.html')
+
+
+@ui.route('/manage-deploy/', methods=['POST'])
+@login_required
+def tar_mgmt():
+    tar = request.files.get('client_tar')
+    if tar:
+        tar.save(current_app.config['CLIENT_TAR_PATH'])
+        tupload = TarUpload()
+        tupload.user = current_user
+        db.session.add(tupload)
+        db.session.commit()
+    return render_template('ui/script.html',
+                           script=Script.query.order_by(Script.date.desc()).first(),
+                           tar=TarUpload.query.order_by(TarUpload.date.desc()).first())
+
+
+@ui.route('/manage-deploy/', methods=['GET'])
+@login_required
+def deploy_mgmt():
+    return render_template('ui/script.html',
+                           script=Script.query.order_by(Script.date.desc()).first(),
+                           tar=TarUpload.query.order_by(TarUpload.date.desc()).first())

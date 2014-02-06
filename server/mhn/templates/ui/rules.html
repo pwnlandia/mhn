@@ -16,9 +16,10 @@
                         <th>SID</th>
                         <th>Rev</th>
                         <th>Revs</th>
-                        <th width="500">Message</th>
+                        <th width="290">Message</th>
                         <th width="150">Class Type</th>
                         <th>References</th>
+                        <th width="290">Notes</th>
                         <th>Active</th>
                     </tr>
                 </thead>
@@ -30,9 +31,7 @@
                         <td>{{ ru.Rule.sid }}</td>
                         <td>{{ ru.Rule.rev }}</td>
                         <td>{{ ru.nrevs }}</td>
-                        <td>
-                            <textarea data-rule-id="{{ ru.Rule.id }}" data-field-name="message" class="text-edit">{{ ru.Rule.message }}</textarea>
-                        </td>
+                        <td>{{ ru.Rule.message }}</td>
                         <td>{{ ru.Rule.classtype }}</td>
                         <td>
                             <select>
@@ -40,6 +39,9 @@
                                 <option disabled>"{{ ref.text }}"</option>
                         {% endfor %}
                             </select>
+                        </td>
+                        <td>
+                            <textarea data-rule-id="{{ ru.Rule.id }}" data-field-name="notes" class="text-edit">{{ ru.Rule.notes if ru.Rule.notes != None }}</textarea>
                         </td>
                         <td>
                             <input class="checkbox" data-rule-id="{{ ru.Rule.id }}" type="checkbox" {% if ru.Rule.is_active %}checked{% endif %}/>

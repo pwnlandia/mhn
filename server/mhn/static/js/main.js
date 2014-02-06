@@ -107,4 +107,60 @@ $(document).ready(function() {
             window.location.href = '/ui/login/';
         });
     });
+
+    $('#submit-script').click(function(e) {
+        e.preventDefault();
+
+        var script = $('#script-edit').val();
+        var notes = $('#notes-edit').val();
+
+        $('#alert-text').hide();
+        $.ajax({
+            type: 'POST',
+            url: '/api/script/',
+            data: JSON.stringify({
+                script: script,
+                notes: notes
+            }),
+            contentType: 'application/json',
+            success: function() {
+                $('#alert-text').removeClass('warning').addClass('success');
+                $('#error-txt').html('Script updated OK!');
+                $('#alert-text').show();
+            },
+            error: function(resp) {
+                $('#alert-text').removeClass('success').addClass('warning');
+                $('#error-txt').html(resp.responseJSON.error);
+                $('#alert-text').show();
+            }
+        });
+    });
+
+    if ($('#src-form').length >= 1) {
+        $('#add-src').click(function(e) {
+            e.preventDefault();
+            var name = $('#name').val();
+            var uri = $('#uri').val();
+            var note = $('#note').val();
+
+            $('#alert-text').hide();
+            $.ajax({
+                type: 'POST',
+                url: '/api/rulesources/',
+                data: JSON.stringify({
+                    name: name,
+                    uri: uri,
+                    note: note
+                }),
+                contentType: 'application/json',
+                success: function() {
+                    window.location.reload();
+                },
+                error: function(resp) {
+                    $('#error-txt').html(resp.responseJSON.error);
+                    $('#alert-text').show();
+                }
+            });
+        });
+    }
 });

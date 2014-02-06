@@ -1,4 +1,6 @@
 API_FIELD_NOT_EDITABLE = '"{}" field is not editable.'
 API_FIELD_INVALID = '"{}" invalid field.'
 API_FIELDS_MISSING = 'Missing required fields: {}.'
-API_SENSOR_EXISTS = 'Sensor with name "{}" already exists.'
+API_SENSOR_EXISTS = 'Sensor with name or hostname "{}" already exists.'
+API_SOURCE_EXISTS = 'Source with uri "{}" already exists.'
+API_NOT_AUTHORIZED = 'Not authorized to perform this request.'

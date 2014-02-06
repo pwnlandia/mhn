@@ -4,6 +4,7 @@ Do not add 'config.py' to SCM.
 """
 
 import os
+from celery.schedules import crontab
 
 
 _basedir = os.path.abspath(os.path.dirname(__file__))
@@ -16,3 +17,19 @@ _basedir = os.path.abspath(os.path.dirname(__file__))
 # SECURITY_PASSWORD_HASH = 'bcrypt'
 # SECURITY_PASSWORD_SALT = SECRET_KEY
 # SECURITY_LOGIN_URL = '/ui/login/'
+# BROKER_URL = 'redis://localhost:6379'
+# CELERY_RESULT_BACKEND = BROKER_URL
+# RENDERED_RULES_PATH = os.path.join(_basedir, 'mhn/static/mhn.rules')
+"""
+CELERYBEAT_SCHEDULE = {
+    'fetch-emerging-rules': {
+            'task': 'mhn.tasks.rules.fetch_source',
+            'schedule': crontab(hour=12),
+            'args': ()
+    }
+}
+"""
+# SERVER_BASE_URL = ''
+# DEPLOY_KEY = ''
+# CLIENT_TAR_PATH = os.path.join(_basedir, 'mhn/static/mhnclient.latest.tar.gz')
+# LOG_FILE_PATH = '/path/log/to/log/file/'

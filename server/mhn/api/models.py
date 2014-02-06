@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy import UniqueConstraint, func
 
 from mhn import db
+from mhn.auth.models import User
 
 
 class APIModel(object):
@@ -62,13 +63,13 @@ class Sensor(db.Model, APIModel):
     created_date = db.Column(
             db.DateTime(), default=datetime.utcnow)
     ip = db.Column(db.String(15))
-    hostname = db.Column(db.String(50))
+    hostname = db.Column(db.String(50), unique=True)
     attacks = db.relationship(
             'Attack', backref='sensor', lazy='dynamic')
 
     def __init__(
           self, uuid=None, name=None, created_date=None,
-          ip=None, hostname=None):
+          ip=None, hostname=None, **args):
         self.uuid = uuid
         self.name = name
         self.created_date = created_date
@@ -153,6 +154,7 @@ class Rule(db.Model, APIModel):
         'date': {'required': False, 'editable': False},
         'rule_format': {'required': True, 'editable': False},
         'is_active': {'required': False, 'editable': True},
+        'notes': {'required': False, 'editable': True}
     }
 
     __tablename__ = 'rules'
@@ -167,6 +169,7 @@ class Rule(db.Model, APIModel):
     date = db.Column(db.DateTime(), default=datetime.utcnow)
     rule_format = db.Column(db.String(500))
     is_active = db.Column(db.Boolean)
+    notes = db.Column(db.String(140))
     __table_args__ = (UniqueConstraint(sid, rev),)
 
     def __init__(self, msg=None, classtype=None, sid=None,
@@ -207,7 +210,7 @@ class Rule(db.Model, APIModel):
         # Remove trailing '; ' from references.
         reference = reference[:-2]
         return self.rule_format.format(msg=msg, sid=sid, rev=rev,
-                                classtype=classtype, reference=reference)
+                                       classtype=classtype, reference=reference)
 
     @classmethod
     def renderall(cls):
@@ -246,6 +249,27 @@ class Rule(db.Model, APIModel):
         db.session.commit()
 
 
+class RuleSource(db.Model, APIModel):
+
+    all_fields = {
+        'uri': {'required': True, 'editable': True},
+        'note': {'required': False, 'editable': True},
+        'name': {'required': True, 'editable': True},
+    }
+
+    __tablename__ = 'rule_sources'
+    id = db.Column(db.Integer, primary_key=True)
+    uri = db.Column(db.String(140))
+    note = db.Column(db.String(140))
+    name = db.Column(db.String(40))
+
+    def  __repr__(self):
+        return '<RuleSource>{}'.format(self.to_dict())
+
+    def to_dict(self):
+        return dict(name=self.name, uri=self.uri, note=self.note)
+
+
 class Reference(db.Model):
 
     __tablename__ = 'rule_references'
@@ -254,3 +278,42 @@ class Reference(db.Model):
     text = db.Column(db.String(140))
     rule_id = db.Column(db.Integer,
                         db.ForeignKey('rules.id'))
+
+
+class DeployScript(db.Model, APIModel):
+    all_fields = {
+        'script': {'required': True, 'editable': True},
+        'date': {'required': False, 'editable': False},
+        'notes': {'required': True, 'editable': True},
+    }
+
+    __tablename__ = 'deploy_scripts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    script = db.Column(db.String(102400))
+    date = db.Column(
+             db.DateTime(), default=datetime.utcnow)
+    notes = db.Column(db.String(140))
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    user = db.relationship(User, uselist=False)
+
+    def __init__(self, script=None, notes=None):
+        self.script = script
+        self.notes = notes
+
+    def __repr__(self):
+        return '<DeployScript>{}'.format(self.to_dict())
+
+    def to_dict(self):
+        return dict(script=self.script, date=self.date, notes=self.notes,
+                    user=self.user.email)
+
+
+class TarUpload(db.Model):
+
+    __tablename__ = 'tar_uploads'
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(
+             db.DateTime(), default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    user = db.relationship(User, uselist=False)
