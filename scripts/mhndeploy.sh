@@ -52,11 +52,6 @@ sudo sed -i 's/log\//\/var\/dionaea\/log\//g' /etc/dionaea/dionaea.conf
 sudo sed -i 's/levels = "all"/levels = "warning,error"/1' /etc/dionaea/dionaea.conf
 sudo sed -i 's/mode = "getifaddrs"/mode = "manual"/1' /etc/dionaea/dionaea.conf
 
-# Appends dionaea command to rc.local
-run_dionaea='dionaea -c /etc/dionaea/dionaea.conf -w /var/dionaea -u nobody -g nogroup -D'
-dionaea_startup="sudo sed -i 's,exit 0,"$run_dionaea"\nexit 0,1' /etc/rc.local"
-eval $dionaea_startup
-
 # Enables p0f.
 #sudo sed -i 's/\/\/\s*"p0f"/"p0f"/g' /etc/dionaea/dionaea.conf
 
@@ -103,6 +98,25 @@ eval $cmd2
 
 sudo pip install -r requirements.txt
 
+# Supervisor will manage mhnclient and Dionea processes.
+# Resets all previous settings.
+sudo apt-get remove -y supervisor
+sudo apt-get purge -y supervisor
+sudo apt-get install -y supervisor
+# Config for supervisor.
+mhncmd="/opt/threatstream/mhn/bin/mhnclient -c /etc/mhnclient/mhnclient.conf -D"
+mhndir="/opt/threatstream/mhn"
+mhnlog="/opt/threatstream/mhn/var/log/error.log"
+diocmd="dionaea -c /etc/dionaea/dionaea.conf -w /var/dionaea -u nobody -g nogroup"
+diodir="/var/dionaea"
+diolog="/var/dionaea/error.log"
+superconfig="autostart=true\nautorestart=true\nredirect_stderr=true\nstopsignal=QUIT"
+mhnsetup="\n[program:mhnclient]\ncommand=$mhncmd\ndirectory=$mhndir\nstdout_logfile=$mhnlog\n$superconfig\n"
+diosetup="\n[program:dionaea]\ncommand=$diocmd\ndirectory=$diodir\nstdout_logfile=$diolog\n$superconfig\n"
+echo $mhnsetup >> /etc/supervisor/supervisord.conf
+echo $diosetup >> /etc/supervisor/supervisord.conf
+
+# Cleanup
 rm deploy.sh
 rm mhnclient.tar.gz
 rm mhnclient.py
@@ -110,4 +124,5 @@ rm mhnclient.conf
 rm requirements.txt
 rm mhnclient-initscript.sh
 rm mhn.rules
+
 sudo reboot

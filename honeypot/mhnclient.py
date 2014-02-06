@@ -12,14 +12,12 @@ Options:
 import json
 import time
 import pickle
-import lockfile
 import logging
 from os import path, makedirs
 from threading import Timer
 from itertools import groupby
 from datetime import datetime
 
-import daemon
 import requests
 import pyparsing as pyp
 from docopt import docopt
@@ -80,6 +78,15 @@ class MHNClient(object):
             logger.info("Bad response format (No JSON) for {}:\n{}".format(
                      resp.url, resp.text))
             return {}
+
+    def run(self):
+        self.connect_sensor()
+        self.download_rules()
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            self.cleanup()
 
     def post(self, *args, **kwargs):
         return self._safe_request(self.session.post, *args, **kwargs)
@@ -449,16 +456,6 @@ def config_logger(logfile, daemon):
         logger.addHandler(rotatelog)
 
 
-def run(honeypot):
-    honeypot.connect_sensor()
-    honeypot.download_rules()
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        honeypot.cleanup()
-
-
 if __name__ ==  '__main__':
     args = docopt(__doc__, version='MHNClient 0.0.1')
     daemonize = args.get('-D')
@@ -476,14 +473,4 @@ if __name__ ==  '__main__':
             # Create needed directories.
             makedirs(fpath)
     config_logger(log_file, daemonize)
-    if daemonize:
-        context = daemon.DaemonContext(
-            working_directory=app_dir,
-            pidfile=lockfile.FileLock(pid_file),
-            files_preserve=[logger.handlers[-1].stream]
-        )
-        with context:
-            logger.info('Running daemonized')
-            run(honeypot)
-    else:
-        run(honeypot)
+    honeypot.run()
