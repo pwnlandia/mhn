@@ -47,7 +47,7 @@ def dashboard():
     worst_ips = db.session.query(Attack.source_ip.label('ip'),
                                  func.count(Attack.source_ip).label('count')).\
                            group_by(Attack.source_ip).\
-                           order_by(Attack.source_ip.desc()).\
+                           order_by(desc('count')).\
                            limit(5)
     # TOP 5 more frequent attack signatures.
     freq_signs = db.session.query(Attack.classification.label('classification'),
