@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from dateutil.parser import parse as parse_date
 from flask import (
         Blueprint, render_template, request, url_for,
@@ -38,7 +40,34 @@ def login_user():
 @ui.route('/dashboard/', methods=['GET'])
 @login_required
 def dashboard():
-    return render_template('ui/dashboard.html')
+    # Number of attacks in the last 24 hours.
+    attackcount = Attack.query.filter(
+            Attack.date >= datetime.utcnow() - timedelta(hours=24)).count()
+    # TOP 5 attacker ips.
+    worst_ips = db.session.query(Attack.source_ip.label('ip'),
+                                 func.count(Attack.source_ip).label('count')).\
+                           group_by(Attack.source_ip).\
+                           order_by(Attack.source_ip.desc()).\
+                           limit(5)
+    # TOP 5 more frequent attack signatures.
+    freq_signs = db.session.query(Attack.classification.label('classification'),
+                                  func.count(Attack.classification).label('count')).\
+                            group_by(Attack.classification).\
+                            order_by(desc('count')).\
+                            limit(5)
+    # TOP 5 attacked ports.)
+    top_ports = db.session.query(Attack.destination_port.label('port'),
+                                  func.count(Attack.destination_port).label('count')).\
+                            group_by(Attack.destination_port).\
+                            order_by(desc('count')).\
+                            limit(5)
+
+
+    return render_template('ui/dashboard.html',
+                           attackcount=attackcount,
+                           worst_ips=worst_ips,
+                           freq_signs=freq_signs,
+                           top_ports=top_ports)
 
 
 @ui.route('/attacks/', methods=['GET'])
