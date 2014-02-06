@@ -36,6 +36,7 @@ def login_user():
 
 
 @ui.route('/dashboard/', methods=['GET'])
+@login_required
 def dashboard():
     return render_template('ui/dashboard.html')
 
@@ -104,6 +105,7 @@ def add_sensor():
 
 
 @ui.route('/manage-deploy/', methods=['POST'])
+@login_required
 def tar_mgmt():
     tar = request.files.get('client_tar')
     if tar:
@@ -118,6 +120,7 @@ def tar_mgmt():
 
 
 @ui.route('/manage-deploy/', methods=['GET'])
+@login_required
 def deploy_mgmt():
     return render_template('ui/script.html',
                            script=Script.query.order_by(Script.date.desc()).first(),

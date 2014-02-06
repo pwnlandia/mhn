@@ -11,9 +11,9 @@ from mhn.api import errors
 from mhn.api.models import (
         Sensor, Attack, Rule, DeployScript as Script,
         DeployScript, RuleSource)
-from mhn.api.decorators import deploy_auth
+from mhn.api.decorators import deploy_auth, sensor_auth
 from mhn.common.utils import error_response
-from mhn.auth import current_user
+from mhn.auth import current_user, login_required
 
 
 api = Blueprint('api', __name__, url_prefix='/api')
@@ -62,6 +62,7 @@ def update_sensor(uuid):
 
 
 @api.route('/sensor/<uuid>/connect/', methods=['POST'])
+@sensor_auth
 def connect_sensor(uuid):
     sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()
     sensor.ip = request.remote_addr
@@ -71,6 +72,7 @@ def connect_sensor(uuid):
 
 # Endpoints for the Attack resource.
 @api.route('/attack/', methods=['POST'])
+@sensor_auth
 def create_attack():
     missing = Attack.check_required(request.json)
     if missing:
@@ -100,6 +102,7 @@ def create_attack():
 
 
 @api.route('/rule/<rule_id>/', methods=['PUT'])
+@login_required
 def update_rule(rule_id):
     rule = Rule.query.filter_by(id=rule_id).first_or_404()
     for field in request.json.keys():
@@ -117,6 +120,7 @@ def update_rule(rule_id):
 
 
 @api.route('/rule/', methods=['GET'])
+@sensor_auth
 def get_rules():
     # Getting active rules.
     if request.args.get('plaintext') in ['1', 'true']:
@@ -135,6 +139,7 @@ def get_rules():
 
 
 @api.route('/rulesources/', methods=['POST'])
+@login_required
 def create_rule_source():
     missing = RuleSource.check_required(request.json)
     if missing:
@@ -153,6 +158,7 @@ def create_rule_source():
 
 
 @api.route('/script/', methods=['POST'])
+@login_required
 def create_script():
     missing = Script.check_required(request.json)
     if missing:
