@@ -73,17 +73,11 @@ sudo mkdir -p /opt/threatstream/mhn/bin
 sudo mkdir -p /opt/threatstream/mhn/rules
 sudo mkdir -p /etc/mhnclient
 
-# Installing init.d script for mhn.
-sudo cp mhnclient-initscript.sh /etc/init.d/mhnclient
-sudo chmod +x /etc/init.d/mhnclient
-
 # Installing mhnclient daemon.
 sudo cp mhn.rules /opt/threatstream/mhn/rules
 sudo cp mhnclient.py /opt/threatstream/mhn/bin/mhnclient
 sudo cp mhnclient.conf /etc/mhnclient/
 sudo chmod +x /opt/threatstream/mhn/bin/mhnclient
-sudo update-rc.d mhnclient defaults
-sudo update-rc.d mhnclient enable
 
 # Setting mhn:mhn as owner of mhn application folders.
 sudo chown mhn:mhn /opt/threatstream/mhn/bin/mhnclient
