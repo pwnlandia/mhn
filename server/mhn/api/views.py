@@ -62,6 +62,7 @@ def update_sensor(uuid):
 
 
 @api.route('/sensor/<uuid>/', methods=['DELETE'])
+@login_required
 def delete_sensor(uuid):
     sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()
     db.session.delete(sensor)
@@ -166,6 +167,7 @@ def create_rule_source():
 
 
 @api.route('/rulesources/<rs_id>/', methods=['DELETE'])
+@login_required
 def delete_rule_source(rs_id):
     source = RuleSource.query.filter_by(id=rs_id).first_or_404()
     db.session.delete(source)
