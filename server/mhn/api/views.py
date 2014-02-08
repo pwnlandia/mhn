@@ -61,6 +61,14 @@ def update_sensor(uuid):
         return jsonify(sensor.to_dict())
 
 
+@api.route('/sensor/<uuid>/', methods=['DELETE'])
+def delete_sensor(uuid):
+    sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()
+    db.session.delete(sensor)
+    db.session.commit()
+    return jsonify({})
+
+
 @api.route('/sensor/<uuid>/connect/', methods=['POST'])
 @sensor_auth
 def connect_sensor(uuid):
@@ -155,6 +163,14 @@ def create_rule_source():
                     errors.API_SOURCE_EXISTS.format(request.json['uri']), 400)
         else:
             return jsonify(rsource.to_dict())
+
+
+@api.route('/rulesources/<rs_id>/', methods=['DELETE'])
+def delete_rule_source(rs_id):
+    source = RuleSource.query.filter_by(id=rs_id).first_or_404()
+    db.session.delete(source)
+    db.session.commit()
+    return jsonify({})
 
 
 @api.route('/script/', methods=['POST'])

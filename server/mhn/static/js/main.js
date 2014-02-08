@@ -164,6 +164,20 @@ $(document).ready(function() {
                 }
             });
         });
+        $('.del-rs').click(function() {
+            var rsId = $(this).attr('data-rs-id');
+
+            $.ajax({
+                type: 'DELETE',
+                url: '/api/rulesources/' + rsId + '/',
+                success: function() {
+                    window.location.reload();
+                },
+                error: function(resp) {
+                    alert('There was an error deleting this source.');
+                }
+            });
+        });
     }
 
     if ($('#sensor-table').length >= 1) {
@@ -184,6 +198,21 @@ $(document).ready(function() {
                     alert('Could not save changes.');
                 }
             );
+        });
+
+        $('.del-sensor').click(function() {
+            var sensorId = $(this).attr('data-sensor-id');
+
+            $.ajax({
+                type: 'DELETE',
+                url: '/api/sensor/' + sensorId + '/',
+                success: function() {
+                    window.location.reload();
+                },
+                error: function(resp) {
+                    alert('There was an error deleting this sensor.');
+                }
+            });
         });
     }
 });
