@@ -1,4 +1,20 @@
 $(document).ready(function() {
+    var requestChange = function(url, inputObj, data, success, error) {
+
+        inputObj.attr('enabled', false);
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            data: JSON.stringify(data),
+            success: success,
+            contentType: 'application/json',
+            error: error,
+            always: function(resp) {
+                inputObj.attr('enabled', true);
+            }
+        });
+    };
+
     if ($('#sensor-fields').length >= 1) {
         $('#create-btn').click(function() {
             var sensorObj = {
@@ -25,29 +41,13 @@ $(document).ready(function() {
     }
 
     if ($('#rule-table').length >= 1) {
-        var requestChange = function(inputObj, data, success, error) {
-            var ruleId = inputObj.attr('data-rule-id');
-
-            inputObj.attr('enabled', false);
-            console.log(data);
-            console.log('/api/rule/' + ruleId + '/');
-            $.ajax({
-                type: 'PUT',
-                url: '/api/rule/' + ruleId + '/',
-                data: JSON.stringify(data),
-                success: success,
-                contentType: 'application/json',
-                error: error,
-                always: function(resp) {
-                    inputObj.attr('enabled', true);
-                }
-            });
-        };
         $('.checkbox').click(function() {
             var checkbox = $(this);
             var isChecked = checkbox.is(':checked');
+            var ruleId = $(this).attr('data-rule-id');
 
             requestChange(
+                '/api/rule/' + ruleId + '/',  // URL
                 checkbox,
                 {is_active: isChecked},  // Data
                 function() {},           // Success
@@ -61,9 +61,11 @@ $(document).ready(function() {
             var input = $(this);
             var fieldName = input.attr('data-field-name');
             var data = new Object();
+            var ruleId = $(this).attr('data-rule-id');
 
             data[fieldName] = input.val();
             requestChange(
+                '/api/rule/' + ruleId + '/',  // URL
                 input,
                 data,                    // Data
                 function() {},           // Success
@@ -159,6 +161,56 @@ $(document).ready(function() {
                 error: function(resp) {
                     $('#error-txt').html(resp.responseJSON.error);
                     $('#alert-text').show();
+                }
+            });
+        });
+        $('.del-rs').click(function() {
+            var rsId = $(this).attr('data-rs-id');
+
+            $.ajax({
+                type: 'DELETE',
+                url: '/api/rulesources/' + rsId + '/',
+                success: function() {
+                    window.location.reload();
+                },
+                error: function(resp) {
+                    alert('There was an error deleting this source.');
+                }
+            });
+        });
+    }
+
+    if ($('#sensor-table').length >= 1) {
+        $('.text-edit').focusout(function() {
+            var input = $(this);
+            var fieldName = input.attr('data-field-name');
+            var data = new Object();
+            var sensorId = $(this).attr('data-sensor-id');
+
+            data[fieldName] = input.val();
+            requestChange(
+                '/api/sensor/' + sensorId + '/',  // URL
+                input,
+                data,                    // Data
+                function() {},           // Success
+                function() {             // Error
+                    // Reverses the state.
+                    alert('Could not save changes.');
+                }
+            );
+        });
+
+        $('.del-sensor').click(function() {
+            var sensorId = $(this).attr('data-sensor-id');
+
+            $.ajax({
+                type: 'DELETE',
+                url: '/api/sensor/' + sensorId + '/',
+                success: function() {
+                    window.location.reload();
+                },
+                error: function(resp) {
+                    alert('There was an error deleting this sensor.');
                 }
             });
         });

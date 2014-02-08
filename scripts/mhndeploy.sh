@@ -35,7 +35,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y snort
 sudo apt-get install -y dionaea
 
 # Editing configuration for Snort.
-sudo sed -i 's,RULE_PATH /etc/snort/rules,RULE_PATH /opt/threatstream/mhn/rules,1' /etc/snort/snort.conf
+sudo sed -i 's,RULE_PATH /etc/snort/rules,RULE_PATH /opt/mhn/rules,1' /etc/snort/snort.conf
 sudo sed -i 's,include \$RULE_PATH,#include \$RULE_PATH,g' /etc/snort/snort.conf
 sudo sed -i 's,# site specific rules,# site specific rules\ninclude \$RULE_PATH/mhn.rules,1' /etc/snort/snort.conf
 
@@ -52,11 +52,6 @@ sudo sed -i 's/log\//\/var\/dionaea\/log\//g' /etc/dionaea/dionaea.conf
 sudo sed -i 's/levels = "all"/levels = "warning,error"/1' /etc/dionaea/dionaea.conf
 sudo sed -i 's/mode = "getifaddrs"/mode = "manual"/1' /etc/dionaea/dionaea.conf
 
-# Appends dionaea command to rc.local
-run_dionaea='dionaea -c /etc/dionaea/dionaea.conf -w /var/dionaea -u nobody -g nogroup -D'
-dionaea_startup="sudo sed -i 's,exit 0,"$run_dionaea"\nexit 0,1' /etc/rc.local"
-eval $dionaea_startup
-
 # Enables p0f.
 #sudo sed -i 's/\/\/\s*"p0f"/"p0f"/g' /etc/dionaea/dionaea.conf
 
@@ -72,27 +67,21 @@ sudo groupadd -g 333 -f mhn
 sudo useradd -u 333 -d /home/mhn -g mhn -m mhn
 
 # Creating application folders.
-sudo mkdir -p /opt/threatstream/mhn/var/log
-sudo mkdir -p /opt/threatstream/mhn/var/run
-sudo mkdir -p /opt/threatstream/mhn/bin
-sudo mkdir -p /opt/threatstream/mhn/rules
+sudo mkdir -p /opt/mhn/var/log
+sudo mkdir -p /opt/mhn/var/run
+sudo mkdir -p /opt/mhn/bin
+sudo mkdir -p /opt/mhn/rules
 sudo mkdir -p /etc/mhnclient
 
-# Installing init.d script for mhn.
-sudo cp mhnclient-initscript.sh /etc/init.d/mhnclient
-sudo chmod +x /etc/init.d/mhnclient
-
 # Installing mhnclient daemon.
-sudo cp mhn.rules /opt/threatstream/mhn/rules
-sudo cp mhnclient.py /opt/threatstream/mhn/bin/mhnclient
+sudo cp mhn.rules /opt/mhn/rules
+sudo cp mhnclient.py /opt/mhn/bin/mhnclient
 sudo cp mhnclient.conf /etc/mhnclient/
-sudo chmod +x /opt/threatstream/mhn/bin/mhnclient
-sudo update-rc.d mhnclient defaults
-sudo update-rc.d mhnclient enable
+sudo chmod +x /opt/mhn/bin/mhnclient
 
 # Setting mhn:mhn as owner of mhn application folders.
-sudo chown mhn:mhn /opt/threatstream/mhn/bin/mhnclient
-sudo chown -R mhn:mhn /opt/threatstream/mhn
+sudo chown mhn:mhn /opt/mhn/bin/mhnclient
+sudo chown -R mhn:mhn /opt/mhn
 sudo chown -R mhn:mhn /etc/mhnclient
 
 configfile="/etc/mhnclient/mhnclient.conf"
@@ -103,6 +92,25 @@ eval $cmd2
 
 sudo pip install -r requirements.txt
 
+# Supervisor will manage mhnclient and Dionea processes.
+# Resets all previous settings.
+sudo apt-get remove -y supervisor
+sudo apt-get purge -y supervisor
+sudo apt-get install -y supervisor
+# Config for supervisor.
+mhncmd="/opt/mhn/bin/mhnclient -c /etc/mhnclient/mhnclient.conf -D"
+mhndir="/opt/mhn"
+mhnlog="/opt/mhn/var/log/error.log"
+diocmd="dionaea -c /etc/dionaea/dionaea.conf -w /var/dionaea -u nobody -g nogroup"
+diodir="/var/dionaea"
+diolog="/var/dionaea/error.log"
+superconfig="autostart=true\nautorestart=true\nredirect_stderr=true\nstopsignal=QUIT"
+mhnsetup="\n[program:mhnclient]\ncommand=$mhncmd\ndirectory=$mhndir\nstdout_logfile=$mhnlog\n$superconfig\n"
+diosetup="\n[program:dionaea]\ncommand=$diocmd\ndirectory=$diodir\nstdout_logfile=$diolog\n$superconfig\n"
+echo $mhnsetup >> /etc/supervisor/supervisord.conf
+echo $diosetup >> /etc/supervisor/supervisord.conf
+
+# Cleanup
 rm deploy.sh
 rm mhnclient.tar.gz
 rm mhnclient.py
@@ -110,4 +118,5 @@ rm mhnclient.conf
 rm requirements.txt
 rm mhnclient-initscript.sh
 rm mhn.rules
+
 sudo reboot

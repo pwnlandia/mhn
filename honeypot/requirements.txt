@@ -2,5 +2,4 @@ docopt
 pyparsing
 requests
 sqlalchemy
-python-daemon
 watchdog

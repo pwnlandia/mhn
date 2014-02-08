@@ -31,5 +31,4 @@ CELERYBEAT_SCHEDULE = {
 """
 # SERVER_BASE_URL = ''
 # DEPLOY_KEY = ''
-# CLIENT_TAR_PATH = os.path.join(_basedir, 'mhn/static/mhnclient.latest.tar.gz')
 # LOG_FILE_PATH = '/path/log/to/log/file/'
