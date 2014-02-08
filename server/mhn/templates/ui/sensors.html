@@ -8,7 +8,7 @@
     </div>
     <div class="row">
         <div class="small-12 large-centered columns">
-            <table>
+            <table id="sensor-table">
                 <thead>
                     <tr>
                         <th></th>
@@ -23,7 +23,14 @@
                     {% for sr in sensors.items %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td>{{ sr.name }}</td>
+                        <td>
+                            <input data-sensor-id="{{ sr.uuid }}"
+                                   type="text"
+                                   data-field-name="name"
+                                   class="text-edit"
+                                   value="{{ sr.name }}"
+                            />
+                        </td>
                         <td>{{ sr.hostname }}</td>
                         <td>{{ sr.ip}}</td>
                         <td>{{ sr.uuid}}</td>
