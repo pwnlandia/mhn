@@ -138,5 +138,4 @@ def add_sensor():
 @login_required
 def deploy_mgmt():
     return render_template('ui/script.html',
-                           script=Script.query.order_by(Script.date.desc()).first(),
-                           tar=TarUpload.query.order_by(TarUpload.date.desc()).first())
+                           script=Script.query.order_by(Script.date.desc()).first())
