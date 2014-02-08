@@ -3,12 +3,12 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse as parse_date
 from flask import (
         Blueprint, render_template, request, url_for,
-        redirect, g, current_app)
+        redirect, g)
 from sqlalchemy import desc, func
 
 from mhn.api.models import (
         Attack, Sensor, Rule, DeployScript as Script,
-        TarUpload, RuleSource)
+        RuleSource)
 from mhn.auth import login_required, current_user
 from mhn import db
 from mhn.common.utils import paginate
@@ -132,21 +132,6 @@ def get_sensors():
 @login_required
 def add_sensor():
     return render_template('ui/add-sensor.html')
-
-
-@ui.route('/manage-deploy/', methods=['POST'])
-@login_required
-def tar_mgmt():
-    tar = request.files.get('client_tar')
-    if tar:
-        tar.save(current_app.config['CLIENT_TAR_PATH'])
-        tupload = TarUpload()
-        tupload.user = current_user
-        db.session.add(tupload)
-        db.session.commit()
-    return render_template('ui/script.html',
-                           script=Script.query.order_by(Script.date.desc()).first(),
-                           tar=TarUpload.query.order_by(TarUpload.date.desc()).first())
 
 
 @ui.route('/manage-deploy/', methods=['GET'])
