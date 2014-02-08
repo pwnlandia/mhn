@@ -35,7 +35,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y snort
 sudo apt-get install -y dionaea
 
 # Editing configuration for Snort.
-sudo sed -i 's,RULE_PATH /etc/snort/rules,RULE_PATH /opt/threatstream/mhn/rules,1' /etc/snort/snort.conf
+sudo sed -i 's,RULE_PATH /etc/snort/rules,RULE_PATH /opt/mhn/rules,1' /etc/snort/snort.conf
 sudo sed -i 's,include \$RULE_PATH,#include \$RULE_PATH,g' /etc/snort/snort.conf
 sudo sed -i 's,# site specific rules,# site specific rules\ninclude \$RULE_PATH/mhn.rules,1' /etc/snort/snort.conf
 
@@ -67,21 +67,21 @@ sudo groupadd -g 333 -f mhn
 sudo useradd -u 333 -d /home/mhn -g mhn -m mhn
 
 # Creating application folders.
-sudo mkdir -p /opt/threatstream/mhn/var/log
-sudo mkdir -p /opt/threatstream/mhn/var/run
-sudo mkdir -p /opt/threatstream/mhn/bin
-sudo mkdir -p /opt/threatstream/mhn/rules
+sudo mkdir -p /opt/mhn/var/log
+sudo mkdir -p /opt/mhn/var/run
+sudo mkdir -p /opt/mhn/bin
+sudo mkdir -p /opt/mhn/rules
 sudo mkdir -p /etc/mhnclient
 
 # Installing mhnclient daemon.
-sudo cp mhn.rules /opt/threatstream/mhn/rules
-sudo cp mhnclient.py /opt/threatstream/mhn/bin/mhnclient
+sudo cp mhn.rules /opt/mhn/rules
+sudo cp mhnclient.py /opt/mhn/bin/mhnclient
 sudo cp mhnclient.conf /etc/mhnclient/
-sudo chmod +x /opt/threatstream/mhn/bin/mhnclient
+sudo chmod +x /opt/mhn/bin/mhnclient
 
 # Setting mhn:mhn as owner of mhn application folders.
-sudo chown mhn:mhn /opt/threatstream/mhn/bin/mhnclient
-sudo chown -R mhn:mhn /opt/threatstream/mhn
+sudo chown mhn:mhn /opt/mhn/bin/mhnclient
+sudo chown -R mhn:mhn /opt/mhn
 sudo chown -R mhn:mhn /etc/mhnclient
 
 configfile="/etc/mhnclient/mhnclient.conf"
@@ -98,9 +98,9 @@ sudo apt-get remove -y supervisor
 sudo apt-get purge -y supervisor
 sudo apt-get install -y supervisor
 # Config for supervisor.
-mhncmd="/opt/threatstream/mhn/bin/mhnclient -c /etc/mhnclient/mhnclient.conf -D"
-mhndir="/opt/threatstream/mhn"
-mhnlog="/opt/threatstream/mhn/var/log/error.log"
+mhncmd="/opt/mhn/bin/mhnclient -c /etc/mhnclient/mhnclient.conf -D"
+mhndir="/opt/mhn"
+mhnlog="/opt/mhn/var/log/error.log"
 diocmd="dionaea -c /etc/dionaea/dionaea.conf -w /var/dionaea -u nobody -g nogroup"
 diodir="/var/dionaea"
 diolog="/var/dionaea/error.log"
