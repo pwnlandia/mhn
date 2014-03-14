@@ -9,18 +9,24 @@ from celery.schedules import crontab
 
 _basedir = os.path.abspath(os.path.dirname(__file__))
 
-# DEBUG = True
-# SECRET_KEY = ''
-# SQLALCHEMY_DATABASE_URI = 'postgres://username:password@server/dbname'
-# SUPERUSER_EMAIL = 'super@email.com'
-# SUPERUSER_PASSWORD = 'superpassword'
-# SECURITY_PASSWORD_HASH = 'bcrypt'
-# SECURITY_PASSWORD_SALT = SECRET_KEY
-# SECURITY_LOGIN_URL = '/ui/login/'
-# BROKER_URL = 'redis://localhost:6379'
-# CELERY_RESULT_BACKEND = BROKER_URL
-# RENDERED_RULES_PATH = os.path.join(_basedir, 'mhn/static/mhn.rules')
-"""
+
+# Local settings.
+DEBUG = {{DEBUG}}
+SECRET_KEY = '{{SECRET_KEY}}'
+SUPERUSER_EMAIL = '{{SUPERUSER_EMAIL}}'
+SUPERUSER_PASSWORD = '{{SUPERUSER_PASSWORD}}'
+SERVER_BASE_URL = '{{SERVER_BASE_URL}}'
+DEPLOY_KEY = '{{DEPLOY_KEY}}'
+LOG_FILE_PATH = '{{LOG_FILE_PATH}}'
+
+# Other settings.
+SQLALCHEMY_DATABASE_URI = 'postgres://username:password@server/dbname'
+SECURITY_PASSWORD_HASH = 'bcrypt'
+SECURITY_PASSWORD_SALT = SECRET_KEY
+SECURITY_LOGIN_URL = '/ui/login/'
+BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = BROKER_URL
+RENDERED_RULES_PATH = os.path.join(_basedir, 'mhn/static/mhn.rules')
 CELERYBEAT_SCHEDULE = {
     'fetch-emerging-rules': {
             'task': 'mhn.tasks.rules.fetch_source',
@@ -28,7 +34,3 @@ CELERYBEAT_SCHEDULE = {
             'args': ()
     }
 }
-"""
-# SERVER_BASE_URL = ''
-# DEPLOY_KEY = ''
-# LOG_FILE_PATH = '/path/log/to/log/file/'
