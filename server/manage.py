@@ -1,3 +1,5 @@
+from urlparse import urlparse
+
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
 
@@ -23,7 +25,10 @@ if __name__ == '__main__':
 
     @manager.command
     def run():
-        mhn.run(debug=config.DEBUG)
+        # Takes run parameters from configuration.
+        serverurl = urlparse(config.SERVER_BASE_URL)
+        mhn.run(debug=config.DEBUG, host=serverurl.hostname,
+                port=serverurl.port)
 
     @manager.command
     def fetch_rules():
