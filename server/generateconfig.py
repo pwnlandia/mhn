@@ -11,7 +11,7 @@ from socket import gethostbyname, gethostname
 
 el = string.ascii_letters + string.digits
 rand_str = lambda n: ''.join(choice(el) for _ in range(n))
-default_base_url = 'http://{}'.format(gethostbyname(gethostname()))
+default_base_url = 'http://{}:8080'.format(gethostbyname(gethostname()))
 default_log_path = 'mhn.log'
 
 
