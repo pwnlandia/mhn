@@ -20,7 +20,7 @@ DEPLOY_KEY = '{{DEPLOY_KEY}}'
 LOG_FILE_PATH = '{{LOG_FILE_PATH}}'
 
 # Other settings.
-SQLALCHEMY_DATABASE_URI = 'postgres://username:password@server/dbname'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'mhn.db')
 SECURITY_PASSWORD_HASH = 'bcrypt'
 SECURITY_PASSWORD_SALT = SECRET_KEY
 SECURITY_LOGIN_URL = '/ui/login/'
