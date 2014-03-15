@@ -27,7 +27,7 @@ if __name__ == '__main__':
     def run():
         # Takes run parameters from configuration.
         serverurl = urlparse(config.SERVER_BASE_URL)
-        mhn.run(debug=config.DEBUG, host=serverurl.hostname,
+        mhn.run(debug=config.DEBUG, host='0.0.0.0',
                 port=serverurl.port)
 
     @manager.command
