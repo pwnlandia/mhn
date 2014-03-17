@@ -1,3 +1,4 @@
+import os
 from urlparse import urlparse
 
 from flask.ext.script import Manager
@@ -8,12 +9,23 @@ try:
 except ImportError:
     print 'It seems like this is the first time running the server.'
     print 'First let us generate a proper configuration file.'
-    from generateconfig import generate_config
-    generate_config()
-    import config
-    from mhn import create_clean_db
-    print 'Initializing database "{}".'.format(config.SQLALCHEMY_DATABASE_URI)
-    create_clean_db()
+    try:
+        from generateconfig import generate_config
+        generate_config()
+        import config
+        from mhn import create_clean_db
+        print 'Initializing database "{}".'.format(config.SQLALCHEMY_DATABASE_URI)
+        create_clean_db()
+    except Exception as e:
+        print e
+        print 'An error ocurred. Please fix the errors and try again.'
+        print 'Deleting "config.py" file.'
+        try:
+            os.remove('config.py')
+            os.remove('config.pyc')
+        finally:
+            raise SystemExit('Exiting now.')
+
 from mhn import mhn, db
 from mhn.tasks.rules import fetch_sources
 
