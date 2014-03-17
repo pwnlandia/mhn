@@ -9,6 +9,7 @@ Options:
     -c <config_path>                Path to config file to use.
     -D                              Daemonize flag.
 """
+import os
 import json
 import time
 import pickle
@@ -132,6 +133,7 @@ class MHNClient(object):
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
                     f.flush()
+        os.sytem('killall -SIGHUP snort')
 
     def post_attack(self, alert):
         self.post(self.attack_url, data=alert.to_json())
