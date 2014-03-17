@@ -91,6 +91,5 @@ def create_clean_db():
     rulesrc.uri = 'http://rules.emergingthreats.net/open/snort-2.9.0/emerging-all.rules'
     rulesrc.name = 'Default rules source'
     db.session.add(rulesrc)
-    fetch_sources()
-
     db.session.commit()
+    fetch_sources()
