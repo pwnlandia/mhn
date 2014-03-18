@@ -3,19 +3,21 @@ This is a helper script meant to generate a
 working config.py file from the config template.
 """
 
+import json
+from urllib2 import urlopen
 import string
 from random import choice
 from getpass import getpass
-from socket import gethostbyname, gethostname
 
 
 el = string.ascii_letters + string.digits
 rand_str = lambda n: ''.join(choice(el) for _ in range(n))
-default_base_url = 'http://{}:8080'.format(gethostbyname(gethostname()))
-default_log_path = 'mhn.log'
 
 
 def generate_config():
+    pub_ip = json.load(urlopen('http://httpbin.org/ip'))['origin']
+    default_base_url = 'http://{}:8080'.format(pub_ip)
+    default_log_path = 'mhn.log'
     localconfig = {}
     localconfig['SECRET_KEY'] = rand_str(32)
     localconfig['DEPLOY_KEY'] = rand_str(8)
