@@ -1,4 +1,4 @@
-Modern Honey Net Framework
+Modern Honey Network
 ==========================
 
 Multi-snort and honeypot sensor management, uses a network of VMs, small footprint SNORT installations, stealthy dionaeas, and a centralized server for management.
