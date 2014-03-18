@@ -45,8 +45,21 @@ It also allows systems administrators to:
 
 ### RUNNING SERVER
 
+With `MHN/server/` as current working directory, run:
 
-1. With `MHN/server/` as current working directory, run:
+`sh run.sh`
+
+This shell script runs all the commands that are needed to start the MHN server, here is a brief explanation of such commands:
+
+- The MHN server uses celery tasks to download rules periodically, in order for this to work, the following commands must be ran and kept alive:
+
+    `celery -A mhn.tasks --config=config beat`
+
+    `celery -A mhn.tasks --config=config worker`
+
+   In the `run.sh` script `&` is appended to these commands in order for them to run in the background.
+
+- Flask built in web server:
 
    `python manage.py run`
 
@@ -60,16 +73,8 @@ It also allows systems administrators to:
 
     After this step, the server should run using Flask's built in HTTP server, using address `0.0.0.0`. This setup is not recommended for a production environment.
 
-2. The MHN server uses celery tasks to download rules periodically, in order for this to work, the following commands must be ran and kept alive. Using a different console window is recommended:
 
-    `celery -A mhn.tasks --config=config beat`
-
-    `celery -A mhn.tasks --config=config worker`
-
-   Append `&` to the commands in order for them to run in the background.
-
-
-## LICENSE
+### LICENSE
 
 Modern Honeypot Network
 
