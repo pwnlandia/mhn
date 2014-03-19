@@ -107,6 +107,8 @@ diolog="/var/dionaea/error.log"
 superconfig="autostart=true\nautorestart=true\nredirect_stderr=true\nstopsignal=QUIT"
 mhnsetup="\n[program:mhnclient]\ncommand=$mhncmd\ndirectory=$mhndir\nstdout_logfile=$mhnlog\n$superconfig\n"
 diosetup="\n[program:dionaea]\ncommand=$diocmd\ndirectory=$diodir\nstdout_logfile=$diolog\n$superconfig\n"
+
+sudo chmod o+w /etc/supervisor/supervisord.conf
 sudo echo $mhnsetup >> /etc/supervisor/supervisord.conf
 sudo echo $diosetup >> /etc/supervisor/supervisord.conf
 
@@ -116,7 +118,6 @@ rm mhnclient.tar.gz
 rm mhnclient.py
 rm mhnclient.conf
 rm requirements.txt
-rm mhnclient-initscript.sh
 rm mhn.rules
 
 sudo reboot
