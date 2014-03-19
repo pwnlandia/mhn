@@ -55,7 +55,7 @@ It also allows systems administrators to:
     * `Do you wish to run in Debug mode?: y/n`: Answer `y` or `no` accordingly.
     * `Superuser email`: Email address for default user.
     * `Superuser password`: Password for default user.
-    * `Server base url ['http://127.0.0.1:8080']`: Server's reachable HTTP address including port.
+    * `Server base url ['http://127.0.0.1:8080']`: Server's reachable HTTP address including port. A suggested address is presented inside the brackets, if that address is incorrect, type in the correct address that clients will use to reach the server.
     * `Path for log file ['mhn.log']`: A path where the application logs will be located. Defaults to `mhn.log`.
 
     After this step, the server should run using Flask's built in HTTP server, using address `0.0.0.0`. This setup is not recommended for a production environment.
