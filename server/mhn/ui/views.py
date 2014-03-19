@@ -10,7 +10,7 @@ from mhn.api.models import (
         Attack, Sensor, Rule, DeployScript as Script,
         RuleSource)
 from mhn.auth import login_required, current_user
-from mhn import db
+from mhn import db, mhn
 from mhn.common.utils import paginate
 
 
@@ -37,6 +37,7 @@ def login_user():
     return render_template('security/login_user.html')
 
 
+@mhn.route('/')
 @ui.route('/dashboard/', methods=['GET'])
 @login_required
 def dashboard():
