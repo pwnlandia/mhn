@@ -60,13 +60,13 @@ It also allows systems administrators to:
 
     After this step, the server should run using Flask's built in HTTP server, using address `0.0.0.0`. This setup is not recommended for a production environment.
 
-2. The MHN server uses celery tasks to download rules periodically, in order for this to work, the following commands must be ran and kept alive. Using a different console window is recommended:
+    Note that this command also runs two celery commands internally as the MHN server uses celery tasks to download rules periodically.
 
     `celery -A mhn.tasks --config=config beat`
 
     `celery -A mhn.tasks --config=config worker`
 
-   Append `&` to the commands in order for them to run in the background.
+    `&` is appended to the commands in order for them to run in the background.
 
 
 ## LICENSE
