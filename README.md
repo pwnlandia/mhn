@@ -36,7 +36,7 @@ It also allows systems administrators to:
 
    Example in Debia/Ubuntu Linux:
 
-   `sudo apt-get install build-essential python-dev redis-server`
+   `sudo apt-get install build-essential python-dev redis-server python-pip`
 
 3. Install Python dependencies listed on `MHN/server/requirements.txt`, using `virtualenv` and `pip` is recommended:
 
