@@ -4,6 +4,6 @@
     "app_dir": "/opt/mhn",
     "alert_file": "/var/log/snort/alert",
     "dionaea_db": "/var/dionaea/logsql.sqlite",
-    "snort_rules": "/opt/threatstream/mhn/rules",
+    "snort_rules": "/opt/mhn/rules",
     "download_time": "00:00"
 }
