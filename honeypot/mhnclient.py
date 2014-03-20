@@ -133,7 +133,7 @@ class MHNClient(object):
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
                     f.flush()
-        os.sytem('killall -SIGHUP snort')
+        os.system('killall -SIGHUP snort')
 
     def post_attack(self, alert):
         self.post(self.attack_url, data=alert.to_json())
