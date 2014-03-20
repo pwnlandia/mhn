@@ -23,7 +23,7 @@ It also allows systems administrators to:
 - Manage snort rules: enable, disable, download
 
 
-### INSTALLING SERVER
+### INSTALLING SERVER (tested Ubuntu 12.0.4.3 x86_64)
 
 1. Clone the repository and move the server directory:
 
