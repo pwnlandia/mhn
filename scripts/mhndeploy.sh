@@ -26,6 +26,7 @@ fi
 echo "Created sensor: " $uuid
 
 # Add ppa to apt sources (Needed for Dionaea).
+sudo apt-get update
 sudo apt-get install -y python-software-properties
 sudo add-apt-repository -y ppa:honeynet/nightly
 sudo apt-get update
@@ -109,8 +110,8 @@ mhnsetup="\n[program:mhnclient]\ncommand=$mhncmd\ndirectory=$mhndir\nstdout_logf
 diosetup="\n[program:dionaea]\ncommand=$diocmd\ndirectory=$diodir\nstdout_logfile=$diolog\n$superconfig\n"
 
 sudo chmod o+w /etc/supervisor/supervisord.conf
-sudo echo $mhnsetup >> /etc/supervisor/supervisord.conf
-sudo echo $diosetup >> /etc/supervisor/supervisord.conf
+sudo echo -e $mhnsetup >> /etc/supervisor/supervisord.conf
+sudo echo -e $diosetup >> /etc/supervisor/supervisord.conf
 
 # Cleanup
 rm deploy.sh
