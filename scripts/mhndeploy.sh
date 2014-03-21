@@ -27,6 +27,7 @@ echo "Created sensor: " $uuid
 
 # Add ppa to apt sources (Needed for Dionaea).
 sudo apt-get update
+sudo apt-get upgrade -y
 sudo apt-get install -y python-software-properties
 sudo add-apt-repository -y ppa:honeynet/nightly
 sudo apt-get update
