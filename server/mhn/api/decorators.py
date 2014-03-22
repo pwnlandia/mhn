@@ -39,7 +39,6 @@ def sensor_auth(view):
             auth = request.authorization
             if auth and auth.get('username') == auth.get('password') and\
                Sensor.query.filter_by(uuid=auth.get('username')).count() == 1:
-                print 'yes'
                 return view(*args, **kwargs)
         return error_response(errors.API_NOT_AUTHORIZED, 401)
     return wrapped_view
