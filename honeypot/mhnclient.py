@@ -350,9 +350,12 @@ class Alert(object):
 
     @classmethod
     def from_connection(cls, sensor_uuid, conn):
-        return Alert(sensor_uuid, 'N/A', 'Dionaea Connection', 'Dionaea Connection', 'N/A',
+        return Alert(sensor_uuid, 'N/A', 'Dionaea Connection',
+                     'Dionaea Connection', 'N/A',
                      conn.datetime.strftime('%m/%d-%H:%M:%S.%f'),
-                     conn.remote_host, conn.local_host, conn.local_port)
+                     Connection.clean_ipv4(conn.remote_host),
+                     Connection.clean_ipv4(conn.local_host),
+                     conn.local_port)
 
 
 class AlertEventHandler(FileSystemEventHandler):
@@ -455,7 +458,7 @@ class AlertEventHandler(FileSystemEventHandler):
                         # Popping matched items to eliminate alert iterations
                         # on next cycle.
                         alerts.pop(matched_alert)
-                    # Finally append any alerts that didn't match.
+                # Finally append any alerts that didn't match.
                 attacks.extend(alerts)
                 self._on_new_attacks(attacks)
 
