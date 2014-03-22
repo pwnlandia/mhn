@@ -45,6 +45,7 @@
                         <th></th>
                         <th>Date</th>
                         <th>Classification</th>
+                        <th>Signature</th>
                         <th>Source IP</th>
                         <th>Destination IP</th>
                         <th>Destination port</th>
@@ -58,6 +59,7 @@
                         <td>{{ loop.index }}</td>
                         <td>{{ at.date|fdate }}</td>
                         <td>{{ at.classification }}</td>
+                        <td>{{ at.signature }}</td>
                         <td>{{ at.source_ip }}</td>
                         <td>{{ at.destination_ip }}</td>
                         <td>{{ at.destination_port }}</td>

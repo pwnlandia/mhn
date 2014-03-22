@@ -111,6 +111,7 @@ class Attack(db.Model, APIModel):
     priority = db.Column(db.Integer)
     date = db.Column(db.DateTime())
     classification = db.Column(db.String(80))
+    signature = db.Column(db.String(100))
     sensor_id = db.Column(db.Integer,
                           db.ForeignKey('sensors.id'))
     __table_args__ = (UniqueConstraint(source_ip, destination_ip,
@@ -119,13 +120,14 @@ class Attack(db.Model, APIModel):
     def __init__(
             self, source_ip=None, destination_ip=None,
             destination_port=None, priority=None, date=None,
-            classification=None):
+            classification=None, signature=None):
         self.source_ip = source_ip
         self.destination_ip = destination_ip
         self.destination_port = destination_port
         self.priority = priority
         self.date = date
         self.classification = classification
+        self.signature = signature
 
     def __repr__(self):
         return '<Attack>{}'.format(self.to_dict())
@@ -135,7 +137,7 @@ class Attack(db.Model, APIModel):
             source_ip=self.source_ip, destination_ip=self.destination_ip,
             destination_port=self.destination_port, priority=self.priority,
             date=self.date, classification=self.classification,
-            sensor=self.sensor.hostname)
+            sensor=self.sensor.hostname, signature=self.signature)
 
 
 class Rule(db.Model, APIModel):
