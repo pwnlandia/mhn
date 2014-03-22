@@ -97,6 +97,7 @@ def create_attack():
         attack.priority = request.json.get('priority')
         attack.date = parse(request.json.get('date'))
         attack.classification = request.json.get('classification')
+        attack.signature = request.json.get('signature')
         attack.sensor = sensor
         # Doing this before add/commit to prevent `InvalidRequestError`.
         attackdict = attack.to_dict()
