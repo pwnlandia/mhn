@@ -37,9 +37,9 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y snort
 sudo apt-get install -y dionaea
 
 # Editing configuration for Snort.
-sudo sed -i 's,RULE_PATH /etc/snort/rules,RULE_PATH /opt/mhn/rules,1' /etc/snort/snort.conf
-sudo sed -i 's,include \$RULE_PATH,#include \$RULE_PATH,g' /etc/snort/snort.conf
-sudo sed -i 's,# site specific rules,# site specific rules\ninclude \$RULE_PATH/mhn.rules,1' /etc/snort/snort.conf
+# Disabling community-sip rules because of conflict with a rule from
+# emerging threats.
+sudo sed -i 's,include \$RULE_PATH/community-sip.rules,#include \$RULE_PATH/community-sip.rules,1' /etc/snort/snort.conf
 
 wget $server_url/static/mhn.rules -O mhn.rules
 
@@ -80,6 +80,11 @@ sudo cp mhn.rules /opt/mhn/rules
 sudo cp mhnclient.py /opt/mhn/bin/mhnclient
 sudo cp mhnclient.conf /etc/mhnclient/
 sudo chmod +x /opt/mhn/bin/mhnclient
+
+# Installing snort rules.
+# mhn.rules will be used as local.rules.
+sudo rm /etc/snort/rules/local.rules
+sudo ln -s /opt/mhn/rules/mhn.rules /etc/snort/rules/local.rules
 
 # Setting mhn:mhn as owner of mhn application folders.
 sudo chown mhn:mhn /opt/mhn/bin/mhnclient
