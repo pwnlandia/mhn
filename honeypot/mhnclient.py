@@ -158,6 +158,9 @@ Base = declarative_base()
 
 
 class Connection(Base):
+    """
+    Represents a Dionaea connection entry.
+    """
 
     __tablename__ = 'connections'
     connection = Column(Integer, primary_key=True)
@@ -172,13 +175,15 @@ class Connection(Base):
     remote_port = Column(String(6))
 
     def to_dict(self):
+        local_host = Connection.clean_ipv4(self.local_host)
+        remote_host = Connection.clean_ipv4(self.remote_host)
         return dict(connection=self.connection,
                     connection_type=self.connection_type,
                     connection_protocol=self.connection_protocol,
                     connection_timestamp=self.connection_timestamp,
                     connection_root=self.connection_root,
-                    local_host=self.local_host, local_port=self.local_port,
-                    remote_host=self.remote_host, remote_port=self.remote_port,
+                    local_host=local_host, local_port=self.local_port,
+                    remote_host=remote_host, remote_port=self.remote_port,
                     remote_hostname=self.remote_hostname)
 
     @property
@@ -212,6 +217,16 @@ class Connection(Base):
 
     def __repr__(self):
         return str(self.to_dict())
+
+    @staticmethod
+    def clean_ipv4(ipaddr):
+        """
+        Removes hybrid ipv4-6 notation present
+        in some addresses.
+        """
+        ipaddr = ipaddr.replace('::ffff:', '')
+        ipaddr = ipaddr.replace('::', '')
+        return ipaddr
 
 
 class Alert(object):
