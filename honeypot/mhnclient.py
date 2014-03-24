@@ -350,8 +350,7 @@ class Alert(object):
 
     @classmethod
     def from_connection(cls, sensor_uuid, conn):
-        return Alert(sensor_uuid, 'N/A', 'Dionaea Connection',
-                     'Dionaea Connection', 'N/A',
+        return Alert(sensor_uuid, 'N/A', '', '', 'N/A',
                      conn.datetime.strftime('%m/%d-%H:%M:%S.%f'),
                      Connection.clean_ipv4(conn.remote_host),
                      Connection.clean_ipv4(conn.local_host),
