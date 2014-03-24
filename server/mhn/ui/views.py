@@ -52,6 +52,7 @@ def dashboard():
                            limit(5)
     # TOP 5 more frequent attack signatures.
     freq_signs = db.session.query(Attack.classification.label('classification'),
+                                  Attack.signature.label('signature'),
                                   func.count(Attack.classification).label('count')).\
                             filter(Attack.classification != '').\
                             group_by(Attack.classification).\
