@@ -1,6 +1,6 @@
 from urlparse import urljoin
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password as encrypt
@@ -80,6 +80,10 @@ def makeurl(uri):
 
 def get_feed():
     from mhn.api.models import Attack
+    from mhn.auth import current_user
+    authfeed = mhn.config['FEED_AUTH_REQUIRED']
+    if authfeed and not current_user.is_authenticated():
+        abort(404)
     feed = AtomFeed('MHN Attack Report', feed_url=request.url,
                     url=request.url_root)
     attacks = Attack.query.order_by(Attack.date.desc()).limit(1000).all()
