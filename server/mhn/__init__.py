@@ -1,7 +1,11 @@
-from flask import Flask
+from urlparse import urljoin
+
+from flask import Flask, request, jsonify, abort
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password as encrypt
+from werkzeug.contrib.atom import AtomFeed
+import xmltodict
 
 
 db = SQLAlchemy()
@@ -56,6 +60,41 @@ if mhn.config['DEBUG']:
     console.setLevel(logging.INFO)
     console.setFormatter(formatter)
     mhn.logger.addHandler(console)
+
+
+@mhn.route('/feed.json')
+def json_feed():
+    feed_content = get_feed().to_string()
+    return jsonify(xmltodict.parse(feed_content))
+
+
+@mhn.route('/feed.xml')
+def xml_feed():
+    return get_feed().get_response()
+
+
+def makeurl(uri):
+    baseurl = mhn.config['SERVER_BASE_URL']
+    return urljoin(baseurl, uri)
+
+
+def get_feed():
+    from mhn.api.models import Attack
+    from mhn.auth import current_user
+    authfeed = mhn.config['FEED_AUTH_REQUIRED']
+    if authfeed and not current_user.is_authenticated():
+        abort(404)
+    feed = AtomFeed('MHN Attack Report', feed_url=request.url,
+                    url=request.url_root)
+    attacks = Attack.query.order_by(Attack.date.desc()).limit(1000).all()
+    for at in attacks:
+        feedtext = u'{source_ip} attack on {destination_ip} '
+        feedtext += u'on port {destination_port}. {signature} - {classification}'
+        feedtext = feedtext.format(**at.to_dict())
+        feed.add('Attack', feedtext, content_type='text',
+                 published=at.date, url=makeurl(at.resource_uri),
+                 updated=at.date)
+    return feed
 
 
 def create_clean_db():

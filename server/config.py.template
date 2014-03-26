@@ -20,6 +20,7 @@ DEPLOY_KEY = '{{DEPLOY_KEY}}'
 LOG_FILE_PATH = '{{LOG_FILE_PATH}}'
 
 # Other settings.
+FEED_AUTH_REQUIRED = False
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'mhn.db')
 SECURITY_PASSWORD_HASH = 'bcrypt'
 SECURITY_PASSWORD_SALT = SECRET_KEY
