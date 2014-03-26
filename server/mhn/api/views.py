@@ -79,6 +79,16 @@ def connect_sensor(uuid):
     return jsonify(sensor.to_dict())
 
 
+@api.route('/attack/<attack_id>/', methods=['GET'])
+@login_required
+def get_attack(attack_id):
+    attack = Attack.query.get(attack_id)
+    if not attack:
+        return error_response(errors.API_ATTACK_NOT_FOUND, 404)
+    else:
+        return jsonify(attack.to_dict())
+
+
 # Endpoints for the Attack resource.
 @api.route('/attack/', methods=['POST'])
 @sensor_auth

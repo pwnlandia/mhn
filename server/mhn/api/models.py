@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from flask.helpers import url_for
 from sqlalchemy import UniqueConstraint, func
 
 from mhn import db
@@ -131,6 +132,11 @@ class Attack(db.Model, APIModel):
 
     def __repr__(self):
         return '<Attack>{}'.format(self.to_dict())
+
+    @property
+    def resource_uri(self):
+        return url_for('api.get_attack',
+                       attack_id=self.id)
 
     def to_dict(self):
         return dict(
