@@ -7,3 +7,4 @@ python-dateutil
 celery
 redis
 requests
+xmltodict
