@@ -1,6 +1,7 @@
 from flask.ext.security import UserMixin, RoleMixin
 
 from mhn import db
+from mhn.api import APIModel
 
 
 roles_users = db.Table(
@@ -14,7 +15,14 @@ class Role(db.Model, RoleMixin):
     description = db.Column(db.String(255))
 
 
-class User(db.Model, UserMixin):
+class User(db.Model, APIModel, UserMixin):
+    all_fields = {
+        'email': {'required': True, 'editable': False},
+        'username': {'required': True, 'editable': False},
+        'password': {'required': True, 'editable': True},
+        'active': {'required': False, 'editable': True}
+    }
+
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
