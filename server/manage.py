@@ -45,6 +45,12 @@ if __name__ == '__main__':
                 port=serverurl.port)
 
     @manager.command
+    def runlocal():
+        serverurl = urlparse(config.SERVER_BASE_URL)
+        mhn.run(debug=config.DEBUG, host='localhost',
+                port=serverurl.port)
+
+    @manager.command
     def fetch_rules():
         fetch_sources()
 
