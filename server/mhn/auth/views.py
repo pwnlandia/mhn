@@ -53,7 +53,7 @@ def create_user():
                 apierrors.API_FIELDS_MISSING.format(missing), 400)
     else:
         user = get_datastore().create_user(
-                email=request.json.get('email'),
+                email=request.json.get('email'), username=request.json.get('username'),
                 password=encrypt_password(request.json.get('password')))
         userrole = user_datastore.find_role('user')
         user_datastore.add_role_to_user(user, userrole)
