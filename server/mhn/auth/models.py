@@ -25,6 +25,7 @@ class User(db.Model, APIModel, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
+    username = db.Column(db.String(255))
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
@@ -34,4 +35,4 @@ class User(db.Model, APIModel, UserMixin):
     def to_dict(self):
         return dict(
                 email=self.email, roles=[r.name for r in self.roles],
-                active=self.active)
+                username=self.username, active=self.active)
