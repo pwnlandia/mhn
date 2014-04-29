@@ -109,6 +109,7 @@ def create_clean_db():
             password=encrypt(mhn.config.get('SUPERUSER_PASSWORD')))
     adminrole = user_datastore.create_role(name='admin', description='')
     user_datastore.add_role_to_user(superuser, adminrole)
+    user_datastore.create_role(name='user', description='')
 
     from os import path
 
