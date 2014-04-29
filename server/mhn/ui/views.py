@@ -141,3 +141,9 @@ def add_sensor():
 def deploy_mgmt():
     return render_template('ui/script.html',
                            script=Script.query.order_by(Script.date.desc()).first())
+
+
+@ui.route('/add-user/', methods=['GET'])
+@login_required
+def add_user():
+    return render_template('ui/add-user.html')

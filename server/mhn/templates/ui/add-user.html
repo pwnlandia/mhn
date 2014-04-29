@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Add User{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="small-4 large-centered columns">
+            <h2>Add User</h2>
+        </div>
+    </div>
+    <form id="user-form" action="{{ url_for('auth.create_user') }}" method="post">
+        <div class="row">
+            <div class="small-5 large-centered columns">
+                <input id="username-edit" name="username" type="text" placeholder="Username" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-5 large-centered columns">
+                <input id="email-edit" name="email" type="text" placeholder="Email" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-5 large-centered columns">
+                <input id="password-edit" name="password" type="password" placeholder="Password" />
+            </div>
+        </div>
+        <div id="msg-container" class="row" style="display:none;">
+            <div class="small-5 large-centered columns">
+                <div id="alert-text" data-alert class="alert-box success round">
+                    <div id="error-txt"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-5 large-centered columns">
+                <input id="submit-user" class="tiny button right" type="submit" value="ADD" />
+            </div>
+        </div>
+    </form>
+{% endblock %}

@@ -215,4 +215,39 @@ $(document).ready(function() {
             });
         });
     }
+
+    if ($('#user-form').length >= 1) {
+        $('#submit-user').click(function(e) {
+            var username = $('#username-edit').val();
+            var email = $('#email-edit').val();
+            var password = $('#password-edit').val();
+
+            e.preventDefault();
+            $('#msg-container').hide();
+            $.ajax({
+                type: 'POST',
+                url: '/auth/user/',
+                data: JSON.stringify({
+                    username: username,
+                    email: email,
+                    password: password
+                }),
+                contentType: 'application/json',
+                success: function(resp) {
+                    $('#alert-text').removeClass('warning').addClass('success');
+                    $('#error-txt').html('User created OK.');
+                    $('#msg-container').show();
+                    $('#username-edit').val('');
+                    $('#email-edit').val('');
+                    $('#password-edit').val('');
+
+                },
+                error: function(resp) {
+                    $('#alert-text').removeClass('success').addClass('warning');
+                    $('#error-txt').html(resp.responseJSON.error);
+                    $('#msg-container').show();
+                }
+            });
+        });
+    }
 });
