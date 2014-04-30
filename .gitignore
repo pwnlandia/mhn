@@ -1,5 +1,7 @@
 *.pyc
 server/config.py
+server/mhn.db
 server/mhn/static/mhn.rules
+server/mhn.log
 
 honeypot/mhnclient.conf

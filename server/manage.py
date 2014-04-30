@@ -47,7 +47,7 @@ if __name__ == '__main__':
     @manager.command
     def runlocal():
         serverurl = urlparse(config.SERVER_BASE_URL)
-        mhn.run(debug=config.DEBUG, host='localhost',
+        mhn.run(debug=config.DEBUG, host='0.0.0.0',
                 port=serverurl.port)
 
     @manager.command

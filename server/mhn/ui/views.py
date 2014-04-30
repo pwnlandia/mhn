@@ -4,12 +4,14 @@ from dateutil.parser import parse as parse_date
 from flask import (
         Blueprint, render_template, request, url_for,
         redirect, g)
+from flask_security import logout_user as logout
 from sqlalchemy import desc, func
 
 from mhn.api.models import (
         Attack, Sensor, Rule, DeployScript as Script,
         RuleSource)
 from mhn.auth import login_required, current_user
+from mhn.auth.models import User, PasswdReset
 from mhn import db, mhn
 from mhn.common.utils import paginate
 
@@ -145,5 +147,14 @@ def deploy_mgmt():
 
 @ui.route('/add-user/', methods=['GET'])
 @login_required
-def add_user():
-    return render_template('ui/add-user.html')
+def settings():
+    return render_template(
+            'ui/settings.html', users=User.query.filter_by(active=True))
+
+
+@ui.route('/forgot-password/<hashstr>/', methods=['GET'])
+def forgot_passwd(hashstr):
+    logout()
+    user = PasswdReset.query.filter_by(hashstr=hashstr).first().user
+    return render_template('ui/reset-password.html', reset_user=user,
+                           hashstr=hashstr)

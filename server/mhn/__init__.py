@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, abort
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password as encrypt
+from flask.ext.mail import Mail
 from werkzeug.contrib.atom import AtomFeed
 import xmltodict
 
@@ -17,6 +18,10 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 mhn = Flask(__name__)
 mhn.config.from_object('config')
+
+# Email app setup.
+mail = Mail()
+mail.init_app(mhn)
 
 # Registering app on db instance.
 db.init_app(mhn)
