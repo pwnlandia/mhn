@@ -47,7 +47,7 @@
                 </ul>
                 {% if current_user.has_role('admin') %}
                 <ul class="right">
-                    <li class=""><a id="out-btn" href="{{ url_for('ui.add_user') }}">Add User</a></li>
+                    <li class=""><a id="out-btn" href="{{ url_for('ui.settings') }}">Settings</a></li>
                 </ul>
                 {% endif %}
             </section>

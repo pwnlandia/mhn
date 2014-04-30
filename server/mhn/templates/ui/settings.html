@@ -1,7 +1,36 @@
 {% extends "base.html" %}
 {% block title %}Add User{% endblock %}
 {% block content %}
+    <div class="row" style="margin-bottom:30px;">
+        <div class="small-4 large-centered columns">
+            <h2>Users</h2>
+        </div>
+    </div>
+    {% for u in users %}
     <div class="row">
+        <div class="small-8 large-centered columns">
+            <div class="row">
+                <div class="small-6 columns">
+                    <h6 class="left">
+                        {{ u.email }}
+                        {% if u == current_user %}
+                            (me)
+                        {% endif %}
+                    </h6>
+                </div>
+                <div class="small-3 columns">
+                    <h6><a class="pass-reset" data-user-id="{{ u.id }}"  href="{{ url_for('auth.reset_passwd', user_id=u.id) }}" class="right">Reset password</a></h6>
+                </div>
+                <div class="small-3 columns">
+                    {% if u != current_user %}
+                    <h6><a class="delete-user" data-user-id="{{ u.id }}" href="{{ url_for('auth.delete_user', user_id=u.id) }}" class="right">Delete</a></h6>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="row" style="margin-top:30px;">
         <div class="small-4 large-centered columns">
             <h2>Add User</h2>
         </div>

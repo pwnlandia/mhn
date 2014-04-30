@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from flask.ext.security import UserMixin, RoleMixin
+from flask import render_template
 
 from mhn import db
 from mhn.api import APIModel
@@ -36,3 +39,21 @@ class User(db.Model, APIModel, UserMixin):
         return dict(
                 email=self.email, roles=[r.name for r in self.roles],
                 username=self.username, active=self.active)
+
+
+class PasswdReset(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    hashstr = db.Column(db.String(40))
+    created = db.Column(db.DateTime(), default=datetime.utcnow)
+    active = db.Column(db.Boolean())
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    user = db.relationship(User, uselist=False)
+
+    @property
+    def email_body(self):
+        from mhn import mhn
+        return render_template(
+                'auth/reset-email.html', hashstr=self.hashstr,
+                 server_url=mhn.config['SERVER_BASE_URL'],
+                 email=self.user.email)
+

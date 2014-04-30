@@ -234,13 +234,75 @@ $(document).ready(function() {
                 }),
                 contentType: 'application/json',
                 success: function(resp) {
-                    $('#alert-text').removeClass('warning').addClass('success');
-                    $('#error-txt').html('User created OK.');
-                    $('#msg-container').show();
-                    $('#username-edit').val('');
-                    $('#email-edit').val('');
-                    $('#password-edit').val('');
+                    window.location.reload();
 
+                },
+                error: function(resp) {
+                    $('#alert-text').removeClass('success').addClass('warning');
+                    $('#error-txt').html(resp.responseJSON.error);
+                    $('#msg-container').show();
+                }
+            });
+        });
+    }
+
+    $('.delete-user').click(function(e) {
+        e.preventDefault();
+        var userId = $(this).attr('data-user-id');
+
+        $.ajax({
+            type: 'DELETE',
+            url: '/auth/user/' + userId + '/',
+            contentType: 'application/json',
+            success: function(resp) {
+                window.location.reload();
+
+            },
+            error: function(resp) {
+                alert('Could not delete user.');
+            }
+        });
+    });
+
+    $('.pass-reset').click(function(e) {
+        e.preventDefault();
+        var userId = $(this).attr('data-user-id');
+
+        $.ajax({
+            type: 'GET',
+            url: '/auth/resetpass/' + userId + '/',
+            contentType: 'application/json',
+            success: function(resp) {
+                alert('Password reset email sent.');
+            },
+            error: function(resp) {
+                alert('Could not sent password reset email.');
+            }
+        });
+    });
+
+    if ($('#pass-form').length >= 1) {
+        $('#submit-pass').click(function(e) {
+            e.preventDefault();
+            $('#msg-container').hide();
+
+            var email = $('#email-edit').val();
+            var password = $('#password-edit').val();
+            var passwordRepeat = $('#password-repeat-edit').val();
+            var hashStr = $('#hashstr-edit').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/auth/changepass/',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    email: email,
+                    password: password,
+                    password_repeat: passwordRepeat,
+                    hashstr: hashStr
+                }),
+                success: function(resp) {
+                    window.location = '/';
                 },
                 error: function(resp) {
                     $('#alert-text').removeClass('success').addClass('warning');
