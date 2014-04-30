@@ -2,6 +2,7 @@ flask
 flask-sqlalchemy
 flask-security
 flask-migrate
+Flask-mail
 py-bcrypt
 python-dateutil
 celery
