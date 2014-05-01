@@ -115,20 +115,39 @@ $(document).ready(function() {
 
         var script = $('#script-edit').val();
         var notes = $('#notes-edit').val();
+        var name = $('#name-edit').val();
+        var id = $('#id-edit').val();
+        var url = $('#script-form').attr('action');
+        var reqType;
+
+        if (id) {
+            reqType = 'PUT';
+        }
+        else {
+            reqType = 'POST';
+        }
 
         $('#alert-text').hide();
         $.ajax({
-            type: 'POST',
-            url: '/api/script/',
+            type: reqType,
+            url: url,
             data: JSON.stringify({
                 script: script,
-                notes: notes
+                notes: notes,
+                name: name,
+                id: id
             }),
             contentType: 'application/json',
-            success: function() {
-                $('#alert-text').removeClass('warning').addClass('success');
-                $('#error-txt').html('Script updated OK!');
-                $('#alert-text').show();
+            success: function(resp) {
+                if (id) {
+                    $('#alert-text').removeClass('warning').addClass('success');
+                    $('#error-txt').html('Script updated OK!');
+                    $('#alert-text').show();
+                }
+                else {
+                    var id = resp.id;
+                    window.location = $('#script-select').attr('action') + '?script_id=' + id;
+                }
             },
             error: function(resp) {
                 $('#alert-text').removeClass('success').addClass('warning');

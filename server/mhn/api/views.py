@@ -201,10 +201,26 @@ def create_script():
         return jsonify(script.to_dict())
 
 
+@api.route('/script/', methods=['PUT', 'PATCH'])
+@login_required
+def update_script():
+    script = Script.query.get(request.json.get('id'))
+    script.user = current_user
+    for editable in Script.editable_fields():
+        if editable in request.json:
+            setattr(script, editable, request.json[editable])
+    db.session.add(script)
+    db.session.commit()
+    return jsonify(script.to_dict())
+
+
 @api.route('/script/', methods=['GET'])
 def get_script():
-    script = DeployScript.query.order_by(DeployScript.date.desc()).first()
-    if request.args.get('latest') in ['1', 'true']:
+    if request.args.get('script_id'):
+        script = DeployScript.query.get(request.args.get('script_id'))
+    else:
+        script = DeployScript.query.order_by(DeployScript.date.desc()).first()
+    if request.args.get('text') in ['1', 'true']:
         resp = make_response(script.script)
         resp.headers['Content-Disposition'] = "attachment; filename=deploy.sh"
         return resp
