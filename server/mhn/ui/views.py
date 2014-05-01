@@ -158,3 +158,8 @@ def forgot_passwd(hashstr):
     user = PasswdReset.query.filter_by(hashstr=hashstr).first().user
     return render_template('ui/reset-password.html', reset_user=user,
                            hashstr=hashstr)
+
+
+@ui.route('/reset-password/', methods=['GET'])
+def reset_passwd():
+    return render_template('ui/reset-request.html')

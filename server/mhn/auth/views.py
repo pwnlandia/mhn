@@ -82,6 +82,33 @@ def delete_user(user_id):
     return jsonify({})
 
 
+@auth.route('/resetrequest/', methods=['POST'])
+def reset_passwd_request():
+    if 'email' not in request.json:
+        return error_response(errors.AUTH_EMAIL_MISSING, 400)
+    email = request.json['email']
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return error_response(errors.AUTH_NOT_FOUND.format(email), 404)
+    hashstr = hashlib.sha1(str(datetime.utcnow()) + user.email).hexdigest()
+    # Deactivate all other password resets for this user.
+    PasswdReset.query.filter_by(user=user).update({'active': False})
+    reset = PasswdReset(hashstr=hashstr, active=True, user=user)
+    db.session.add(reset)
+    db.session.commit()
+    # Send password reset email to user.
+    from mhn import mhn
+    msg = Message(
+            html=reset.email_body, subject='MHN Password reset',
+            recipients=[user.email], sender=mhn.config['DEFAULT_MAIL_SENDER'])
+    try:
+        mail.send(msg)
+    except:
+        return error_response(errors.AUTH_SMTP_ERROR, 500)
+    else:
+        return jsonify({})
+
+
 @auth.route('/resetpass/<user_id>/', methods=['GET', 'POST'])
 @roles_accepted('admin')
 def reset_passwd(user_id):
@@ -113,7 +140,6 @@ def change_passwd():
     password = request.json.get('password')
     password_repeat = request.json.get('password_repeat')
     hashstr = request.json.get('hashstr')
-    print request.json
     if not email or not password or not password_repeat or not hashstr:
         return error_response(errors.AUTH_RESET_MISSING, 400)
     if password != password_repeat:

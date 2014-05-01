@@ -312,4 +312,30 @@ $(document).ready(function() {
             });
         });
     }
+
+    if ($('#reset-req-form').length >= 1) {
+        $('#submit-req').click(function(e) {
+            e.preventDefault();
+            $('#msg-container').hide();
+
+            var email = $('#email-edit').val();
+
+            $.ajax({
+                type: 'POST',
+                url: $('#reset-req-form').attr('action'),
+                contentType: 'application/json',
+                data: JSON.stringify({email: email}),
+                success: function(resp) {
+                    $('#alert-text').removeClass('warning').addClass('success');
+                    $('#error-txt').html('Email sent!');
+                    $('#msg-container').show();
+                },
+                error: function(resp) {
+                    $('#alert-text').removeClass('success').addClass('warning');
+                    $('#error-txt').html(resp.responseJSON.error);
+                    $('#msg-container').show();
+                }
+            });
+        });
+    }
 });
