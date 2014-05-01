@@ -257,6 +257,7 @@ class Reference(db.Model):
 class DeployScript(db.Model, APIModel):
     all_fields = {
         'script': {'required': True, 'editable': True},
+        'name': {'required': True, 'editable': True},
         'date': {'required': False, 'editable': False},
         'notes': {'required': True, 'editable': True},
     }
@@ -268,10 +269,12 @@ class DeployScript(db.Model, APIModel):
     date = db.Column(
              db.DateTime(), default=datetime.utcnow)
     notes = db.Column(db.String(140))
+    name = db.Column(db.String(140))
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     user = db.relationship(User, uselist=False)
 
-    def __init__(self, script=None, notes=None):
+    def __init__(self, name=None, script=None, notes=None):
+        self.name = name
         self.script = script
         self.notes = notes
 
@@ -280,4 +283,4 @@ class DeployScript(db.Model, APIModel):
 
     def to_dict(self):
         return dict(script=self.script, date=self.date, notes=self.notes,
-                    user=self.user.email)
+                    user=self.user.email, id=self.id)

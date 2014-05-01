@@ -3,51 +3,86 @@
 {% block content %}
     <div class="row">
         <div class="small-4 columns">
-            <h3>Deploy Command</h3>
+            <h3>Select Script</h3>
+            <form id="script-select" method="get" action="">
+                <select onchange="this.form.submit();" name="script_id">
+                    <option value="0">New script</option>
+                    {% for s in scripts %}
+                    <option {% if script.id == s.id %}selected{% endif %} value={{ s.id }}>{{ s.name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
         </div>
     </div>
-    <div class="row">
-        <div class="small-12 small-centered columns">
-            <p><kbd>wget {{ settings.server_url }}/api/script/?latest=true -O deploy.sh && sh deploy.sh {{ settings.server_url }} {{ settings.deploy_key }}</kbd></p>
+    {% if script %}
+        {% if script.id %}
+        <div class="row">
+            <div class="small-4 columns">
+                <h3>Deploy Command</h3>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="small-12 columns">
-            <hr>
+        <div class="row">
+            <div class="small-12 small-centered columns">
+                <p><kbd>wget "{{ settings.server_url }}/api/script/?text=true&script_id={{ script.id }}" -O deploy.sh && sh deploy.sh {{ settings.server_url }} {{ settings.deploy_key }}</kbd></p>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="small-4 columns">
-            <h3>Deploy Script</h3>
-        </div>
-    </div>
-    <form>
+        {% endif %}
         <div class="row">
             <div class="small-12 columns">
-                <textarea id="script-edit"
-                    style="font-family:Courier, monospace;height:auto;"
-                    rows="25">{{ script.script }}</textarea>
+                <hr>
             </div>
         </div>
         <div class="row">
             <div class="small-4 columns">
-                <h3>Notes</h3>
+                <h3>Deploy Script</h3>
             </div>
         </div>
-        <div class="row">
-            <div class="small-12 columns">
-                <textarea id="notes-edit" style="height:auto;" rows="3">{{ script.notes }}</textarea>
-            </div>
-        </div>
-        <div class="row" style="margin-top: 15px;">
-            <div class="small-6 columns">
-                <div id="alert-text" style="display:none;" data-alert class="alert-box success round">
-                    <div id="error-txt"></div>
+        <form id="script-form" method="post" action="{{ url_for('api.create_script') }}">
+            {% if script.id %}
+            <input id="id-edit" type="hidden" value={{ script.id }} />
+            {% endif %}
+            <div class="row">
+                <div class="small-4 columns">
+                    <h3>Name</h3>
                 </div>
             </div>
-            <div class="small-2 columns">
-                <input style="float:right;" type="button" class="small button" id="submit-script" value="UPDATE"/>
+            <div class="row">
+                <div class="small-12 columns">
+                    <input id="name-edit" style="height:auto;" value="{{ script.name }}" />
+                </div>
             </div>
-        </div>
-    </form>
+            <div class="row">
+                <div class="small-4 columns">
+                    <h3>Script</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-12 columns">
+                    <textarea id="script-edit"
+                        style="font-family:Courier, monospace;height:auto;"
+                        rows="25">{{ script.script }}</textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-4 columns">
+                    <h3>Notes</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-12 columns">
+                    <textarea id="notes-edit" style="height:auto;" rows="3">{{ script.notes }}</textarea>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 15px;">
+                <div class="small-6 columns">
+                    <div id="alert-text" style="display:none;" data-alert class="alert-box success round">
+                        <div id="error-txt"></div>
+                    </div>
+                </div>
+                <div class="small-2 columns">
+                    <input style="float:right;" type="button" class="small button" id="submit-script" value="{% if script.id %}UPDATE{% else %}CREATE{% endif %}"/>
+                </div>
+            </div>
+        </form>
+    {% endif %}
 {% endblock %}
