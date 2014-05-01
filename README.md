@@ -69,6 +69,22 @@ It also allows systems administrators to:
     `&` is appended to the commands in order for them to run in the background.
 
 
+### ADVANCED SETUP
+
+MHN auto configuration sets up SQLite as database engine for the server, but you can set up your server to use a different database engine:
+
+#### MySQL
+
+`SQLALCHEMY_DATABASE_URI = 'mysql://username:password@localhost/databasename'`
+
+#### PostgreSQL
+
+`SQLALCHEMY_DATABASE_URI = 'postgresql://username:password@localhost/databasename'`
+
+For more information visit: https://github.com/mitsuhiko/flask-sqlalchemy.
+
+
+
 ## LICENSE
 
 Modern Honeypot Network
