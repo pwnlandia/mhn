@@ -218,7 +218,6 @@ $(document).ready(function() {
 
     if ($('#user-form').length >= 1) {
         $('#submit-user').click(function(e) {
-            var username = $('#username-edit').val();
             var email = $('#email-edit').val();
             var password = $('#password-edit').val();
 
@@ -228,7 +227,6 @@ $(document).ready(function() {
                 type: 'POST',
                 url: '/auth/user/',
                 data: JSON.stringify({
-                    username: username,
                     email: email,
                     password: password
                 }),
