@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Change Password{% endblock %}
+{% block content %}
+    <div class="row" style="margin-bottom:30px;">
+        <div class="small-4 large-centered columns">
+            <h2>Change Password</h2>
+        </div>
+    </div>
+    <form id="reset-req-form" action="{{ url_for('auth.reset_passwd_request') }}" method="post">
+        <div class="row">
+            <div class="small-5 large-centered columns">
+                <label>
+                    A password recovery email will be sent to this address.
+                    <input id="email-edit" name="email" type="text" placeholder="Email" />
+                </label>
+            </div>
+        </div>
+        <div id="msg-container" class="row" style="display:none;">
+            <div class="small-5 large-centered columns">
+                <div id="alert-text" data-alert class="alert-box success round">
+                    <div id="error-txt"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-5 large-centered columns">
+                <input id="submit-req" class="tiny button right" type="submit" value="SEND" />
+            </div>
+        </div>
+    </form>
+{% endblock %}
