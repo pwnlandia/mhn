@@ -59,7 +59,7 @@ def create_user():
         user = get_datastore().create_user(
                 email=request.json.get('email'),
                 password=encrypt_password(request.json.get('password')))
-        userrole = user_datastore.find_role('user')
+        userrole = user_datastore.find_role('admin')
         user_datastore.add_role_to_user(user, userrole)
         try:
             db.session.add(user)
@@ -109,52 +109,37 @@ def reset_passwd_request():
         return jsonify({})
 
 
-@auth.route('/resetpass/<user_id>/', methods=['GET', 'POST'])
-@roles_accepted('admin')
-def reset_passwd(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return error_response(errors.AUTH_NOT_FOUND.format(user_id), 404)
-    hashstr = hashlib.sha1(str(datetime.utcnow()) + user.email).hexdigest()
-    # Deactivate all other password resets for this user.
-    PasswdReset.query.filter_by(user=user).update({'active': False})
-    reset = PasswdReset(hashstr=hashstr, active=True, user=user)
-    db.session.add(reset)
-    db.session.commit()
-    # Send password reset email to user.
-    from mhn import mhn
-    msg = Message(
-            html=reset.email_body, subject='MHN Password reset',
-            recipients=[user.email], sender=mhn.config['DEFAULT_MAIL_SENDER'])
-    try:
-        mail.send(msg)
-    except:
-        return error_response(errors.AUTH_SMTP_ERROR, 500)
-    else:
-        return jsonify({})
-
-
 @auth.route('/changepass/', methods=['POST'])
 def change_passwd():
-    email = request.json.get('email')
     password = request.json.get('password')
     password_repeat = request.json.get('password_repeat')
-    hashstr = request.json.get('hashstr')
-    if not email or not password or not password_repeat or not hashstr:
+    if not password or not password_repeat:
+        # Request body is not complete.
         return error_response(errors.AUTH_RESET_MISSING, 400)
     if password != password_repeat:
+        # Password do not match.
         return error_response(errors.AUTH_PASSWD_MATCH, 400)
-    reset = db.session.query(PasswdReset).join(User).\
-                filter(User.email == email, PasswdReset.active == True).\
-                filter(PasswdReset.hashstr == hashstr).\
-                first()
-    if not reset:
-        return error_response(errors.AUTH_RESET_HASH, 404)
-    user = reset.user
+    if current_user.is_authenticated():
+        # No need to check password hash object or email.
+        user = current_user
+    else:
+        email = request.json.get('email')
+        hashstr = request.json.get('hashstr')
+        if not email or not hashstr:
+            # Request body is not complete for not authenticated
+            # request, ie, uses password reset hash.
+            return error_response(errors.AUTH_RESET_MISSING, 400)
+        reset = db.session.query(PasswdReset).join(User).\
+                    filter(User.email == email, PasswdReset.active == True).\
+                    filter(PasswdReset.hashstr == hashstr).\
+                    first()
+        if not reset:
+            return error_response(errors.AUTH_RESET_HASH, 404)
+        db.session.add(reset)
+        reset.active = False
+        user = reset.user
     user.password = encrypt_password(password)
-    reset.active = False
     db.session.add(user)
-    db.session.add(reset)
     db.session.commit()
     return jsonify({})
 

@@ -262,23 +262,6 @@ $(document).ready(function() {
         });
     });
 
-    $('.pass-reset').click(function(e) {
-        e.preventDefault();
-        var userId = $(this).attr('data-user-id');
-
-        $.ajax({
-            type: 'GET',
-            url: '/auth/resetpass/' + userId + '/',
-            contentType: 'application/json',
-            success: function(resp) {
-                alert('Password reset email sent.');
-            },
-            error: function(resp) {
-                alert('Could not sent password reset email.');
-            }
-        });
-    });
-
     if ($('#pass-form').length >= 1) {
         $('#submit-pass').click(function(e) {
             e.preventDefault();
@@ -308,6 +291,37 @@ $(document).ready(function() {
                     $('#msg-container').show();
                 }
             });
+        });
+    }
+
+    if ($('#change-pass-form').length >= 1) {
+        $('#submit-pass').click(function(e) {
+            e.preventDefault();
+
+            $('#pass-msg-container').hide();
+            var password = $('#password-change-edit').val();
+            var passwordRepeat = $('#password-repeat-edit').val();
+
+            $.ajax({
+                type: 'POST',
+                url: $('#change-pass-form').attr('action'),
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    password: password,
+                    password_repeat: passwordRepeat,
+                }),
+                success: function(resp) {
+                    $('#pass-alert-text').removeClass('warning').addClass('success');
+                    $('#pass-error-txt').html('Password successfully changed.');
+                    $('#pass-msg-container').show();
+                },
+                error: function(resp) {
+                    $('#pass-alert-text').removeClass('success').addClass('warning');
+                    $('#pass-error-txt').html(resp.responseJSON.error);
+                    $('#pass-msg-container').show();
+                }
+            });
+
         });
     }
 
