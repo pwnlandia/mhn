@@ -45,3 +45,18 @@ EOF
 deactivate
 . /opt/hpfeeds/env/bin/activate
 python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "" "$CHANNELS"
+
+apt-get install supervisor
+
+cat >> /etc/supervisor/conf.d/mnemosyne.conf <<EOF 
+[program:mnemosyne]
+command=/opt/mnemosyne/env/bin/python runner.py --config mnemosyne.cfg
+directory=/opt/mnemosyne
+stdout_logfile=/var/log/mnemosyne.log
+stderr_logfile=/var/log/mnemosyne.err
+autostart=true
+autorestart=true
+startsecs=10
+EOF
+
+supervisorctl update
