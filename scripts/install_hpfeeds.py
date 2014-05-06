@@ -11,11 +11,11 @@ cd /tmp
 wget http://dist.schmorp.de/libev/libev-4.15.tar.gz
 tar zxvf libev-4.15.tar.gz 
 cd libev-4.15
-./configure && make && sudo make install
+./configure && make && make install
 ldconfig
 
 cd /opt
-git clone https://github.com/rep/hpfeeds.git
+git clone https://github.com/threatstream/hpfeeds
 chmod 755 -R hpfeeds
 cd hpfeeds
 virtualenv env
