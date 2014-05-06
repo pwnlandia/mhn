@@ -16,7 +16,7 @@ chmod 755 -R .
 
 IDENT=mnemosyne
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
-CHANNELS = 'conpot.events,thug.events,beeswarm.hive,dionaea.capture,thug.files,beeswarn.feeder,cuckoo.analysis,kippo.sessions,glastopf.events,glastopf.files,mwbinary.dionaea.sensorunique'
+CHANNELS='conpot.events,thug.events,beeswarm.hive,dionaea.capture,thug.files,beeswarn.feeder,cuckoo.analysis,kippo.sessions,glastopf.events,glastopf.files,mwbinary.dionaea.sensorunique'
 
 cat > /opt/mnemosyne/mnemosyne.cfg <<EOF
 [webapi]
@@ -43,5 +43,5 @@ token =
 EOF
 
 deactivate
-/opt/hpfeeds/env/bin/activate
+. /opt/hpfeeds/env/bin/activate
 python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "" "$CHANNELS"
