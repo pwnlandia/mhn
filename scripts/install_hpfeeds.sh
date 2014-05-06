@@ -3,7 +3,7 @@
 set -e
 
 apt-get update
-apt-get install -y libffi-dev build-essential python-pip python-dev mongodb git
+apt-get install -y libffi-dev build-essential python-pip python-dev mongodb git libssl-dev
 
 pip install virtualenv
 
