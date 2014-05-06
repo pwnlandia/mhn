@@ -128,6 +128,7 @@ def create_clean_db():
         initdeploy.script = deployfile.read()
         initdeploy.notes = 'Initial deploy script'
         initdeploy.user = superuser
+        initdeploy.name = 'Ubunut 12.04 Dionaea + Snort'
         db.session.add(initdeploy)
 
     # Creating an initial rule source.
