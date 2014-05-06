@@ -22,7 +22,7 @@ server {
     server_name  _;
     
     location / { 
-        try_files $uri @mhnserver; 
+        try_files \$uri @mhnserver; 
     }
     
     root $MHN_HOME/server;
