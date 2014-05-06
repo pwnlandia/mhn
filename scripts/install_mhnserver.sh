@@ -41,7 +41,7 @@ ln -fs /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
 apt-get install supervisor
 
-cat >> /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
+cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
 [program:mhn-uwsgi]
 command=$MHN_HOME/env/bin/uwsgi -s /tmp/uwsgi.sock -w mhn:mhn -H $MHN_HOME/env --chmod-socket=666
 directory=$MHN_HOME/server
@@ -52,7 +52,7 @@ autorestart=true
 startsecs=10
 EOF
 
-cat >> /etc/supervisor/conf.d/mhn-celery-worker.conf <<EOF 
+cat > /etc/supervisor/conf.d/mhn-celery-worker.conf <<EOF 
 [program:mhn-celery-worker]
 command=$MHN_HOME/env/bin/celery worker -A mhn.tasks --loglevel=INFO
 directory=$MHN_HOME/server
@@ -63,7 +63,7 @@ autorestart=true
 startsecs=10
 EOF
 
-cat >> /etc/supervisor/conf.d/mhn-celery-beat.conf <<EOF 
+cat > /etc/supervisor/conf.d/mhn-celery-beat.conf <<EOF 
 [program:mhn-celery-beat]
 command=$MHN_HOME/env/bin/celery beat -A mhn.tasks --loglevel=INFO
 directory=$MHN_HOME/server
