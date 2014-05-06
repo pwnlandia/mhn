@@ -42,6 +42,13 @@ It also allows systems administrators to:
 
    `pip install -r requirements.txt`
 
+4. Installing mnemosyne:
+
+    sudo ./scripts/install_mnemosyne.sh
+
+5. Installing hpfeeds broker:
+
+    sudo ./scripts/install_hpfeeds.sh
 
 ### RUNNING SERVER
 
@@ -68,6 +75,16 @@ It also allows systems administrators to:
 
     `&` is appended to the commands in order for them to run in the background.
 
+2. Running the hpfeeds broker:
+
+    cd /opt/hpfeeds/
+    python broker/feedbroker.py
+
+
+3. Running the mnemosyne daemon:
+
+    cd /opt/mnemosyne
+    python runner.py --config mnemosyne.cfg
 
 ### ADVANCED SETUP
 

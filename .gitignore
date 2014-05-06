@@ -5,3 +5,5 @@ server/mhn/static/mhn.rules
 server/mhn.log
 
 honeypot/mhnclient.conf
+
+/.vagrant
