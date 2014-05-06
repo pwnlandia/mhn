@@ -6,8 +6,9 @@ apt-get update
 apt-get install -y git build-essential python-pip python-dev redis-server
 pip install virtualenv
 
-MHN_REPO=`dirname $0`/..
-cd $MHN_REPO
+MHN_HOME=`dirname $0`/..
+cd $MHN_HOME
+MHN_HOME=`pwd`
 
 virtualenv env
 . env/bin/activate
@@ -24,7 +25,7 @@ server {
         try_files $uri @mhnserver; 
     }
     
-    root /opt/MHN/server;
+    root $MHN_HOME/server;
 
     location @mhnserver {
       include uwsgi_params;
@@ -32,19 +33,18 @@ server {
     }
 
     location  /static {
-      alias /opt/MHN/server/mhn/static;
+      alias $MHN_HOME/server/mhn/static;
     }
 }
 EOF
 ln -fs /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-/etc/init.d/nginx restart
 
 apt-get install supervisor
 
 cat >> /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
 [program:mhn-uwsgi]
-command=/opt/MHN/mhnenv/bin/uwsgi -s /tmp/uwsgi.sock -w mhn:mhn -H /opt/MHN/mhnenv --chmod-socket=666
-directory=/opt/MHN/server
+command=$MHN_HOME/env/bin/uwsgi -s /tmp/uwsgi.sock -w mhn:mhn -H $MHN_HOME/env --chmod-socket=666
+directory=$MHN_HOME/server
 stdout_logfile=/var/log/uwsgi/mhn.log
 stderr_logfile=/var/log/uwsgi/mhn.err
 autostart=true
@@ -54,10 +54,10 @@ EOF
 
 cat >> /etc/supervisor/conf.d/mhn-celery-worker.conf <<EOF 
 [program:mhn-celery-worker]
-command=/opt/MHN/mhnenv/bin/celery worker -A mhn.tasks --loglevel=INFO
-directory=/opt/MHN/server
-stdout_logfile=/opt/MHN/server/worker.log
-stderr_logfile=/opt/MHN/server/worker.err
+command=$MHN_HOME/env/bin/celery worker -A mhn.tasks --loglevel=INFO
+directory=$MHN_HOME/server
+stdout_logfile=$MHN_HOME/server/worker.log
+stderr_logfile=$MHN_HOME/server/worker.err
 autostart=true
 autorestart=true
 startsecs=10
@@ -65,16 +65,17 @@ EOF
 
 cat >> /etc/supervisor/conf.d/mhn-celery-beat.conf <<EOF 
 [program:mhn-celery-beat]
-command=/opt/MHN/mhnenv/bin/celery beat -A mhn.tasks --loglevel=INFO
-directory=/opt/MHN/server
-stdout_logfile=/opt/MHN/server/worker.log
-stderr_logfile=/opt/MHN/server/worker.err
+command=$MHN_HOME/env/bin/celery beat -A mhn.tasks --loglevel=INFO
+directory=$MHN_HOME/server
+stdout_logfile=$MHN_HOME/server/worker.log
+stderr_logfile=$MHN_HOME/server/worker.err
 autostart=true
 autorestart=true
 startsecs=10
 EOF
 
-mkdir /var/log/uwsgi
-chown www-data:www-data -R /opt/MHN/server/*
+mkdir -p /var/log/uwsgi
+chown www-data:www-data -R $MHN_HOME/server/*
 
 supervisorctl update
+/etc/init.d/nginx restart
