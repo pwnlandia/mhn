@@ -61,6 +61,7 @@ stderr_logfile=$MHN_HOME/server/worker.err
 autostart=true
 autorestart=true
 startsecs=10
+user=www-data
 EOF
 
 cat > /etc/supervisor/conf.d/mhn-celery-beat.conf <<EOF 
