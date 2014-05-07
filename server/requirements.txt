@@ -10,3 +10,4 @@ redis
 requests
 xmltodict
 uwsgi
+pymongo

@@ -4,15 +4,16 @@ from uuid import uuid1
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from flask import Blueprint, request, jsonify, make_response
-from dateutil.parser import parse
+from bson.errors import InvalidId
 
 from mhn import db
 from mhn.api import errors
 from mhn.api.models import (
-        Sensor, Attack, Rule, DeployScript as Script,
+        Sensor, Rule, DeployScript as Script,
         DeployScript, RuleSource)
 from mhn.api.decorators import deploy_auth, sensor_auth
 from mhn.common.utils import error_response
+from mhn.common.clio import Clio
 from mhn.auth import current_user, login_required
 
 
@@ -79,46 +80,46 @@ def connect_sensor(uuid):
     return jsonify(sensor.to_dict())
 
 
-@api.route('/attack/<attack_id>/', methods=['GET'])
+# Utility functions that generalize the GET
+# requests of resources from Mnemosyne.
+def _get_one_resource(resource, res_id):
+    try:
+        res = resource.get(_id=res_id)
+    except InvalidId:
+        res = None
+    if not res:
+        return error_response(errors.API_RESOURCE_NOT_FOUND, 404)
+    else:
+        return jsonify(res.to_dict())
+
+
+def _get_query_resource(resource, query):
+    return jsonify(data=[r.to_dict() for r in resource.get(**query)])
+# Now let's make use these methods in the views.
+
+
+@api.route('/feed/<feed_id>/', methods=['GET'])
 @login_required
-def get_attack(attack_id):
-    attack = Attack.query.get(attack_id)
-    if not attack:
-        return error_response(errors.API_ATTACK_NOT_FOUND, 404)
-    else:
-        return jsonify(attack.to_dict())
+def get_feed(feed_id):
+    return _get_one_resource(Clio().hpfeed, feed_id)
 
 
-# Endpoints for the Attack resource.
-@api.route('/attack/', methods=['POST'])
-@sensor_auth
-def create_attack():
-    missing = Attack.check_required(request.json)
-    if missing:
-        return error_response(
-                errors.API_FIELDS_MISSING.format(missing), 400)
-    else:
-        sensor = Sensor.query.filter_by(
-                uuid=request.json.get('sensor')).first_or_404()
-        attack = Attack()
-        attack.source_ip = request.json.get('source_ip')
-        attack.destination_ip = request.json.get('destination_ip')
-        attack.destination_port = request.json.get('destination_port')
-        attack.priority = request.json.get('priority')
-        attack.date = parse(request.json.get('date'))
-        attack.classification = request.json.get('classification')
-        attack.signature = request.json.get('signature')
-        attack.sensor = sensor
-        # Doing this before add/commit to prevent `InvalidRequestError`.
-        attackdict = attack.to_dict()
-        try:
-            db.session.add(attack)
-            db.session.commit()
-        except IntegrityError:
-            # Silently ignoring attack repost.
-            pass
-        finally:
-            return jsonify(attackdict)
+@api.route('/session/<session_id>/', methods=['GET'])
+@login_required
+def get_session(session_id):
+    return _get_one_resource(Clio().session, session_id)
+
+
+@api.route('/feed/', methods=['GET'])
+@login_required
+def get_feeds():
+    return _get_query_resource(Clio().hpfeed, request.args.to_dict())
+
+
+@api.route('/session/', methods=['GET'])
+@login_required
+def get_sessions():
+    return _get_query_resource(Clio().session, request.args.to_dict())
 
 
 @api.route('/rule/<rule_id>/', methods=['PUT'])
