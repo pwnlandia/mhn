@@ -96,9 +96,9 @@ def get_feed():
     for f in itertools.islice(hpfeeds, 1000):
         feedtext = u'Feed "{ident}" on channel {channel} '
         if f.normalized:
-            feedtext += 'normalized with payload "{payload"}'
+            feedtext += 'normalized with payload "{payload}"'
         else:
-            feedtext += 'not normalized with payload "{payload"}'
+            feedtext += 'not normalized with payload "{payload}": '
         feedtext = feedtext.format(**f.to_dict())
         feed.add('Feed', feedtext, content_type='text',
                  published=f.last_error, updated=f.last_error,
