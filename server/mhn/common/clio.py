@@ -51,7 +51,7 @@ class Clio():
 class ResourceMixin(object):
 
     db_name = 'mnemosyne'
-    expected_filters = ()
+    expected_filters = ('_id',)
 
     def __init__(self, client=None, **kwargs):
         self.client = client
@@ -65,6 +65,8 @@ class ResourceMixin(object):
         todict = {}
         for attr in self.__class__.expected_filters:
             todict[attr] = getattr(self, attr)
+        # Making sure dict is json serializable.
+        todict['_id'] = str(todict['_id'])
         return todict
 
     def get(self, **kwargs):
@@ -112,7 +114,7 @@ class Session(ResourceMixin):
     collection_name = 'session'
     expected_filters = ('protocol', 'source_ip', 'source_port',
                         'destination_ip', 'destination_port',
-                        'honeypot')
+                        'honeypot', '_id')
 
 
 class SessionProtocol(ResourceMixin):
@@ -120,14 +122,14 @@ class SessionProtocol(ResourceMixin):
     collection_name = 'session_protocol'
     expected_filters = ('protocol', 'source_ip', 'source_port',
                         'destination_ip', 'destination_port',
-                        'honeypot')
+                        'honeypot', '_id')
 
 
 class HpFeed(ResourceMixin):
 
     collection_name = 'hpfeed'
     expected_filters = ('ident', 'channel', 'last_error', 'last_error_timestamp',
-                        'normalized', 'payload')
+                        'normalized', 'payload', '_id')
 
 
 class Url(ResourceMixin):
@@ -135,20 +137,20 @@ class Url(ResourceMixin):
     collection_name = 'url'
     expected_filters = ('protocol', 'source_ip', 'source_port',
                         'destination_ip', 'destination_port',
-                        'honeypot')
+                        'honeypot', '_id')
 
 
 class File(ResourceMixin):
 
     collection_name = 'file'
-    expected_filters = ('md5', 'sha1', 'sha512')
+    expected_filters = ('md5', 'sha1', 'sha512', '_id')
 
 
 class AuthKey(ResourceMixin):
 
     db_name = 'hpfeeds'
     collection_name = 'auth_key'
-    expected_filters = ('identifier', 'secret', 'publish', 'subscribe')
+    expected_filters = ('identifier', 'secret', 'publish', 'subscribe', '_id')
 
     def get(self, **kwargs):
         if 'identifier' in kwargs:
