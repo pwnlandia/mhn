@@ -104,7 +104,7 @@ def get_feed():
         feed.add('Feed', feedtext, content_type='text',
                  published=f.last_error_timestamp,
                  updated=f.last_error_timestamp,
-                 url=makeurl(url_for('api.get_attack', attack_id=str(f._id))))
+                 url=makeurl(url_for('api.get_feed', feed_id=str(f._id))))
     return feed
 
 
