@@ -92,10 +92,8 @@ def get_feed(feed_id):
 @api.route('/feed/', methods=['GET'])
 @login_required
 def get_feeds():
-    feeds = Clio().hpfeed.get(**request.args)
-    resp = make_response(json.dumps([f.to_dict() for f in feeds]))
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
+    feeds = Clio().hpfeed.get(**request.args.to_dict())
+    return jsonify(data=[f.to_dict() for f in feeds])
 
 
 @api.route('/rule/<rule_id>/', methods=['PUT'])
