@@ -87,9 +87,7 @@ sudo rm /etc/snort/rules/local.rules
 sudo ln -s /opt/mhn/rules/mhn.rules /etc/snort/rules/local.rules
 
 # Setting mhn:mhn as owner of mhn application folders.
-sudo chown mhn:mhn /opt/mhn/bin/mhnclient
-sudo chown -R mhn:mhn /opt/mhn
-sudo chown -R mhn:mhn /etc/mhnclient
+sudo chown -R mhn:mhn /opt/mhn /etc/mhnclient
 
 configfile="/etc/mhnclient/mhnclient.conf"
 cmd="sudo sed -i 's/\"sensor_uuid\": \"\"/\"sensor_uuid\": \"$uuid\"/1' $configfile"
@@ -100,31 +98,33 @@ eval $cmd2
 sudo pip install -r requirements.txt
 
 # Supervisor will manage mhnclient and Dionea processes.
-# Resets all previous settings.
-sudo apt-get remove -y supervisor
-sudo apt-get purge -y supervisor
 sudo apt-get install -y supervisor
-# Config for supervisor.
-mhncmd="/opt/mhn/bin/mhnclient -c /etc/mhnclient/mhnclient.conf -D"
-mhndir="/opt/mhn"
-mhnlog="/opt/mhn/var/log/error.log"
-diocmd="dionaea -c /etc/dionaea/dionaea.conf -w /var/dionaea -u nobody -g nogroup"
-diodir="/var/dionaea"
-diolog="/var/dionaea/error.log"
-superconfig="autostart=true\nautorestart=true\nredirect_stderr=true\nstopsignal=QUIT"
-mhnsetup="\n[program:mhnclient]\ncommand=$mhncmd\ndirectory=$mhndir\nstdout_logfile=$mhnlog\n$superconfig\n"
-diosetup="\n[program:dionaea]\ncommand=$diocmd\ndirectory=$diodir\nstdout_logfile=$diolog\n$superconfig\n"
 
-sudo chmod o+w /etc/supervisor/supervisord.conf
-sudo echo -e $mhnsetup >> /etc/supervisor/supervisord.conf
-sudo echo -e $diosetup >> /etc/supervisor/supervisord.conf
+# Config for supervisor.
+
+cat > /etc/supervisor/conf.d/mhnclient.conf <<EOF
+[program:mhnclient]
+command=/opt/mhn/bin/mhnclient -c /etc/mhnclient/mhnclient.conf -D
+directory=/opt/mhn
+stdout_logfile=/opt/mhn/var/log/error.log
+autostart=true
+autorestart=true
+redirect_stderr=true
+stopsignal=QUIT
+EOF
+
+cat > /etc/supervisor/conf.d/dionaea.conf <<EOF
+[program:dionaea]
+command=dionaea -c /etc/dionaea/dionaea.conf -w /var/dionaea -u nobody -g nogroup
+directory=/var/dionaea
+stdout_logfile=/var/dionaea/error.log
+autostart=true
+autorestart=true
+redirect_stderr=true
+stopsignal=QUIT
+EOF
+
+supervisorctl update
 
 # Cleanup
-rm deploy.sh
-rm mhnclient.tar.gz
-rm mhnclient.py
-rm mhnclient.conf
-rm requirements.txt
-rm mhn.rules
-
-sudo reboot
+rm -f deploy.sh mhnclient.tar.gz mhnclient.py mhnclient.conf requirements.txt mhn.rules

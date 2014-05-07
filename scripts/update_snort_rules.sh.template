@@ -1,0 +1,13 @@
+#!/bin/bash
+
+rm -f /opt/mhn/rules/mhn.rules.tmp
+
+echo "[`date`] Updating snort signatures ..."
+wget {{BASE_URL}}/static/mhn.rules -O /opt/mhn/rules/mhn.rules.tmp && \
+	mv /opt/mhn/rules/mhn.rules.tmp /opt/mhn/rules/mhn.rules && \
+	killall -SIGHUP snort && \
+	echo "[`date`] Successfully updated snort signatures" && \
+	exit 0
+
+echo "[`date`] Failed to update snort signatures"
+exit 1
