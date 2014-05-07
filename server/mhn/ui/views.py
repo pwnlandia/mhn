@@ -8,7 +8,7 @@ from flask_security import logout_user as logout
 from sqlalchemy import desc, func
 
 from mhn.api.models import (
-        Attack, Sensor, Rule, DeployScript as Script,
+        Sensor, Rule, DeployScript as Script,
         RuleSource)
 from mhn.auth import login_required, current_user
 from mhn.auth.models import User, PasswdReset
