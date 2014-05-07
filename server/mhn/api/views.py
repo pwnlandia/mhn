@@ -4,6 +4,7 @@ from uuid import uuid1
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from flask import Blueprint, request, jsonify, make_response
+from bson.errors import InvalidId
 
 from mhn import db
 from mhn.api import errors
@@ -79,21 +80,46 @@ def connect_sensor(uuid):
     return jsonify(sensor.to_dict())
 
 
+# Utility functions that generalize the GET
+# requests of resources from Mnemosyne.
+def _get_one_resource(resource, res_id):
+    try:
+        res = resource.get(_id=res_id)
+    except InvalidId:
+        res = None
+    if not res:
+        return error_response(errors.API_RESOURCE_NOT_FOUND, 404)
+    else:
+        return jsonify(res.to_dict())
+
+
+def _get_query_resource(resource, query):
+    return jsonify(data=[r.to_dict() for r in resource.get(**query)])
+# Now let's make use these methods in the views.
+
+
 @api.route('/feed/<feed_id>/', methods=['GET'])
 @login_required
 def get_feed(feed_id):
-    feed = Clio().hpfeed.get(_id=feed_id)
-    if not feed:
-        return error_response(errors.API_FEED_NOT_FOUND, 404)
-    else:
-        return jsonify(feed.to_dict())
+    return _get_one_resource(Clio().hpfeed, feed_id)
+
+
+@api.route('/session/<session_id>/', methods=['GET'])
+@login_required
+def get_session(session_id):
+    return _get_one_resource(Clio().session, session_id)
 
 
 @api.route('/feed/', methods=['GET'])
 @login_required
 def get_feeds():
-    feeds = Clio().hpfeed.get(**request.args.to_dict())
-    return jsonify(data=[f.to_dict() for f in feeds])
+    return _get_query_resource(Clio().hpfeed, request.args.to_dict())
+
+
+@api.route('/session/', methods=['GET'])
+@login_required
+def get_sessions():
+    return _get_query_resource(Clio().session, request.args.to_dict())
 
 
 @api.route('/rule/<rule_id>/', methods=['PUT'])

@@ -4,7 +4,7 @@ from flask.ext.sqlalchemy import Pagination
 from mhn.constants import PAGE_SIZE
 
 
-def error_response(message, status_code):
+def error_response(message, status_code=400):
     resp = jsonify({'error': message})
     resp.status_code = status_code
     return resp
