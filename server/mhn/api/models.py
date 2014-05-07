@@ -1,11 +1,13 @@
+import string
+from random import choice
 from datetime import datetime
 
-from flask.helpers import url_for
 from sqlalchemy import UniqueConstraint, func
 
 from mhn import db
 from mhn.api import APIModel
 from mhn.auth.models import User
+from mhn.common.clio import Clio
 
 
 class Sensor(db.Model, APIModel):
@@ -19,7 +21,8 @@ class Sensor(db.Model, APIModel):
         'name': {'required': True, 'editable': True},
         'created_date': {'required': False, 'editable': False},
         'ip': {'required': False, 'editable': False},
-        'hostname': {'required': True, 'editable': True}
+        'hostname': {'required': True, 'editable': True},
+        'honeypot': {'required': True, 'editable': False}
     }
 
     __tablename__ = 'sensors'
@@ -31,24 +34,46 @@ class Sensor(db.Model, APIModel):
             db.DateTime(), default=datetime.utcnow)
     ip = db.Column(db.String(15))
     hostname = db.Column(db.String(50), unique=True)
+    identifier = db.Column(db.String(50), unique=True)
+    honeypot = db.Column(db.String(50))
 
     def __init__(
-          self, uuid=None, name=None, created_date=None,
-          ip=None, hostname=None, **args):
+          self, uuid=None, name=None, created_date=None, honeypot=None,
+          ip=None, hostname=None, identifier=None, **args):
         self.uuid = uuid
         self.name = name
         self.created_date = created_date
         self.ip = ip
         self.hostname = hostname
+        self.identifier = identifier
+        self.honeypot = honeypot
 
     def __repr__(self):
         return '<Sensor>{}'.format(self.to_dict())
 
     def to_dict(self):
         return dict(
-            uuid=self.uuid, name=self.name,
+            uuid=self.uuid, name=self.name, honeypot=self.honeypot,
             created_date=self.created_date, ip=self.ip,
-            hostname=self.hostname)
+            hostname=self.hostname, identifier=self.uuid,
+            # Extending with info from Mnemosyne.
+            secret=self.authkey.secret, publish=self.authkey.publish)
+
+    def new_auth_dict(self):
+        el = string.ascii_letters + string.digits
+        rand_str = lambda n: ''.join(choice(el) for _ in range(n))
+        return dict(secret=rand_str(16),
+                    identifier=self.uuid, honeypot=self.honeypot,
+                    subscribe=[], publish=Sensor.get_channels(self.honeypot))
+
+    @property
+    def authkey(self):
+        return Clio().authkey.get(identifier=self.uuid)
+
+    @staticmethod
+    def get_channels(honeypot):
+        from mhn import mhn
+        return mhn.config.get('HONEYPOT_CHANNELS', {}).get(honeypot, [])
 
 
 class Rule(db.Model, APIModel):
