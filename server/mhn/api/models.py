@@ -53,65 +53,6 @@ class Sensor(db.Model, APIModel):
             hostname=self.hostname)
 
 
-class Attack(db.Model, APIModel):
-
-    # Defines some properties on the fields:
-    # required: Is required for creating object via
-    #           a POST request.
-    # editable: Can be edited via a PUT request.
-    # Defaults to False.
-    all_fields = {
-        'source_ip': {'required': True},
-        'destination_ip': {'required': True},
-        'destination_port': {'required': True},
-        'priority': {},
-        'date': {'required': True},
-        'sensor': {'required': True}
-    }
-
-    __tablename__ = 'attacks'
-
-    id = db.Column(db.Integer, primary_key=True)
-    source_ip = db.Column(db.String(15))
-    destination_ip = db.Column(db.String(15))
-    destination_port = db.Column(db.Integer)
-    priority = db.Column(db.Integer)
-    date = db.Column(db.DateTime())
-    classification = db.Column(db.String(80))
-    signature = db.Column(db.String(100))
-    sensor_id = db.Column(db.Integer,
-                          db.ForeignKey('sensors.id'))
-    __table_args__ = (UniqueConstraint(source_ip, destination_ip,
-                                       destination_port, date, sensor_id),)
-
-    def __init__(
-            self, source_ip=None, destination_ip=None,
-            destination_port=None, priority=None, date=None,
-            classification=None, signature=None):
-        self.source_ip = source_ip
-        self.destination_ip = destination_ip
-        self.destination_port = destination_port
-        self.priority = priority
-        self.date = date
-        self.classification = classification
-        self.signature = signature
-
-    def __repr__(self):
-        return '<Attack>{}'.format(self.to_dict())
-
-    @property
-    def resource_uri(self):
-        return url_for('api.get_attack',
-                       attack_id=self.id)
-
-    def to_dict(self):
-        return dict(
-            source_ip=self.source_ip, destination_ip=self.destination_ip,
-            destination_port=self.destination_port, priority=self.priority,
-            date=self.date, classification=self.classification,
-            sensor=self.sensor.hostname, signature=self.signature)
-
-
 class Rule(db.Model, APIModel):
 
     # Defines some properties on the fields:
