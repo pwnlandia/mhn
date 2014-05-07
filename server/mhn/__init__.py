@@ -102,8 +102,8 @@ def get_feed():
             feedtext += 'and error "{last_error}".'
         feedtext = feedtext.format(**f.to_dict())
         feed.add('Feed', feedtext, content_type='text',
-                 published=f.last_error.timestamp,
-                 updated=f.last_error.timestamp,
+                 published=f.last_error_timestamp,
+                 updated=f.last_error_timestamp,
                  url=makeurl(url_for('api.get_attack', attack_id=str(f._id))))
     return feed
 
