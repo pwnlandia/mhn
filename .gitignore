@@ -9,3 +9,5 @@ celerybeat-schedule
 honeypot/mhnclient.conf
 
 /.vagrant
+/env
+

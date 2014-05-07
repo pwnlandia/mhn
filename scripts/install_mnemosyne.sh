@@ -7,7 +7,7 @@ apt-get install -y git python-pip python-dev mongodb
 pip install virtualenv
 
 cd /opt/
-git clone https://github.com/johnnykv/mnemosyne.git
+git clone https://github.com/threatstream/mnemosyne.git
 cd mnemosyne
 virtualenv env
 . env/bin/activate
