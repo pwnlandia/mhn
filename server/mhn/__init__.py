@@ -1,6 +1,7 @@
+import itertools
 from urlparse import urljoin
 
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password as encrypt
@@ -84,21 +85,24 @@ def makeurl(uri):
 
 
 def get_feed():
-    from mhn.api.models import Attack
+    from mhn.common.clio import Clio
     from mhn.auth import current_user
     authfeed = mhn.config['FEED_AUTH_REQUIRED']
     if authfeed and not current_user.is_authenticated():
         abort(404)
-    feed = AtomFeed('MHN Attack Report', feed_url=request.url,
+    feed = AtomFeed('MHN HpFeeds Report', feed_url=request.url,
                     url=request.url_root)
-    attacks = Attack.query.order_by(Attack.date.desc()).limit(1000).all()
-    for at in attacks:
-        feedtext = u'{source_ip} attack on {destination_ip} '
-        feedtext += u'on port {destination_port}. {signature} - {classification}'
-        feedtext = feedtext.format(**at.to_dict())
-        feed.add('Attack', feedtext, content_type='text',
-                 published=at.date, url=makeurl(at.resource_uri),
-                 updated=at.date)
+    hpfeeds = Clio().hpfeed.get()
+    for f in itertools.islice(hpfeeds, 1000):
+        feedtext = u'Feed "{ident}" on channel {channel} '
+        if f.normalized:
+            feedtext += 'normalized with payload "{payload"}'
+        else:
+            feedtext += 'not normalized with payload "{payload"}'
+        feedtext = feedtext.format(**f.to_dict())
+        feed.add('Feed', feedtext, content_type='text',
+                 published=f.last_error, updated=f.last_error,
+                 url=makeurl(url_for('api.get_attack', attack_id=str(f._id))))
     return feed
 
 
