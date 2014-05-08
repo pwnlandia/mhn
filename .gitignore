@@ -12,3 +12,4 @@ honeypot/mhnclient.conf
 /.vagrant
 /env
 
+index.html*
