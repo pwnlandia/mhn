@@ -7,6 +7,7 @@ def config_ctx():
     """
     settings = {
         'server_url': current_app.config['SERVER_BASE_URL'],
-        'deploy_key': current_app.config['DEPLOY_KEY']
+        'deploy_key': current_app.config['DEPLOY_KEY'],
+        'supported_honeypots': current_app.config['HONEYPOT_CHANNELS'].keys()
     }
     return dict(settings=settings)

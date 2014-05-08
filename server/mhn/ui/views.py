@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-from dateutil.parser import parse as parse_date
 from flask import (
         Blueprint, render_template, request, url_for,
         redirect, g)
@@ -13,10 +12,13 @@ from mhn.api.models import (
 from mhn.auth import login_required, current_user
 from mhn.auth.models import User, PasswdReset
 from mhn import db, mhn
-from mhn.common.utils import paginate
+from mhn.common.utils import (
+        paginate_options, alchemy_pages, mongo_pages)
+from mhn.common.clio import Clio
 
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
+clio = Clio()
 
 
 @ui.before_request
@@ -44,54 +46,29 @@ def login_user():
 @login_required
 def dashboard():
     # Number of attacks in the last 24 hours.
-    attackcount = Attack.query.filter(
-            Attack.date >= datetime.utcnow() - timedelta(hours=24)).count()
+    attackcount = clio.session.count(
+             timestamp_lte=datetime.utcnow() - timedelta(hours=24))
     # TOP 5 attacker ips.
-    worst_ips = db.session.query(Attack.source_ip.label('ip'),
-                                 func.count(Attack.source_ip).label('count')).\
-                           group_by(Attack.source_ip).\
-                           order_by(desc('count')).\
-                           limit(5)
-    # TOP 5 more frequent attack signatures.
-    freq_signs = db.session.query(Attack.classification.label('classification'),
-                                  Attack.signature.label('signature'),
-                                  func.count(Attack.classification).label('count')).\
-                            filter(Attack.classification != '').\
-                            group_by(Attack.classification).\
-                            order_by(desc('count')).\
-                            limit(5)
-    # TOP 5 attacked ports.)
-    top_ports = db.session.query(Attack.destination_port.label('port'),
-                                  func.count(Attack.destination_port).label('count')).\
-                            group_by(Attack.destination_port).\
-                            order_by(desc('count')).\
-                            limit(5)
-
+    top_attackers = clio.session.top_attackers(top=5)
+    # TOP 5 attacked ports
+    top_ports = clio.session.top_targeted_ports(top=5)
 
     return render_template('ui/dashboard.html',
                            attackcount=attackcount,
-                           worst_ips=worst_ips,
-                           freq_signs=freq_signs,
+                           top_attackers=top_attackers,
                            top_ports=top_ports)
 
 
 @ui.route('/attacks/', methods=['GET'])
 @login_required
 def get_attacks():
-    attacks = Attack.query
-    date = request.args.get('date')
-    sensor = request.args.get('sensor')
-    if date:
-        try:
-            date = parse_date(date)
-            attacks = attacks.filter(Attack.date >= date)
-        except TypeError:
-            pass
-    if sensor:
-        attacks = attacks.join(Sensor).filter(Sensor.uuid == sensor)
-    attacks = attacks.order_by(desc(Attack.date))
-    attacks = paginate(attacks)
-    return render_template('ui/attacks.html', attacks=attacks,
+    options = paginate_options()
+    options['order_by'] = '-timestamp'
+    total = clio.session.count(**request.args.to_dict())
+    sessions = clio.session.get(
+            options=options, **request.args.to_dict())
+    sessions = mongo_pages(sessions, total)
+    return render_template('ui/attacks.html', attacks=sessions,
                            sensors=Sensor.query, view='ui.get_attacks',
                            **request.args.to_dict())
 
@@ -102,7 +79,7 @@ def get_rules():
     rules = db.session.query(Rule, func.count(Rule.rev).label('nrevs')).\
                group_by(Rule.sid).\
                order_by(desc(Rule.date))
-    rules = paginate(rules)
+    rules = alchemy_pages(rules)
     return render_template('ui/rules.html', rules=rules, view='ui.get_rules')
 
 
@@ -116,18 +93,8 @@ def rule_sources_mgmt():
 @ui.route('/sensors/', methods=['GET'])
 @login_required
 def get_sensors():
-    # The following uses fancy SQLAlchemy subqueries to query
-    # Sensors ordered by the number of attacks.
-    # 1. Creating subquery with attacks count per sensor.
-    # 2. Querying sensors outer-joining the subquery made beforehand,
-    #    and ordering by its attack_count column.
-    stmt = db.session.query(Attack.sensor_id,
-                            func.count('*').label('attack_count')).\
-                      group_by(Attack.sensor_id).subquery()
-    sensors = db.session.query(Sensor).\
-                         outerjoin(stmt, Sensor.id==stmt.c.sensor_id).\
-                         order_by(desc(stmt.c.attack_count))
-    sensors = paginate(sensors)
+    sensors = db.session.query(Sensor)
+    sensors = alchemy_pages(sensors)
     return render_template('ui/sensors.html', sensors=sensors,
                            view='ui.get_sensors')
 
