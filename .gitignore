@@ -5,6 +5,7 @@ server/mhn/static/mhn.rules
 server/mhn.log
 
 celerybeat-schedule
+celerybeat.pid
 
 honeypot/mhnclient.conf
 

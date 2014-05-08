@@ -44,3 +44,16 @@ CELERYBEAT_SCHEDULE = {
             'args': ()
     }
 }
+HONEYPOT_CHANNELS = {
+    'dionaea': [
+        'mwbinary.dionaea.sensorunique',
+        'dionaea.capture',
+        'dionaea.capture.anon',
+        'dionaea.caputres'
+    ],
+    'conpot': ['conpot.events'],
+    'snort': ['snort.alerts'],
+    'kippo': ['kippo.sessions'],
+    'thugh': ['thug.files', 'thug.events'],
+    'glastopf': ['glastopf.files', 'glastopf.events']
+}
