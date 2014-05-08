@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-from dateutil.parser import parse as parse_date
 from flask import (
         Blueprint, render_template, request, url_for,
         redirect, g)
@@ -13,7 +12,8 @@ from mhn.api.models import (
 from mhn.auth import login_required, current_user
 from mhn.auth.models import User, PasswdReset
 from mhn import db, mhn
-from mhn.common.utils import paginate
+from mhn.common.utils import (
+        paginate_options, alchemy_pages, mongo_pages)
 from mhn.common.clio import Clio
 
 
@@ -62,20 +62,13 @@ def dashboard():
 @ui.route('/attacks/', methods=['GET'])
 @login_required
 def get_attacks():
-    attacks = Attack.query
-    date = request.args.get('date')
-    sensor = request.args.get('sensor')
-    if date:
-        try:
-            date = parse_date(date)
-            attacks = attacks.filter(Attack.date >= date)
-        except TypeError:
-            pass
-    if sensor:
-        attacks = attacks.join(Sensor).filter(Sensor.uuid == sensor)
-    attacks = attacks.order_by(desc(Attack.date))
-    attacks = paginate(attacks)
-    return render_template('ui/attacks.html', attacks=attacks,
+    options = paginate_options()
+    options['order_by'] = '-timestamp'
+    total = clio.session.count(**request.args.to_dict())
+    sessions = clio.session.get(
+            options=options, **request.args.to_dict())
+    sessions = mongo_pages(sessions, total)
+    return render_template('ui/attacks.html', attacks=sessions,
                            sensors=Sensor.query, view='ui.get_attacks',
                            **request.args.to_dict())
 
@@ -86,7 +79,7 @@ def get_rules():
     rules = db.session.query(Rule, func.count(Rule.rev).label('nrevs')).\
                group_by(Rule.sid).\
                order_by(desc(Rule.date))
-    rules = paginate(rules)
+    rules = alchemy_pages(rules)
     return render_template('ui/rules.html', rules=rules, view='ui.get_rules')
 
 
@@ -100,18 +93,8 @@ def rule_sources_mgmt():
 @ui.route('/sensors/', methods=['GET'])
 @login_required
 def get_sensors():
-    # The following uses fancy SQLAlchemy subqueries to query
-    # Sensors ordered by the number of attacks.
-    # 1. Creating subquery with attacks count per sensor.
-    # 2. Querying sensors outer-joining the subquery made beforehand,
-    #    and ordering by its attack_count column.
-    stmt = db.session.query(Attack.sensor_id,
-                            func.count('*').label('attack_count')).\
-                      group_by(Attack.sensor_id).subquery()
-    sensors = db.session.query(Sensor).\
-                         outerjoin(stmt, Sensor.id==stmt.c.sensor_id).\
-                         order_by(desc(stmt.c.attack_count))
-    sensors = paginate(sensors)
+    sensors = db.session.query(Sensor)
+    sensors = alchemy_pages(sensors)
     return render_template('ui/sensors.html', sensors=sensors,
                            view='ui.get_sensors')
 
