@@ -49,7 +49,8 @@ HONEYPOT_CHANNELS = {
         'mwbinary.dionaea.sensorunique',
         'dionaea.capture',
         'dionaea.capture.anon',
-        'dionaea.caputres'
+        'dionaea.caputres',
+        'dionaea.connections'
     ],
     'conpot': ['conpot.events'],
     'snort': ['snort.alerts'],
