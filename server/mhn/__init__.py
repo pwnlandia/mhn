@@ -126,16 +126,25 @@ def create_clean_db():
 
     from mhn.api.models import DeployScript, RuleSource
     from mhn.tasks.rules import fetch_sources
-    # Creating a initial deploy script.
-    # Reading initial deploy script should be: ../../scripts/mhndeploy.sh
-    deploypath = path.abspath('../scripts/mhndeploy.sh')
-    with open(deploypath, 'r') as deployfile:
-        initdeploy = DeployScript()
-        initdeploy.script = deployfile.read()
-        initdeploy.notes = 'Initial deploy script'
-        initdeploy.user = superuser
-        initdeploy.name = 'Ubunut 12.04 Dionaea + Snort'
-        db.session.add(initdeploy)
+    # Creating a initial deploy scripts.
+    # Reading initial deploy script should be: ../../scripts/
+    #|-- deploy_conpot.sh
+    #|-- deploy_dionaea.sh
+    #|-- deploy_snort.sh
+    deployscripts = {
+        'Conpot': path.abspath('../scripts/deploy_conpot.sh'),
+        'Dionaea': path.abspath('../scripts/deploy_dionaea.sh'),
+        'Snort': path.abspath('../scripts/deploy_snort.sh'),
+    }
+    for honeypot, deploypath in deployscripts.iteritems():
+
+        with open(deploypath, 'r') as deployfile:
+            initdeploy = DeployScript()
+            initdeploy.script = deployfile.read()
+            initdeploy.notes = 'Initial deploy script for {}'.format(honeypot)
+            initdeploy.user = superuser
+            initdeploy.name = 'Ubunut 12.04 {}'.format(honeypot)
+            db.session.add(initdeploy)
 
     # Creating an initial rule source.
     rulesrc = RuleSource()
