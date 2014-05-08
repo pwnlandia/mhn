@@ -3,44 +3,20 @@
 set -e
 set -x
 
-# TODO: replace with the registration code
+if [ $# -ne 2 ]
+    then
+        echo "Wrong number of arguments supplied."
+        echo "Usage: $0 <server_url> <deploy_key>."
+        exit 1
+fi
 
-# if [ $# -ne 2 ]
-#     then
-#         echo "Wrong number of arguments supplied."
-#         echo "Usage: sh mhndeploy.sh <server_url> <deploy_key>."
-#         exit 1
-# fi
+server_url=$1
+deploy_key=$2
 
-# server_url=$1
-# deploy_key=$2
-
-# echo 'Downloading latest client version from: '$mhnclient_url
-# wget $server_url/static/mhnclient.latest.tar.gz -O mhnclient.tar.gz
-# tar -xvf mhnclient.tar.gz
-
-# hostname=$(hostname)
-
-# deploy_cmd="curl -s -X POST -H \"Content-Type: application/json\" -d '{\"name\": \"$hostname\", \"hostname\": \"$hostname\", \"deploy_key\": \"$deploy_key\"}' $server_url/api/sensor/ |  python -c 'import json,sys;obj=json.load(sys.stdin);print obj[\"uuid\"]'"
-# uuid=$(eval $deploy_cmd)
-
-# if [ -z "$uuid" ]
-#     then
-#         echo "Could not create sensor using name \"$hostname\"."
-#         exit 1
-# fi
-
-# echo "Created sensor: " $uuid
-
-######################################################
-# TODO: get these from the registration process...
-# hpfeeds info
-HPF_HOST="mhn-dev.threatstream.com"
-HPF_PORT="10000"
-HPF_IDENT="dionaea.$uuid"
-HPF_SECRET="3w3e45r5r56y78u9i9i0o0l0k9j"
-######################################################
-
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "dionaea"
 
 # Add ppa to apt sources (Needed for Dionaea).
 apt-get update
