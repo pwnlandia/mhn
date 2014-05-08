@@ -6,7 +6,7 @@ ThreatStream 2014
 """
 import pymongo
 
-from bson import ObjectId
+from bson import ObjectId, son
 
 
 class Clio():
@@ -73,11 +73,11 @@ class ResourceMixin(object):
         if self.client is None:
             raise ValueError
         else:
-            query = dict()
             if '_id' in kwargs:
                 kwargs['_id'] = ObjectId(kwargs['_id'])
                 return self.__class__.from_dict(
                         self.collection.find_one(kwargs), self.client)
+            query = dict()
             for arg in self.expected_filters:
                 # Creating a query dictionary
                 # with values passed in kwargs.
@@ -85,6 +85,16 @@ class ResourceMixin(object):
                     query[arg] = kwargs.get(arg)
             queryset = self.collection.find(query)
             return (self.__class__.from_dict(f, self.client) for f in queryset)
+
+    def count(self, **kwargs):
+        query = dict()
+        for arg in self.expected_filters:
+            # Creating a query dictionary
+            # with values passed in kwargs.
+            if kwargs.get(arg):
+                query[arg] = kwargs.get(arg)
+        # Just counting the results.
+        return self.collection.find(query).count()
 
     @property
     def collection(self):
@@ -115,6 +125,29 @@ class Session(ResourceMixin):
     expected_filters = ('protocol', 'source_ip', 'source_port',
                         'destination_ip', 'destination_port',
                         'honeypot', '_id')
+
+    def _tops(self, attrname, top=5):
+        # A bit of Javascript-like formatting
+        # has never killed anybody.
+        res = self.collection.aggregate([
+            {
+                '$group': {
+                    '_id': '$' + attrname,
+                    'count': {'$sum': 1}
+                }
+            },
+            {
+                '$sort': son.SON([('count', -1)])
+            }
+        ])
+        if 'ok' in res:
+            return res.get('result', [])[:top]
+
+    def top_attackers(self, top=5):
+        return self._tops('source_ip', top)
+
+    def top_targeted_ports(self, top=5):
+        return self._tops('destination_port', top)
 
 
 class SessionProtocol(ResourceMixin):

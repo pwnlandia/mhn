@@ -14,9 +14,11 @@ from mhn.auth import login_required, current_user
 from mhn.auth.models import User, PasswdReset
 from mhn import db, mhn
 from mhn.common.utils import paginate
+from mhn.common.clio import Clio
 
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
+clio = Clio()
 
 
 @ui.before_request
@@ -44,34 +46,16 @@ def login_user():
 @login_required
 def dashboard():
     # Number of attacks in the last 24 hours.
-    attackcount = Attack.query.filter(
-            Attack.date >= datetime.utcnow() - timedelta(hours=24)).count()
+    attackcount = clio.session.count(
+             timestamp_lte=datetime.utcnow() - timedelta(hours=24))
     # TOP 5 attacker ips.
-    worst_ips = db.session.query(Attack.source_ip.label('ip'),
-                                 func.count(Attack.source_ip).label('count')).\
-                           group_by(Attack.source_ip).\
-                           order_by(desc('count')).\
-                           limit(5)
-    # TOP 5 more frequent attack signatures.
-    freq_signs = db.session.query(Attack.classification.label('classification'),
-                                  Attack.signature.label('signature'),
-                                  func.count(Attack.classification).label('count')).\
-                            filter(Attack.classification != '').\
-                            group_by(Attack.classification).\
-                            order_by(desc('count')).\
-                            limit(5)
-    # TOP 5 attacked ports.)
-    top_ports = db.session.query(Attack.destination_port.label('port'),
-                                  func.count(Attack.destination_port).label('count')).\
-                            group_by(Attack.destination_port).\
-                            order_by(desc('count')).\
-                            limit(5)
-
+    top_attackers = clio.session.top_attackers(top=5)
+    # TOP 5 attacked ports
+    top_ports = clio.session.top_targeted_ports(top=5)
 
     return render_template('ui/dashboard.html',
                            attackcount=attackcount,
-                           worst_ips=worst_ips,
-                           freq_signs=freq_signs,
+                           top_attackers=top_attackers,
                            top_ports=top_ports)
 
 
