@@ -34,7 +34,7 @@
                         <td>{{ sr.hostname }}</td>
                         <td>{{ sr.ip}}</td>
                         <td>{{ sr.uuid}}</td>
-                        <td><a href="{{ url_for('ui.get_attacks', sensor=sr.uuid) }}">{{ sr.attacks.all()|count }}</a></td>
+                        <td><a href="{{ url_for('ui.get_attacks', identifier=sr.uuid) }}">{{ sr.attacks_count }}</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
