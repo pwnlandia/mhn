@@ -1,45 +1,20 @@
 #!/bin/bash
 
-#TODO: replace this with the registration code
+if [ $# -ne 2 ]
+    then
+        echo "Wrong number of arguments supplied."
+        echo "Usage: $0 <server_url> <deploy_key>."
+        exit 1
+fi
 
-# if [ $# -ne 2 ]
-#     then
-#         echo "Wrong number of arguments supplied."
-#         echo "Usage: sh mhndeploy.sh <server_url> <deploy_key>."
-#         exit 1
-# fi
+server_url=$1
+deploy_key=$2
 
-# server_url=$1
-# deploy_key=$2
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "conpot"
 
-# hostname=$(hostname)
-
-# curl -s -X POST -H "Content-Type: application/json" -d "{
-# 	\"name\": \"$hostname\", 
-# 	\"hostname\": \"$hostname\", 
-# 	\"deploy_key\": \"$deploy_key\"
-# }" $server_url/api/sensor/ > /tmp/conpot-deploy.json
-
-# uuid=$(python -c 'import json;obj=json.load(file("/tmp/conpot-deploy.json"));print obj["uuid"]')
-
-# if [ -z "$uuid" ]
-#     then
-#         echo "Could not create sensor using name \"$hostname\"."
-#         exit 1
-# fi
-
-set -e
-
-# echo "Created sensor: " $uuid
-
-######################################################
-# TODO: get these from the registration process...
-# hpfeeds info
-HPF_HOST="mhn-dev.threatstream.com"
-HPF_PORT="10000"
-HPF_IDENT="conpot.$uuid"
-HPF_SECRET="3w3e45r5r56y78u9i9i0o0l0k9j"
-######################################################
 
 apt-get update
 apt-get install -y git libsmi2ldbl snmp-mibs-downloader python-pip python-dev libxml2-dev libxslt-dev
