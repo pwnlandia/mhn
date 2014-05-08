@@ -1,5 +1,0 @@
-docopt
-pyparsing
-requests
-sqlalchemy
-watchdog
