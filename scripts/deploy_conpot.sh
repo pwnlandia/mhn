@@ -74,7 +74,7 @@ apt-get install -y supervisor
 
 cat > /etc/supervisor/conf.d/conpot.conf <<EOF
 [program:conpot]
-command=$CONPOT_HOME/env/bin/conpot -c $CONPOT_HOME/conpot.conf
+command=$CONPOT_HOME/env/bin/conpot -c $CONPOT_HOME/conpot.cfg
 directory=$CONPOT_HOME
 stdout_logfile=/var/log/conpot.out
 stderr_logfile=/var/log/conpot.err
