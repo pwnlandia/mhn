@@ -62,7 +62,7 @@ rm -f /opt/mhn/rules/mhn.rules.tmp
 echo "[`date`] Updating snort signatures ..."
 wget $server_url/static/mhn.rules -O /opt/mhn/rules/mhn.rules.tmp && \
 	mv /opt/mhn/rules/mhn.rules.tmp /opt/mhn/rules/mhn.rules && \
-	killall -SIGHUP snort && \
+	/etc/init.d/snort restart && \
 	echo "[`date`] Successfully updated snort signatures" && \
 	exit 0
 
@@ -84,7 +84,7 @@ apt-get install -y supervisor
 # Config for supervisor.
 cat > /etc/supervisor/conf.d/snort_hpfeeds.conf <<EOF
 [program:snort_hpfeeds]
-command=/opt/snort_hpfeeds/env/bin/python /opt/snort_hpfeeds/env/bin/snort_hpfeeds.py /opt/snort_hpfeeds/snort_hpfeeds.conf
+command=/opt/snort_hpfeeds/env/bin/python /opt/snort_hpfeeds/env/bin/snort_hpfeeds.py -c /opt/snort_hpfeeds/snort_hpfeeds.conf
 directory=/opt/snort_hpfeeds
 stdout_logfile=/var/log/snort_hpfeeds.out
 stderr_logfile=/var/log/snort_hpfeeds.err
