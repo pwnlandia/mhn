@@ -40,7 +40,7 @@ mkdir -p $SNORT_HPF_HOME
 cd $SNORT_HPF_HOME
 virtualenv env
 . env/bin/activate
-pip install -e git+https://github.com/threatstream/snort_hpfeeds.git#egg=snort_hpfeeds-dev
+pip install --process-dependency-links -e git+https://github.com/threatstream/snort_hpfeeds.git#egg=snort_hpfeeds-dev
 
 cat > snort_hpfeeds.conf <<EOF
 {
@@ -53,18 +53,10 @@ cat > snort_hpfeeds.conf <<EOF
 }
 EOF
 
-# Creating application folders.
-mkdir -p /opt/mhn/rules
-cp mhn.rules /opt/mhn/rules
-
-# Installing snort rules.
-# mhn.rules will be used as local.rules.
-rm -f /etc/snort/rules/local.rules
-ln -s /opt/mhn/rules/mhn.rules /etc/snort/rules/local.rules
-
 cat > /etc/cron.daily/update_snort_rules.sh <<EOF
 #!/bin/bash
 
+mkdir -p /opt/mhn/rules
 rm -f /opt/mhn/rules/mhn.rules.tmp
 
 echo "[`date`] Updating snort signatures ..."
@@ -79,6 +71,12 @@ exit 1
 EOF
 chmod 755 /etc/cron.daily/update_snort_rules.sh
 /etc/cron.daily/update_snort_rules.sh
+
+# Installing snort rules.
+# mhn.rules will be used as local.rules.
+rm -f /etc/snort/rules/local.rules
+ln -s /opt/mhn/rules/mhn.rules /etc/snort/rules/local.rules
+
 
 # Supervisor will manage snort-hpfeeds
 apt-get install -y supervisor
