@@ -59,9 +59,13 @@ class ResourceMixin(object):
         for attr in self.__class__.expected_filters:
             setattr(self, attr, kwargs.get(attr))
 
-    def _clean_query(self, dirty):
+    def __call__(self, *args, **kwargs):
+        return self.get(*args, **kwargs)
+
+    @classmethod
+    def _clean_query(cls, dirty):
         clean = dict()
-        for arg in self.__class__.expected_filters:
+        for arg in cls.expected_filters:
             # Creating a query dictionary
             # with values passed in kwargs.
             if dirty.get(arg):
@@ -120,7 +124,7 @@ class ResourceMixin(object):
                 kwargs['_id'] = ObjectId(kwargs['_id'])
                 return self.__class__.from_dict(
                         self.collection.find_one(kwargs), self.client)
-            query = self._clean_query(kwargs)
+            query = self.__class__._clean_query(kwargs)
             queryset = self.collection.find(query)
             if options:
                 skip, limit, order_by = self.__class__._clean_options(options)
@@ -132,8 +136,20 @@ class ResourceMixin(object):
                     queryset = queryset.sort(*order_by)
             return (self.__class__.from_dict(f, self.client) for f in queryset)
 
+    def delete(self, **kwargs):
+        query = dict()
+        if kwargs:
+            query = self.__class__._clean_query(kwargs)
+        elif self._id:
+            query = {'_id': self._id}
+        else:
+            # Need to be at least a valid resource or
+            # pass keyword arguments.
+            return None
+        return self.collection.remove(query)
+
     def count(self, **kwargs):
-        query = self._clean_query(kwargs)
+        query = self.__class__._clean_query(kwargs)
         # Just counting the results.
         return self.collection.find(query).count()
 
@@ -167,8 +183,9 @@ class Session(ResourceMixin):
                         'destination_ip', 'destination_port',
                         'honeypot', 'timestamp', '_id', 'identifier')
 
-    def _clean_query(self, dirty):
-        clean = super(Session, self)._clean_query(dirty)
+    @classmethod
+    def _clean_query(cls, dirty):
+        clean = super(Session, cls)._clean_query(dirty)
         if 'destination_port' in clean:
             # Converts destination_port to integer so the find()
             # call matches properly. If it's not a proper integer
