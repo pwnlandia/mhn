@@ -165,7 +165,7 @@ class Session(ResourceMixin):
     collection_name = 'session'
     expected_filters = ('protocol', 'source_ip', 'source_port',
                         'destination_ip', 'destination_port',
-                        'honeypot', 'timestamp', '_id')
+                        'honeypot', 'timestamp', '_id', 'identifier')
 
     def _clean_query(self, dirty):
         clean = super(Session, self)._clean_query(dirty)
@@ -190,12 +190,6 @@ class Session(ResourceMixin):
             else:
                 clean['timestamp'] = {'$gte': timestamp}
 
-        if 'identifier' in dirty:
-            # This adds support for querying by hpfeed indentifer.
-            hpfeed = HpFeed(self.client)
-            # This may be slow as hpfeed collection gets bigger.
-            _ids = [f._id for f in hpfeed.get(ident=dirty['identifier'])]
-            clean['hpfeed_id'] = {'$in': _ids}
         return clean
 
     def _tops(self, attrname, top=5):
