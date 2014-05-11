@@ -112,45 +112,47 @@ def create_clean_db():
     """
     Use from a python shell to create a fresh database.
     """
-    mhn.test_request_context().push()
-    db.create_all()
-    # Creating superuser entry.
-    superuser = user_datastore.create_user(
-            email=mhn.config.get('SUPERUSER_EMAIL'),
-            password=encrypt(mhn.config.get('SUPERUSER_PASSWORD')))
-    adminrole = user_datastore.create_role(name='admin', description='')
-    user_datastore.add_role_to_user(superuser, adminrole)
-    user_datastore.create_role(name='user', description='')
+    with mhn.test_request_context():
+        db.create_all()
+        # Creating superuser entry.
+        superuser = user_datastore.create_user(
+                email=mhn.config.get('SUPERUSER_EMAIL'),
+                password=encrypt(mhn.config.get('SUPERUSER_PASSWORD')))
+        adminrole = user_datastore.create_role(name='admin', description='')
+        user_datastore.add_role_to_user(superuser, adminrole)
+        user_datastore.create_role(name='user', description='')
 
-    from os import path
+        from os import path
 
-    from mhn.api.models import DeployScript, RuleSource
-    from mhn.tasks.rules import fetch_sources
-    # Creating a initial deploy scripts.
-    # Reading initial deploy script should be: ../../scripts/
-    #|-- deploy_conpot.sh
-    #|-- deploy_dionaea.sh
-    #|-- deploy_snort.sh
-    deployscripts = {
-        'Conpot': path.abspath('../scripts/deploy_conpot.sh'),
-        'Dionaea': path.abspath('../scripts/deploy_dionaea.sh'),
-        'Snort': path.abspath('../scripts/deploy_snort.sh'),
-    }
-    for honeypot, deploypath in deployscripts.iteritems():
+        from mhn.api.models import DeployScript, RuleSource
+        from mhn.tasks.rules import fetch_sources
+        # Creating a initial deploy scripts.
+        # Reading initial deploy script should be: ../../scripts/
+        #|-- deploy_conpot.sh
+        #|-- deploy_dionaea.sh
+        #|-- deploy_snort.sh
+        deployscripts = {
+            'Conpot': path.abspath('../scripts/deploy_conpot.sh'),
+            'Dionaea': path.abspath('../scripts/deploy_dionaea.sh'),
+            'Snort': path.abspath('../scripts/deploy_snort.sh'),
+        }
+        for honeypot, deploypath in deployscripts.iteritems():
 
-        with open(deploypath, 'r') as deployfile:
-            initdeploy = DeployScript()
-            initdeploy.script = deployfile.read()
-            initdeploy.notes = 'Initial deploy script for {}'.format(honeypot)
-            initdeploy.user = superuser
-            initdeploy.name = 'Ubunut 12.04 {}'.format(honeypot)
-            db.session.add(initdeploy)
+            with open(deploypath, 'r') as deployfile:
+                initdeploy = DeployScript()
+                initdeploy.script = deployfile.read()
+                initdeploy.notes = 'Initial deploy script for {}'.format(honeypot)
+                initdeploy.user = superuser
+                initdeploy.name = 'Ubunut 12.04 {}'.format(honeypot)
+                db.session.add(initdeploy)
 
-    # Creating an initial rule source.
-    rulesrc = RuleSource()
-    rulesrc.name = 'Emerging Threats'
-    rulesrc.uri = 'http://rules.emergingthreats.net/open/snort-2.9.0/emerging-all.rules'
-    rulesrc.name = 'Default rules source'
-    db.session.add(rulesrc)
-    db.session.commit()
-    fetch_sources()
+        # Creating an initial rule source.
+        rules_source = mhn.config.get('SNORT_RULES_SOURCE')
+        if not mhn.config.get('TESTING'):
+            rulesrc = RuleSource()
+            rulesrc.name = rules_source['name']
+            rulesrc.uri = rules_source['uri']
+            rulesrc.name = 'Default rules source'
+            db.session.add(rulesrc)
+            db.session.commit()
+            fetch_sources()
