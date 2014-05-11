@@ -3,6 +3,7 @@ flask-sqlalchemy
 flask-security
 flask-migrate
 Flask-mail
+Flask-Testing
 py-bcrypt
 python-dateutil
 celery

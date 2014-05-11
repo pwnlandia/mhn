@@ -3,6 +3,10 @@ server/config.py
 server/mhn.db
 server/mhn/static/mhn.rules
 server/mhn.log
+server/mhn/mhn.log
+
+
+*test-mhn.db
 
 celerybeat-schedule
 celerybeat.pid
