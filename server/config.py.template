@@ -44,6 +44,10 @@ CELERYBEAT_SCHEDULE = {
             'args': ()
     }
 }
+SNORT_RULES_SOURCE = {
+    'name': 'Emerging Threats',
+    'uri': 'http://rules.emergingthreats.net/open/snort-2.9.0/emerging-all.rules'
+}
 HONEYPOT_CHANNELS = {
     'dionaea': [
         'mwbinary.dionaea.sensorunique',
