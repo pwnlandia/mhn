@@ -3,7 +3,10 @@
 set -e
 
 apt-get update
-apt-get install -y libffi-dev build-essential python-pip python-dev mongodb git libssl-dev
+apt-get install -y libffi-dev build-essential python-pip python-dev git libssl-dev
+
+SCRIPTS=`dirname $0`
+bash $SCRIPTS/install_mongo.sh
 
 pip install virtualenv
 

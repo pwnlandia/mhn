@@ -49,7 +49,7 @@ cat > snort_hpfeeds.conf <<EOF
 	"port":   $HPF_PORT,
 	"ident":  "$HPF_IDENT",
 	"secret": "$HPF_SECRET",
-	"alert_file": "/var/log/snort/alerts"
+	"alert_file": "/var/log/snort/alert"
 }
 EOF
 

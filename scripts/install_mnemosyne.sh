@@ -3,8 +3,11 @@
 set -e
 
 apt-get update
-apt-get install -y git python-pip python-dev mongodb
+apt-get install -y git python-pip python-dev
 pip install virtualenv
+
+SCRIPTS=`dirname $0`
+bash $SCRIPTS/install_mongo.sh
 
 cd /opt/
 git clone https://github.com/threatstream/mnemosyne.git
@@ -16,7 +19,7 @@ chmod 755 -R .
 
 IDENT=mnemosyne
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
-CHANNELS='conpot.events,thug.events,beeswarm.hive,dionaea.capture,thug.files,beeswarn.feeder,cuckoo.analysis,kippo.sessions,glastopf.events,glastopf.files,mwbinary.dionaea.sensorunique'
+CHANNELS='conpot.events,thug.events,beeswarm.hive,dionaea.capture,dionaea.connections,thug.files,beeswarn.feeder,cuckoo.analysis,kippo.sessions,glastopf.events,glastopf.files,mwbinary.dionaea.sensorunique,snort.alerts'
 
 cat > /opt/mnemosyne/mnemosyne.cfg <<EOF
 [webapi]
