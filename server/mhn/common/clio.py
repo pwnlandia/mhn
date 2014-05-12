@@ -186,16 +186,25 @@ class Session(ResourceMixin):
     @classmethod
     def _clean_query(cls, dirty):
         clean = super(Session, cls)._clean_query(dirty)
-        if 'destination_port' in clean:
-            # Converts destination_port to integer so the find()
-            # call matches properly. If it's not a proper integer
-            # it will be removed from the query.
+        def clean_integer(field_name, query):
+            # Integer fields in mongo need to be int type, GET queries
+            # are passed as str so this method converts the str to
+            # integer so the find() call matches properly.
+            # If it's not a proper integer it will be remove
+            # from the query.
             try:
-                destination_port = int(clean['destination_port'])
+                integer = int(query[field_name])
             except (ValueError, TypeError):
-                clean.pop('destination_port')
+                query.pop(field_name)
             else:
-                clean['destination_port'] = destination_port
+                query[field_name] = integer
+            finally:
+                return query
+
+        intfields = ('destination_port', 'source_port',)
+        for field in intfields:
+            if field in clean:
+                clean = clean_integer(field, dirty)
 
         if 'timestamp' in clean:
             # Transforms timestamp queries into
