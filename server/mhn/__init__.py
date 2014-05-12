@@ -92,19 +92,14 @@ def get_feed():
         abort(404)
     feed = AtomFeed('MHN HpFeeds Report', feed_url=request.url,
                     url=request.url_root)
-    hpfeeds = Clio().hpfeed.get()
-    for f in itertools.islice(hpfeeds, 1000):
-        feedtext = u'Feed "{ident}" on channel {channel} '
-        if f.normalized:
-            feedtext += 'normalized with payload "{payload}".'
-        else:
-            feedtext += 'not normalized with payload "{payload}" '
-            feedtext += 'and error "{last_error}".'
-        feedtext = feedtext.format(**f.to_dict())
+    sessions = Clio().session.get(options={'limit': 1000})
+    for s in sessions:
+        feedtext = u'Sensor "{identifier}" '
+        feedtext += '{source_ip}:{source_port} on sensorip:{destination_port}.'
+        feedtext = feedtext.format(**s.to_dict())
         feed.add('Feed', feedtext, content_type='text',
-                 published=f.last_error_timestamp,
-                 updated=f.last_error_timestamp,
-                 url=makeurl(url_for('api.get_feed', feed_id=str(f._id))))
+                 published=s.timestamp, updated=s.timestamp,
+                 url=makeurl(url_for('api.get_session', session_id=str(s._id))))
     return feed
 
 
