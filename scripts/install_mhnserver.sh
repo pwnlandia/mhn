@@ -14,6 +14,8 @@ virtualenv env
 . env/bin/activate
 pip install -r server/requirements.txt
 
+python generateconfig.py
+python initdatabase.py
 
 apt-get install nginx
 cat > /etc/nginx/sites-available/default <<EOF 
