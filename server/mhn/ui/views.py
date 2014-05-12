@@ -95,13 +95,14 @@ def rule_sources_mgmt():
 @ui.route('/sensors/', methods=['GET'])
 @login_required
 def get_sensors():
-    sensors = db.session.query(Sensor)
+    sensors = Sensor.query.all()
+    total = Sensor.query.count()
     sensors = sorted(
             sensors, key=lambda s: s.attacks_count, reverse=True)
     # Paginating the list.
     sensors = sensors[(g.page - 1) * PAGE_SIZE:PAGE_SIZE]
     # Using mongo_pages because it expects paginated iterables.
-    sensors = mongo_pages(sensors, len(sensors))
+    sensors = mongo_pages(sensors, total)
     return render_template('ui/sensors.html', sensors=sensors,
                            view='ui.get_sensors')
 
