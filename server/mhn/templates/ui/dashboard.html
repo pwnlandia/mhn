@@ -26,9 +26,9 @@
         <div class="row">
             <div class="small-6 push-6 columns">
                 <ol>
-                {% for ip in worst_ips %}
+                {% for ip in top_attackers %}
                     <li><strong>
-                    {{ ip.ip }} ({{ ip.count }} attacks)
+                    {{ ip._id }} ({{ ip.count }} attacks)
                     </li></strong>
                 {% endfor %}
                 </ol>
@@ -44,7 +44,7 @@
                 <ol>
                 {% for port in top_ports %}
                     <li><strong>
-                    {{ port.port }} ({{ port.count }} times)
+                    {{ port._id }} ({{ port.count }} times)
                     </li></strong>
                 {% endfor %}
                 </ol>

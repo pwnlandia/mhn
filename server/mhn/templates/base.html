@@ -54,6 +54,22 @@
         </nav>
         {% endif %}
         {% block content %}{% endblock %}
+        {% block footer %}
+        <style>
+            #footer {
+                margin-top: 80px;
+                margin-bottom: 80px;
+                bottom: 0;
+                width: 100%;
+            }
+        </style>
+        <div class="row" id="footer">
+            <div class="small-7 large-centered columns">
+                <span><small>Modern Honeynet Project is an open source project created by: </small><span>
+                <a href="https://threatstream.com"><img width="158" height="25" src="/static/img/tslogo.png" /></a>
+            </div>
+        </div>
+        {% endblock %}
         <script src="/static/js/vendor/fastclick.js"></script>
         <script>
             $(document).foundation();

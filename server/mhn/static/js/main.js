@@ -78,7 +78,8 @@ $(document).ready(function() {
     }
 
     if ($('#login-form').length >= 1) {
-        $('#log-btn').click(function() {
+        $('#log-btn').click(function(e) {
+            e.preventDefault();
             var email = $('#email').val();
             var passwd = $('#passwd').val();
             var data = {

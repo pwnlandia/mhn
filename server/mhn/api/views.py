@@ -68,6 +68,7 @@ def update_sensor(uuid):
 @login_required
 def delete_sensor(uuid):
     sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()
+    Clio().authkey.delete(identifier=uuid)
     db.session.delete(sensor)
     db.session.commit()
     return jsonify({})

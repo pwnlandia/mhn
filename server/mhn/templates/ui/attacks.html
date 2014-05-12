@@ -7,64 +7,73 @@
         </div>
     </div>
     <div class="row">
-        <div class="small-4 columns">
-            <h4>Search Filters</h4>
+        <div class="small-7 large-centered columns">
+            <div class="row">
+                <div class="small-4 columns">
+                    <h4>Search Filters</h4>
+                </div>
+            </div>
+            <form id="attack-filter" action="" method="get">
+                <div class="row">
+                    <div class="small-4 columns">
+                        <label>Sensor</label>
+                    </div>
+                    <div class="small-3 columns">
+                        <label>Honeypot</label>
+                    </div>
+                    <div class="small-3 pull-2 columns">
+                        <label>Date</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-4 columns">
+                        <select name="identifier">
+                            <option value="">All</option>
+                            {% for s in sensors %}
+                            <option {% if s.uuid == identifier %}selected{% endif %} value="{{ s.uuid }}">{{ s.hostname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="small-3 columns">
+                        <select name="honeypot">
+                            <option value="">All</option>
+                            {% for pot in settings.supported_honeypots %}
+                            <option {% if pot == honeypot %}selected{% endif %} value="{{ pot }}">{{ pot }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="small-3 columns">
+                        <input type="text" name="timestamp" value="{{ timestamp }}" placeholder="MM/DD/YY" />
+                    </div>
+                    <div class="small-2 columns">
+                        <input class="tiny button" type="submit" value="GO" />
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
-    <form id="attack-filter" action="" method="get">
-        <div class="row">
-            <div class="small-3 columns">
-                <label>Sensor</label>
-            </div>
-            <div class="small-3 pull-6 columns">
-                <label>Date</label>
-            </div>
-        </div>
-        <div class="row">
-            <div class="small-3 columns">
-                <select name="sensor">
-                    <option value="">All</option>
-                    {% for s in sensors %}
-                    <option {% if s.uuid == sensor %}selected{% endif %} value="{{ s.uuid }}">{{ s.hostname }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="small-3 columns">
-                <input type="text" name="date" value="{{ date }}" placeholder="MM/DD/YY" />
-            </div>
-            <div class="small-6 columns">
-                <input class="tiny button" type="submit" value="SEARCH" />
-            </div>
-        </div>
-    </form>
     <div class="row">
-        <div class="small-12 large-centered columns">
+        <div class="small-7 large-centered columns">
             <table>
                 <thead>
                     <tr>
                         <th></th>
                         <th>Date</th>
-                        <th>Classification</th>
-                        <th>Signature</th>
                         <th>Source IP</th>
-                        <th>Destination IP</th>
                         <th>Destination port</th>
-                        <th>Priority</th>
-                        <th>Sensor</th>
+                        <th>Protocol</th>
+                        <th>Honeypot</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for at in attacks.items %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td>{{ at.date|fdate }}</td>
-                        <td>{{ at.classification }}</td>
-                        <td>{{ at.signature }}</td>
+                        <td>{{ at.timestamp|fdate }}</td>
                         <td>{{ at.source_ip }}</td>
-                        <td>{{ at.destination_ip }}</td>
                         <td>{{ at.destination_port }}</td>
-                        <td>{{ at.priority }}</td>
-                        <td>{{ at.sensor.hostname }}</td>
+                        <td>{{ at.protocol }}</td>
+                        <td>{{ at.honeypot }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

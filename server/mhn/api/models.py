@@ -67,6 +67,10 @@ class Sensor(db.Model, APIModel):
                     subscribe=[], publish=Sensor.get_channels(self.honeypot))
 
     @property
+    def attacks_count(self):
+        return Clio().session.count(identifier=self.uuid)
+
+    @property
     def authkey(self):
         return Clio().authkey.get(identifier=self.uuid)
 
