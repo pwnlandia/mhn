@@ -224,7 +224,7 @@ class Session(ResourceMixin):
         res = self.collection.aggregate([
             {
                 '$match': {
-                    attrname: {'$ne': 'null'},
+                    attrname: {'$ne': None},
                 }
             },
             {
