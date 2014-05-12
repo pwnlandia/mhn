@@ -19,7 +19,6 @@ from mhn.constants import PAGE_SIZE
 
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
-clio = Clio()
 
 
 @ui.before_request
@@ -46,6 +45,7 @@ def login_user():
 @ui.route('/dashboard/', methods=['GET'])
 @login_required
 def dashboard():
+    clio = Clio()
     # Number of attacks in the last 24 hours.
     attackcount = clio.session.count(
              timestamp_lte=datetime.utcnow() - timedelta(hours=24))
@@ -63,6 +63,7 @@ def dashboard():
 @ui.route('/attacks/', methods=['GET'])
 @login_required
 def get_attacks():
+    clio = Clio()
     options = paginate_options()
     options['order_by'] = '-timestamp'
     total = clio.session.count(**request.args.to_dict())

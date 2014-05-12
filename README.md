@@ -44,11 +44,18 @@ It also allows systems administrators to:
 
 4. Installing mnemosyne:
 
-    sudo ./scripts/install_mnemosyne.sh
+   `sudo ./scripts/install_mnemosyne.sh`
 
 5. Installing hpfeeds broker:
 
-    sudo ./scripts/install_hpfeeds.sh
+   `sudo ./scripts/install_hpfeeds.sh`
+
+6. Installing MHN server using nginx and uwsgi:
+
+   `sudo ./scripts/install_mhnserver.sh`
+
+   At some point the script will help you generate the configuration file, follow the steps bellow for generating a proper file. After that the database will be initialized, this process might take some time as the snort rules will be parsed and rendered from the default sources.
+
 
 ### RUNNING SERVER
 
@@ -63,7 +70,16 @@ It also allows systems administrators to:
     * `Superuser email`: Email address for default user.
     * `Superuser password`: Password for default user.
     * `Server base url ['http://127.0.0.1:8080']`: Server's reachable HTTP address including port. A suggested address is presented inside the brackets, if that address is incorrect, type in the correct address that clients will use to reach the server.
+    * `Mail server address ["localhost"]`: SMTP server address to be used. Defaults to `localhost`.
+    * `Mail server port [25]`: Port to be used to connect to the SMTP server. Defaults to `25`.
+    * `Use TLS for email? y/n`: Answer `y` or `n` accordingly.
+    * `Use SSL for email? y/n`: Answer `y` or `n` accordingly.
+    * `Mail server username [""]`: Credentials to authenticate against the mail server. Defaults to ` `.
+    * `Mail server password [""]`: Credentials to authenticate against the mail server. Defaults to ` `.
+    * `Mail default sender [""]`: Default `From` address for outgoing email. Defaults to ` `.
     * `Path for log file ['mhn.log']`: A path where the application logs will be located. Defaults to `mhn.log`.
+
+    Note that mail settings aren't required, but some features like password reset won't work unless a mail server is propperly setup.
 
     After this step, the server should run using Flask's built in HTTP server, using address `0.0.0.0`. This setup is not recommended for a production environment.
 
@@ -100,9 +116,11 @@ MHN auto configuration sets up SQLite as database engine for the server, but you
 
 For more information visit: https://github.com/mitsuhiko/flask-sqlalchemy.
 
-### Production deploy with NGINX and UWSGI
+### Steps Production deploy with NGINX and UWSGI
 
 The following instructions where tested for Ubuntu 12.04, if you are using a different distro or UNIX platform, all you need to do is find the proper packages for your system and everything else should work the same.
+
+Note: If you are using the `install_mhnserver.sh` script, you don't need to follow these steps.
 
 ##### Installing dependencies
 
