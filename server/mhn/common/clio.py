@@ -223,6 +223,11 @@ class Session(ResourceMixin):
         # has never killed anybody.
         res = self.collection.aggregate([
             {
+                '$match': {
+                    attrname: {'$ne': 'null'},
+                }
+            },
+            {
                 '$group': {
                     '_id': '$' + attrname,
                     'count': {'$sum': 1}
