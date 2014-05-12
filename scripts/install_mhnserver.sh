@@ -14,8 +14,10 @@ virtualenv env
 . env/bin/activate
 pip install -r server/requirements.txt
 
+cd $MHN_HOME/server/
 python generateconfig.py
 python initdatabase.py
+cd $MHN_HOME
 
 apt-get install nginx
 cat > /etc/nginx/sites-available/default <<EOF 
