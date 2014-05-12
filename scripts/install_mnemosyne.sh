@@ -3,8 +3,11 @@
 set -e
 
 apt-get update
-apt-get install -y git python-pip python-dev mongodb
+apt-get install -y git python-pip python-dev
 pip install virtualenv
+
+SCRIPTS=`dirname $0`
+bash $SCRIPTS/install_mongo.sh
 
 cd /opt/
 git clone https://github.com/threatstream/mnemosyne.git
