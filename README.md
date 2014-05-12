@@ -116,9 +116,11 @@ MHN auto configuration sets up SQLite as database engine for the server, but you
 
 For more information visit: https://github.com/mitsuhiko/flask-sqlalchemy.
 
-### Production deploy with NGINX and UWSGI
+### Steps Production deploy with NGINX and UWSGI
 
 The following instructions where tested for Ubuntu 12.04, if you are using a different distro or UNIX platform, all you need to do is find the proper packages for your system and everything else should work the same.
+
+Note: If you are using the `install_mhnserver.sh` script, you don't need to follow these steps.
 
 ##### Installing dependencies
 
