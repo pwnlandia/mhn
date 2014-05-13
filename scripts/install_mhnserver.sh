@@ -1,4 +1,4 @@
-#!/bin/bash
+c#!/bin/bash
 
 set -e
 
@@ -15,7 +15,7 @@ virtualenv env
 pip install -r server/requirements.txt
 
 
-apt-get install nginx
+apt-get install -y nginx
 cat > /etc/nginx/sites-available/default <<EOF 
 server {
     listen       80;
@@ -39,7 +39,7 @@ server {
 EOF
 ln -fs /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-apt-get install supervisor
+apt-get install -y supervisor
 
 cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
 [program:mhn-uwsgi]

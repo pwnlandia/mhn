@@ -24,7 +24,7 @@ EOF
 cd ..
 make
 
-apt-get install supervisor
+apt-get install -y supervisor
 
 cat > /etc/supervisor/conf.d/honeymap.conf <<EOF 
 [program:honeymap]
@@ -40,7 +40,7 @@ EOF
 supervisorctl update
 
 
-apt-get install libgeoip-dev
+apt-get install -y libgeoip-dev
 /opt/hpfeeds/env/bin/pip install GeoIP
 
 cd /opt/
