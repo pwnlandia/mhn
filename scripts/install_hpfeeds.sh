@@ -29,7 +29,7 @@ pip install pyopenssl==0.14
 pip install pymongo
 pip install -e git+https://github.com/rep/evnet.git#egg=evnet-dev
 
-apt-get install supervisor
+apt-get install -y supervisor
 
 cat >> /etc/supervisor/conf.d/hpfeeds-broker.conf <<EOF 
 [program:hpfeeds-broker]

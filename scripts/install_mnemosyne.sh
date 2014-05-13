@@ -49,7 +49,7 @@ deactivate
 . /opt/hpfeeds/env/bin/activate
 python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "" "$CHANNELS"
 
-apt-get install supervisor
+apt-get install -y supervisor
 
 cat >> /etc/supervisor/conf.d/mnemosyne.conf <<EOF 
 [program:mnemosyne]
