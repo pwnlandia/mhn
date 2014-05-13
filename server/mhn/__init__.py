@@ -138,7 +138,7 @@ def create_clean_db():
                 initdeploy.script = deployfile.read()
                 initdeploy.notes = 'Initial deploy script for {}'.format(honeypot)
                 initdeploy.user = superuser
-                initdeploy.name = 'Ubunut 12.04 {}'.format(honeypot)
+                initdeploy.name = 'Ubuntu 12.04 {}'.format(honeypot)
                 db.session.add(initdeploy)
 
         # Creating an initial rule source.

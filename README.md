@@ -24,8 +24,8 @@ It also allows systems administrators to:
 
     
     $ cd /opt/
-    $ git clone 
-    $ cd scripts/
+    $ git clone https://github.com/threatstream/MHN.git
+    $ cd MHN/scripts/
     $ sudo ./install_hpfeeds.sh
     $ sudo ./install_mnemosyne.sh
     $ sudo ./install_mhnserver.sh
