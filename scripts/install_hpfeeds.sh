@@ -28,6 +28,7 @@ pip install cffi
 pip install pyopenssl==0.14
 pip install pymongo
 pip install -e git+https://github.com/rep/evnet.git#egg=evnet-dev
+pip install .
 
 apt-get install -y supervisor
 

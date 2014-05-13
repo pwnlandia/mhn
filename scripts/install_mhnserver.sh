@@ -15,6 +15,11 @@ virtualenv env
 pip install -r server/requirements.txt
 
 cd $MHN_HOME/server/
+
+echo "==========================================================="
+echo "  MHN Configuration"
+echo "==========================================================="
+
 python generateconfig.py
 python initdatabase.py
 cd $MHN_HOME

@@ -37,9 +37,6 @@ autorestart=true
 startsecs=10
 EOF
 
-supervisorctl update
-
-
 apt-get install -y libgeoip-dev
 /opt/hpfeeds/env/bin/pip install GeoIP
 
@@ -80,6 +77,7 @@ autorestart=true
 startsecs=10
 EOF
 
+supervisorctl update
 
 
 
