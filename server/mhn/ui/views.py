@@ -19,7 +19,6 @@ from mhn.constants import PAGE_SIZE
 
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
-clio = Clio()
 
 
 @ui.before_request
@@ -46,6 +45,7 @@ def login_user():
 @ui.route('/dashboard/', methods=['GET'])
 @login_required
 def dashboard():
+    clio = Clio()
     # Number of attacks in the last 24 hours.
     attackcount = clio.session.count(
              timestamp_lte=datetime.utcnow() - timedelta(hours=24))
@@ -63,6 +63,7 @@ def dashboard():
 @ui.route('/attacks/', methods=['GET'])
 @login_required
 def get_attacks():
+    clio = Clio()
     options = paginate_options()
     options['order_by'] = '-timestamp'
     total = clio.session.count(**request.args.to_dict())
@@ -94,13 +95,15 @@ def rule_sources_mgmt():
 @ui.route('/sensors/', methods=['GET'])
 @login_required
 def get_sensors():
-    sensors = db.session.query(Sensor)
+    sensors = Sensor.query.all()
+    total = Sensor.query.count()
     sensors = sorted(
             sensors, key=lambda s: s.attacks_count, reverse=True)
     # Paginating the list.
-    sensors = sensors[(g.page - 1) * PAGE_SIZE:PAGE_SIZE]
+    pag = paginate_options()
+    sensors = sensors[pag['skip']:pag['skip'] + pag['limit']]
     # Using mongo_pages because it expects paginated iterables.
-    sensors = mongo_pages(sensors, len(sensors))
+    sensors = mongo_pages(sensors, total)
     return render_template('ui/sensors.html', sensors=sensors,
                            view='ui.get_sensors')
 

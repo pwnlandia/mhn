@@ -21,7 +21,6 @@ It also allows systems administrators to:
 
 
 ### INSTALLING SERVER (tested Ubuntu 12.0.4.3 x86_64)
-
     
     $ cd /opt/
     $ git clone https://github.com/threatstream/MHN.git
@@ -60,7 +59,6 @@ Prior to running MHN, you need to configure it.
     $ sudo /etc/init.d/nginx start
     $ sudo /etc/init.d/supervisord start
     $ sudo supervisorctl status
-
 
 
 ## LICENSE
