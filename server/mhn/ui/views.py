@@ -126,6 +126,10 @@ def deploy_mgmt():
             'ui/script.html', scripts=Script.query.order_by(Script.date.desc()),
             script=script)
 
+@ui.route('/honeymap/', methods=['GET'])
+@login_required
+def honeymap():
+    return render_template('ui/honeymap.html')
 
 @ui.route('/add-user/', methods=['GET'])
 @login_required
