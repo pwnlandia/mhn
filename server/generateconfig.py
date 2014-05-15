@@ -17,6 +17,7 @@ rand_str = lambda n: ''.join(choice(el) for _ in range(n))
 def generate_config():
     pub_ip = json.load(urlopen('http://httpbin.org/ip'))['origin']
     default_base_url = 'http://{}:8080'.format(pub_ip)
+    default_honeymap_url = 'http://{}:3000'.format(pub_ip)
     default_log_path = 'mhn.log'
     localconfig = {}
     localconfig['SECRET_KEY'] = rand_str(32)
@@ -32,6 +33,13 @@ def generate_config():
         server_base_url = server_base_url[:-1]
     server_base_url = server_base_url if server_base_url.strip() else default_base_url
     localconfig['SERVER_BASE_URL'] = server_base_url
+
+    honeymap_url = raw_input('Honeymap url ["{}"]: '.format(default_honeymap_url))
+    if honeymap_url.endswith('/'):
+        honeymap_url = honeymap_url[:-1]
+    honeymap_url = honeymap_url if honeymap_url.strip() else default_honeymap_url
+    localconfig['HONEYMAP_URL'] = honeymap_url
+
     mail_server = raw_input('Mail server address ["localhost"]: ')
     localconfig['MAIL_SERVER'] = mail_server if mail_server else "localhost"
     mail_port = raw_input('Mail server port [25]: ')
