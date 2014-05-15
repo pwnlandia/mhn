@@ -10,6 +10,7 @@ cd /opt
 git clone https://github.com/threatstream/honeymap.git
 
 cd /opt/honeymap/server
+export GOPATH=`pwd`
 go get
 go build
 cat > config.json <<EOF
