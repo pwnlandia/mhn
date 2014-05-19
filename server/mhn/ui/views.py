@@ -82,7 +82,7 @@ def get_rules():
     rules = db.session.query(Rule, func.count(Rule.rev).label('nrevs')).\
                group_by(Rule.sid).\
                order_by(desc(Rule.date))
-    rules = alchemy_pages(rules)
+    rules = alchemy_pages(rules, limit=10)
     return render_template('ui/rules.html', rules=rules, view='ui.get_rules')
 
 
