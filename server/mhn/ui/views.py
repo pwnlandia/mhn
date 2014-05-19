@@ -101,7 +101,7 @@ def get_sensors():
     sensors = sorted(
             sensors, key=lambda s: s.attacks_count, reverse=True)
     # Paginating the list.
-    pag = paginate_options()
+    pag = paginate_options(limit=10)
     sensors = sensors[pag['skip']:pag['skip'] + pag['limit']]
     # Using mongo_pages because it expects paginated iterables.
     sensors = mongo_pages(sensors, total)
