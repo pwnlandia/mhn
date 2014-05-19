@@ -6,6 +6,7 @@ from flask import (
 from flask_security import logout_user as logout
 from sqlalchemy import desc, func
 
+from mhn.ui.utils import get_flag_ip
 from mhn.api.models import (
         Sensor, Rule, DeployScript as Script,
         RuleSource)
@@ -15,7 +16,6 @@ from mhn import db, mhn
 from mhn.common.utils import (
         paginate_options, alchemy_pages, mongo_pages)
 from mhn.common.clio import Clio
-from mhn.constants import PAGE_SIZE
 
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
@@ -57,7 +57,8 @@ def dashboard():
     return render_template('ui/dashboard.html',
                            attackcount=attackcount,
                            top_attackers=top_attackers,
-                           top_ports=top_ports)
+                           top_ports=top_ports,
+                           get_flag_ip=get_flag_ip)
 
 
 @ui.route('/attacks/', methods=['GET'])

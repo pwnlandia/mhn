@@ -28,6 +28,7 @@
                 <ol>
                 {% for ip in top_attackers %}
                     <li><strong>
+                    <img src="{{ get_flag_ip(ip._id) }}" width=25 height=50 />
                     {{ ip._id }} ({{ ip.count }} attacks)
                     </li></strong>
                 {% endfor %}
