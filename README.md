@@ -27,7 +27,7 @@ It also allows systems administrators to:
     $ cd MHN/scripts/
     $ sudo ./install_hpfeeds.sh
     $ sudo ./install_mnemosyne.sh
-
+    $ sudo ./install_honeymap.sh
 
 Run the following script to complete the installation.  While this script runs, you will
 be prompted for some configuration options.  See below for how this looks.
@@ -44,6 +44,7 @@ be prompted for some configuration options.  See below for how this looks.
     Superuser email: YOUR_EMAIL@YOURSITE.COM
     Superuser password: 
     Server base url ["http://1.2.3.4:8080"]: 
+    Honeymap url ["http://1.2.3.4:3000"]:
     Mail server address ["localhost"]: 
     Mail server port [25]: 
     Use TLS for email?: y/n n
@@ -54,17 +55,10 @@ be prompted for some configuration options.  See below for how this looks.
     Path for log file ["mhn.log"]: 
 
 
-MHN Can be run with an optional component called honeymap.  This allows realtime visualization of the 
-honeypot data as it flows back to the MHN server.
-
-    $ sudo ./install_honeymap.sh  #optional
-
 ### Running
 
 If the installation scripts ran successfully you should have a number of services running on your
-MHN server.  See below for checking these.  Note: if you did not install honeymap, you will not see
-honeymap or geoloc in the list below.
-
+MHN server.  See below for checking these.
 
     user@precise64:/opt/MHN/scripts$ sudo /etc/init.d/nginx status
      * nginx is running
@@ -78,7 +72,6 @@ honeymap or geoloc in the list below.
     mhn-celery-worker                RUNNING    pid 29910, uptime 0:18:41
     mhn-uwsgi                        RUNNING    pid 29911, uptime 0:18:41
     mnemosyne                        RUNNING    pid 28173, uptime 0:30:08
-
 
 
 ## LICENSE
