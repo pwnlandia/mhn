@@ -84,6 +84,27 @@ autorestart=true
 startsecs=10
 EOF
 
+SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
+/opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py "collector" "$SECRET" "" "geoloc.events"
+
+cat > $MHN_HOME/server/collector.json <<EOF
+{
+  "IDENT": "collector",
+  "SECRET": "$SECRET"
+}
+EOF
+
+cat > /etc/supervisor/conf.d/mhn-collector.conf <<EOF 
+[program:mhn-collector]
+command=$MHN_HOME/env/bin/python collector.py collector.json
+directory=$MHN_HOME/server
+stdout_logfile=$MHN_HOME/server/collector.log
+stderr_logfile=$MHN_HOME/server/collector.err
+autostart=true
+autorestart=true
+startsecs=10
+EOF
+
 mkdir -p /var/log/uwsgi
 chown www-data:www-data -R $MHN_HOME/server/*
 

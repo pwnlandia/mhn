@@ -12,3 +12,4 @@ requests
 xmltodict
 uwsgi
 pymongo
+-e git+https://github.com/threatstream/hpfeeds/#egg=hpfeeds-dev
