@@ -9,6 +9,7 @@ from celery.schedules import crontab
 
 _basedir = os.path.abspath(os.path.dirname(__file__))
 
+MHN_SERVER_HOME = _basedir
 
 # Local settings.
 DEBUG = {{DEBUG}}
