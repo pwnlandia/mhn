@@ -30,7 +30,7 @@ def main():
         GEOLOC_CHAN = 'geoloc.events',
         IDENT = '',
         SECRET = '',
-        RHOST = 'hpfeeds.threatstream.com',
+        RHOST = 'mhnbroker.threatstream.com',
         RPORT = 10000,
         RCHANNEL = 'mhn-community.events',
         RIDENT  = 'mhn-server',
