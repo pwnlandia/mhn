@@ -2,7 +2,8 @@ import requests
 from flask import current_app as app
 
 from mhn.ui import constants
-
+from config import MHN_SERVER_HOME
+import os
 
 def get_flag_ip(ipaddr):
     """
@@ -27,4 +28,8 @@ def get_flag_ip(ipaddr):
         return constants.DEFAULT_FLAG_URL
     else:
         # Constructs the flag source using country code
-        return flag_path.format(ccode.upper())
+        flag = flag_path.format(ccode.upper())
+        if os.path.exists(MHN_SERVER_HOME +"/mhn"+flag):
+            return flag
+        else:
+            return constants.DEFAULT_FLAG_URL
