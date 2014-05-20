@@ -9,7 +9,7 @@ def get_flag_ip(ipaddr):
     Returns an static address where the flag is located.
     Defaults to static immge: '/static/img/unknown.png'
     """
-    flag_api = 'http://geonames.org/flags/x/{}.gif'
+    flag_path = '/static/img/flags-iso/shiny/64/{}.png'
     geo_api = 'https://geospray.threatstream.com/ip/{}'
     try:
         # Using threatstream's geospray API to get
@@ -26,6 +26,5 @@ def get_flag_ip(ipaddr):
                 'Unexpected response for "{}": {}'.format(r.url, r.json()))
         return constants.DEFAULT_FLAG_URL
     else:
-        # Constructs the flag source using country code and
-        # geonames.org service.
-        return flag_api.format(ccode.lower())
+        # Constructs the flag source using country code
+        return flag_path.format(ccode.upper())
