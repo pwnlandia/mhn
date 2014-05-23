@@ -70,8 +70,8 @@
                     {% for at in attacks.items %}
                     <tr>
                         <td>{{ loop.index }}</td>
-                        <td><img src="{{ get_flag_ip(at.source_ip) }}" width=25 height=50 /></td>
                         <td>{{ at.timestamp|fdate }}</td>
+                        <td><img src="{{ get_flag_ip(at.source_ip) }}" width=25 height=50 /></td>
                         <td>{{ at.source_ip }}</td>
                         <td>{{ at.destination_port }}</td>
                         <td>{{ at.protocol }}</td>
