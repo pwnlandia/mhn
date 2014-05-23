@@ -11,19 +11,23 @@ def error_response(message, status_code=400):
     return resp
 
 
-def alchemy_pages(query):
+def alchemy_pages(query, **kwargs):
+    page = kwargs.get('page', g.page)
+    page_size = kwargs.get('limit', PAGE_SIZE)
     items = query.\
-            offset((g.page - 1) * PAGE_SIZE).\
-            limit(PAGE_SIZE)
-    return Pagination(g.page, PAGE_SIZE, query.count(), items)
+            offset((page - 1) * page_size).\
+            limit(page_size)
+    return Pagination(page, page_size, query.count(), items)
 
 
 def mongo_pages(result, total):
     return Pagination(g.page, PAGE_SIZE, total, result)
 
 
-def paginate_options():
-    return dict(skip=(g.page - 1) * PAGE_SIZE, limit=PAGE_SIZE)
+def paginate_options(**kwargs):
+    page = kwargs.get('page', g.page)
+    page_size = kwargs.get('limit', PAGE_SIZE)
+    return dict(skip=(page - 1) * page_size, limit=page_size)
 
 
 class Pagination(object):

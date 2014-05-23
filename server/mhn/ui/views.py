@@ -82,7 +82,7 @@ def get_rules():
     rules = db.session.query(Rule, func.count(Rule.rev).label('nrevs')).\
                group_by(Rule.sid).\
                order_by(desc(Rule.date))
-    rules = alchemy_pages(rules)
+    rules = alchemy_pages(rules, limit=10)
     return render_template('ui/rules.html', rules=rules, view='ui.get_rules')
 
 
@@ -101,7 +101,7 @@ def get_sensors():
     sensors = sorted(
             sensors, key=lambda s: s.attacks_count, reverse=True)
     # Paginating the list.
-    pag = paginate_options()
+    pag = paginate_options(limit=10)
     sensors = sensors[pag['skip']:pag['skip'] + pag['limit']]
     # Using mongo_pages because it expects paginated iterables.
     sensors = mongo_pages(sensors, total)
