@@ -73,7 +73,7 @@ def get_attacks():
     sessions = mongo_pages(sessions, total)
     return render_template('ui/attacks.html', attacks=sessions,
                            sensors=Sensor.query, view='ui.get_attacks',
-                           **request.args.to_dict())
+                           get_flag_ip=get_flag_ip, **request.args.to_dict())
 
 
 @ui.route('/rules/', methods=['GET'])
