@@ -70,8 +70,13 @@ MHN server.  See below for checking these.
     hpfeeds-broker                   RUNNING    pid 10089, uptime 0:36:42
     mhn-celery-beat                  RUNNING    pid 29909, uptime 0:18:41
     mhn-celery-worker                RUNNING    pid 29910, uptime 0:18:41
+    mhn-collector                    RUNNING    pid 7872,  uptime 0:18:41
     mhn-uwsgi                        RUNNING    pid 29911, uptime 0:18:41
     mnemosyne                        RUNNING    pid 28173, uptime 0:30:08
+
+### Data
+
+The MHN server reports anonymized attack data back to ThreatStream.  If you are interested in this data please contact: mhn@threatstream.com.  This data reporting can be disabled by running the following command from the MHN server after completing the initial installation steps outlined above: `/opt/MHN/scripts/disable_collector.sh`
 
 
 ## LICENSE
