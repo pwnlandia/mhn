@@ -4,8 +4,17 @@ from flask import current_app as app
 from mhn.ui import constants
 from config import MHN_SERVER_HOME
 import os
+from werkzeug.contrib.cache import SimpleCache
+flag_cache = SimpleCache(threshold=1000, default_timeout=300)
 
 def get_flag_ip(ipaddr):
+    flag = flag_cache.get(ipaddr)
+    if not flag:
+        flag = _get_flag_ip(ipaddr)
+        flag_cache.set(ipaddr, flag)
+    return flag
+
+def _get_flag_ip(ipaddr):
     """
     Returns an static address where the flag is located.
     Defaults to static immge: '/static/img/unknown.png'
