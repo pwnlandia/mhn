@@ -73,6 +73,11 @@ MHN server.  See below for checking these.
     mhn-uwsgi                        RUNNING    pid 29911, uptime 0:18:41
     mnemosyne                        RUNNING    pid 28173, uptime 0:30:08
 
+### Data
+
+The MHN server reports anonymized attack data back to mhnbroker.threatstream.com.  If you are interested in this data please contact: mhn@threatstream.com.  
+This data reporting can be disabled by running the following command from the MHN server after the initial installation completed: `/opt/MHN/scripts/disable_collector.sh`
+
 
 ## LICENSE
 
