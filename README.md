@@ -75,7 +75,7 @@ MHN server.  See below for checking these.
 
 ### Data
 
-The MHN server reports anonymized attack data back to mhnbroker.threatstream.com.  If you are interested in this data please contact: mhn@threatstream.com.  
+The MHN server reports anonymized attack data back to ThreatStream.  If you are interested in this data please contact: mhn@threatstream.com.  
 This data reporting can be disabled by running the following command from the MHN server after the initial installation completed: `/opt/MHN/scripts/disable_collector.sh`
 
 
