@@ -106,7 +106,7 @@ def get_sensors():
     # Using mongo_pages because it expects paginated iterables.
     sensors = mongo_pages(sensors, total)
     return render_template('ui/sensors.html', sensors=sensors,
-                           view='ui.get_sensors')
+                           view='ui.get_sensors', pag=pag)
 
 
 @ui.route('/add-sensor/', methods=['GET'])

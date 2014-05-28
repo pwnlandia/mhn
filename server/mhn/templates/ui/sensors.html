@@ -23,7 +23,7 @@
                 <tbody>
                     {% for sr in sensors.items %}
                     <tr>
-                        <td>{{ loop.index }}- <img class="del-sensor" data-sensor-id="{{ sr.uuid }}" src="/static/img/trash-24.png"/> </td>
+                        <td>{{ pag.skip + loop.index  }}- <img class="del-sensor" data-sensor-id="{{ sr.uuid }}" src="/static/img/trash-24.png"/> </td>
                         <td>
                             <input data-sensor-id="{{ sr.uuid }}"
                                    type="text"
