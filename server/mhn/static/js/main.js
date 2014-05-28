@@ -19,7 +19,8 @@ $(document).ready(function() {
         $('#create-btn').click(function() {
             var sensorObj = {
                 name: $('#name').val(),
-                hostname: $('#hostname').val()
+                hostname: $('#hostname').val(),
+                honeypot: $('#honeypot').val()
             }
             $('#alert-row').hide();
             $.ajax({
