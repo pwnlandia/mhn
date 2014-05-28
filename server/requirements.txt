@@ -1,0 +1,15 @@
+flask
+flask-sqlalchemy
+flask-security
+flask-migrate
+Flask-mail
+Flask-Testing
+py-bcrypt
+python-dateutil
+celery
+redis
+requests
+xmltodict
+uwsgi
+pymongo
+-e git+https://github.com/threatstream/hpfeeds/#egg=hpfeeds-dev

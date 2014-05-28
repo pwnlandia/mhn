@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Sensors{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="small-4 large-centered columns">
+            <h2>Add a Sensor</h2>
+        </div>
+    </div>
+    <div id="sensor-fields">
+        <div class="row">
+            <div class="small-3 columns">
+                <label>Sensor Name</label>
+            </div>
+            <div class="small-3 columns">
+                <label>Hostname</label>
+            </div>
+            <div class="small-3 pull-3 columns">
+                <label>Honeypot</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-3 columns">
+                <input id="name" type="text" name="name" value="" />
+            </div>
+            <div class="small-3 columns">
+                <input id="hostname" type="text" name="hostname" />
+            </div>
+            <div class="small-3 columns">
+                <input id="honeypot" type="text" name="honeypot" />
+            </div>
+            <div class="small-6 columns">
+                <input id="create-btn" class="tiny button" type="submit" value="CREATE" />
+            </div>
+        </div>
+        <div class="row" id="alert-row" style="display:none;">
+            <div class="small-6 columns">
+                <div id="alert-text" data-alert class="alert-box warning round">
+                    <div id="error-txt"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sensor-info" style="display:none;">
+        <div class="row">
+            <div class="panel small-8 columns">
+                <h1><small id="sensor-id"></small></h1>
+            </div>
+        </div>
+    </div>
+{% endblock %}

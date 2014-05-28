@@ -1,0 +1,26 @@
+{% macro render_pagination(items, view, args) %}
+{% if items.pages > 1 %}
+<div class="pagination-centered">
+    <ul class="pagination">
+        {% if items.page > 1 %}
+        {% set _ = args.update({'page': items.page - 1}) %}
+        <li class="arrow"><a href="{{ url_for(view, **args) }}">&laquo;</a></li>
+        {% endif %}
+        {% for page in items.iter_pages() %}
+        {% if not page %}
+        <li class="unavailable" style="color:#999;">&hellip;</li>
+        {% else %}
+        {% set _ = args.update({'page': page}) %}
+        <li class={% if page == items.page %}"current"{% endif %}>
+            <a href="{{ url_for(view, **args) }}">{{ page }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+        {% if items.pages > items.page %}
+        {% set _ = args.update({'page': items.page + 1}) %}
+        <li class="arrow"><a href="{{ url_for(view, **args) }}">&raquo;</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% endmacro %}

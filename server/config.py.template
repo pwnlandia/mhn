@@ -1,0 +1,66 @@
+"""
+Template to create config.py file.
+Do not add 'config.py' to SCM.
+"""
+
+import os
+from celery.schedules import crontab
+
+
+_basedir = os.path.abspath(os.path.dirname(__file__))
+
+MHN_SERVER_HOME = _basedir
+
+# Local settings.
+DEBUG = {{DEBUG}}
+SECRET_KEY = '{{SECRET_KEY}}'
+SUPERUSER_EMAIL = '{{SUPERUSER_EMAIL}}'
+SUPERUSER_PASSWORD = '{{SUPERUSER_PASSWORD}}'
+SERVER_BASE_URL = '{{SERVER_BASE_URL}}'
+HONEYMAP_URL = '{{HONEYMAP_URL}}'
+DEPLOY_KEY = '{{DEPLOY_KEY}}'
+LOG_FILE_PATH = '{{LOG_FILE_PATH}}'
+
+MAIL_SERVER = '{{MAIL_SERVER}}'
+MAIL_PORT = {{MAIL_PORT}}
+MAIL_USE_TLS = {{MAIL_USE_TLS}}
+MAIL_USE_SSL = {{MAIL_USE_SSL}}
+MAIL_USERNAME = '{{MAIL_USERNAME}}'
+MAIL_PASSWORD = '{{MAIL_PASSWORD}}'
+DEFAULT_MAIL_SENDER = '{{DEFAULT_MAIL_SENDER}}'
+MAIL_DEBUG = DEBUG
+
+# Other settings.
+FEED_AUTH_REQUIRED = False
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'mhn.db')
+SECURITY_PASSWORD_HASH = 'bcrypt'
+SECURITY_PASSWORD_SALT = SECRET_KEY
+SECURITY_LOGIN_URL = '/ui/login/'
+BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = BROKER_URL
+RENDERED_RULES_PATH = os.path.join(_basedir, 'mhn/static/mhn.rules')
+CELERYBEAT_SCHEDULE = {
+    'fetch-emerging-rules': {
+            'task': 'mhn.tasks.rules.fetch_source',
+            'schedule': crontab(hour=12),
+            'args': ()
+    }
+}
+SNORT_RULES_SOURCE = {
+    'name': 'Emerging Threats',
+    'uri': 'http://rules.emergingthreats.net/open/snort-2.9.0/emerging-all.rules'
+}
+HONEYPOT_CHANNELS = {
+    'dionaea': [
+        'mwbinary.dionaea.sensorunique',
+        'dionaea.capture',
+        'dionaea.capture.anon',
+        'dionaea.caputres',
+        'dionaea.connections'
+    ],
+    'conpot': ['conpot.events'],
+    'snort': ['snort.alerts'],
+    'kippo': ['kippo.sessions'],
+    'thug': ['thug.files', 'thug.events'],
+    'glastopf': ['glastopf.files', 'glastopf.events']
+}

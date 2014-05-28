@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="row" style="margin-top:30px;">
+    <div class="small-3 small-centered columns">
+        <h2>
+            Attack Stats
+        </h2>
+    </div>
+</div>
+<div class="row" style="margin-top:30px;">
+    <div class="small-10 small-centered columns">
+        <div class="row">
+            <div class="small-6 columns">
+                <h3>Attacks in the last 24 hours:</h3>
+            </div>
+            <div class="small-6 columns">
+                <h3><strong>{{ attackcount }}</strong></h3>
+            </div>
+        </div>
+        <div class="row" style="margin-top:30px;">
+            <div class="small-6 columns">
+                <h3>TOP 5 Attacker IPs:</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-6 push-6 columns">
+                <ol>
+                {% for ip in top_attackers %}
+                    <li><strong>
+                    <img src="{{ get_flag_ip(ip._id) }}" width=25 height=50 />
+                    {{ ip._id }} ({{ ip.count }} attacks)
+                    </li></strong>
+                {% endfor %}
+                </ol>
+            </div>
+        </div>
+        <div class="row" style="margin-top:30px;">
+            <div class="small-6 columns">
+                <h3>TOP 5 Attacked ports:</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-6 push-6 columns">
+                <ol>
+                {% for port in top_ports %}
+                    <li><strong>
+                    {{ port._id }} ({{ port.count }} times)
+                    </li></strong>
+                {% endfor %}
+                </ol>
+            </div>
+        </div>
+        <div class="row" style="margin-top:30px;">
+            <div class="small-6 columns">
+                <h3>TOP 5 Attacks Signatures:</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-6 push-6 columns">
+                <ol>
+                {% for sig in freq_signs %}
+                    <li><strong>
+                    {{ sig.signature }} / {{ sig.classification }} ({{ sig.count }} times)
+                    </li></strong>
+                {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

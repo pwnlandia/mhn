@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+    <div class="row" style="margin-bottom:30px;">
+        <div class="small-4 large-centered columns">
+            <h2>Users</h2>
+        </div>
+    </div>
+    {% for u in users %}
+    <div class="row">
+        <div class="small-8 large-centered columns">
+            <div class="row">
+                <div class="small-6 columns">
+                    <h6 class="left">
+                        {{ u.email }}
+                        {% if u == current_user %}
+                            (me)
+                        {% endif %}
+                    </h6>
+                </div>
+                <div class="small-6 columns">
+                    {% if u != current_user %}
+                    <h6><a class="delete-user right" data-user-id="{{ u.id }}" href="{{ url_for('auth.delete_user', user_id=u.id) }}" class="right">Delete</a></h6>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="row">
+        <div class="small-6 columns">
+            <div class="row" style="margin-top:30px;">
+                <div class="small-10 large-centered columns">
+                    <h5>Add User</h5>
+                </div>
+            </div>
+            <form id="user-form" action="{{ url_for('auth.create_user') }}" method="post">
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="email-edit" name="email" type="text" placeholder="Email" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="password-edit" name="password" type="password" placeholder="Password" />
+                    </div>
+                </div>
+                <div id="msg-container" class="row" style="display:none;">
+                    <div class="small-10 large-centered columns">
+                        <div id="alert-text" data-alert class="alert-box success round">
+                            <div id="error-txt"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="submit-user" class="tiny button right" type="submit" value="ADD" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="small-6 columns">
+            <div class="row" style="margin-top:30px;">
+                <div class="small-10 large-centered columns">
+                    <h5>Change Password</h5>
+                </div>
+            </div>
+            <form id="change-pass-form" action="{{ url_for('auth.change_passwd', user_id=user.id) }}" method="post">
+                <input id="email-edit" name="email" type="hidden" value="{{ user.email }}" placeholder="Email" />
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="password-change-edit" name="password" type="password" placeholder="New Password" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="password-repeat-edit" name="password-repeat" type="password" placeholder="New Password Again" />
+                    </div>
+                </div>
+                <input id="hashstr-edit" type="hidden" value="{{ hashstr }}" />
+                <div id="pass-msg-container" class="row" style="display:none;">
+                    <div class="small-10 large-centered columns">
+                        <div id="pass-alert-text" data-alert class="alert-box success round">
+                            <div id="pass-error-txt"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="submit-pass" class="tiny button right" type="submit" value="CHANGE" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

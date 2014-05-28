@@ -1,0 +1,79 @@
+<!doctype html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <title>{% block extra_head %}{% endblock %}</title>
+        <script src="/static/js/vendor/jquery.js"></script>
+        <link rel="stylesheet" href="/static/css/foundation.min.css">
+        <link rel="stylesheet" href="/static/css/normalize.css">
+        <script src="/static/js/vendor/foundation.min.js"></script>
+        <script src="/static/js/vendor/modernizr.js"></script>
+        <script src="/static/js/main.js"></script>
+    </head>
+    <body>
+        {% if user.is_authenticated() %}
+        <nav class="top-bar" style="margin-bottom: 30px;"  data-topbar>
+            <ul class="title-area">
+                <li class="name">
+                    <h1><a href="{{ url_for('ui.dashboard') }}">MHN Server</a></h1>
+                </li>
+            </ul>
+            <section class="top-bar-section">
+                <!-- Left Nav Section -->
+                <ul class="left">
+                    <li><a href="{{ url_for('ui.honeymap') }}">Map</a></li>
+                    <li><a href="{{ url_for('ui.deploy_mgmt') }}">Deploy</a></li>
+                    <li><a href="{{ url_for('ui.get_attacks') }}">Attacks</a></li>
+                    <li class="has-dropdown">
+                        <a href="{{ url_for('ui.get_rules') }}">Rules</a>
+                        <ul class="dropdown">
+                            <li><label>Manage</label></li>
+                            <li><a href="{{ url_for('ui.get_rules') }}">Activate/Deactivate</a></li>
+                            <li><a href="{{ url_for('ui.rule_sources_mgmt') }}">Sources</a></li>
+                            <li><label>Download</label></li>
+                            <li><a href="{{ url_for('api.get_rules', plaintext=true) }}">Live Render</a></li>
+                            <li><a href="/static/mhn.rules">Pre-Rendered</a></li>
+                        </ul>
+                    </li>
+                    <li class="has-dropdown">
+                        <a href="{{ url_for('ui.get_sensors') }}">Sensors</a>
+                        <ul class="dropdown">
+                            <li><a href="{{ url_for('ui.get_sensors') }}">View sensors</a></li>
+                            <li><a href="{{ url_for('ui.add_sensor') }}">Add sensor</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- Right Nav Section -->
+                <ul class="right">
+                    <li class="active"><a id="out-btn" href="#">LOGOUT</a></li>
+                </ul>
+                {% if current_user.has_role('admin') %}
+                <ul class="right">
+                    <li class=""><a id="out-btn" href="{{ url_for('ui.settings') }}">Settings</a></li>
+                </ul>
+                {% endif %}
+            </section>
+        </nav>
+        {% endif %}
+        {% block content %}{% endblock %}
+        {% block footer %}
+        <style>
+            #footer {
+                margin-top: 80px;
+                margin-bottom: 80px;
+                bottom: 0;
+                width: 100%;
+            }
+        </style>
+        <div class="row" id="footer">
+            <div class="small-7 large-centered columns">
+                <span><small>Modern Honeynet Project is an open source project created by: </small><span>
+                <a href="https://threatstream.com"><img width="158" height="25" src="/static/img/tslogo.png" /></a>
+            </div>
+        </div>
+        {% endblock %}
+        <script src="/static/js/vendor/fastclick.js"></script>
+        <script>
+            $(document).foundation();
+        </script>
+    </body>
+</html>
