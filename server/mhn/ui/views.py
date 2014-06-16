@@ -11,12 +11,11 @@ from mhn.api.models import (
         Sensor, Rule, DeployScript as Script,
         RuleSource)
 from mhn.auth import login_required, current_user
-from mhn.auth.models import User, PasswdReset
+from mhn.auth.models import User, PasswdReset, ApiKey
 from mhn import db, mhn
 from mhn.common.utils import (
         paginate_options, alchemy_pages, mongo_pages)
 from mhn.common.clio import Clio
-
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
 
@@ -136,7 +135,10 @@ def honeymap():
 @login_required
 def settings():
     return render_template(
-            'ui/settings.html', users=User.query.filter_by(active=True))
+        'ui/settings.html', 
+        users=User.query.filter_by(active=True),
+        apikey=ApiKey.query.filter_by(user_id=current_user.id).first()
+    )
 
 
 @ui.route('/forgot-password/<hashstr>/', methods=['GET'])

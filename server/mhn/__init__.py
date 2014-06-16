@@ -8,12 +8,12 @@ from flask.ext.security.utils import encrypt_password as encrypt
 from flask.ext.mail import Mail
 from werkzeug.contrib.atom import AtomFeed
 import xmltodict
-
+import uuid
 
 db = SQLAlchemy()
 # After defining `db`, import auth models due to
 # circular dependency.
-from mhn.auth.models import User, Role
+from mhn.auth.models import User, Role, ApiKey
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 
@@ -116,6 +116,11 @@ def create_clean_db():
         adminrole = user_datastore.create_role(name='admin', description='')
         user_datastore.add_role_to_user(superuser, adminrole)
         user_datastore.create_role(name='user', description='')
+        db.session.flush()
+
+        apikey = ApiKey(user_id=superuser.id, api_key=str(uuid.uuid4()).replace("-", ""))
+        db.session.add(apikey)
+        db.session.flush()        
 
         from os import path
 
