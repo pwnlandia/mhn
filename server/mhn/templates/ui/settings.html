@@ -3,6 +3,26 @@
 {% block content %}
     <div class="row" style="margin-bottom:30px;">
         <div class="small-4 large-centered columns">
+            <h2>Your Info</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-10 large-centered columns">
+            <div class="row">
+                <div class="small-10 columns">
+                    <h6 class="left"><b>Email</b>: {{ current_user.email }}</h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-8 columns">
+                    <h6 class="left"><b>Apikey</b>: {{apikey.api_key}}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-bottom:30px;">
+        <div class="small-4 large-centered columns">
             <h2>Users</h2>
         </div>
     </div>

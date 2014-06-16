@@ -55,3 +55,12 @@ class PasswdReset(db.Model):
                  server_url=mhn.config['SERVER_BASE_URL'],
                  email=self.user.email)
 
+class ApiKey(db.Model):
+    all_fields = {
+        'api_key': {'required': True, 'editable': False},
+        'user_id': {'required': True, 'editable': False}
+    }
+
+    id = db.Column(db.Integer, primary_key=True)
+    api_key = db.Column(db.String(32), unique=True)
+    user_id = db.Column('user_id', db.Integer, db.ForeignKey("user.id"), nullable=False)

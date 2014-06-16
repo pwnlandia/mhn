@@ -11,12 +11,12 @@ from flask_security.utils import (
 from mhn import db, mail
 from mhn import user_datastore
 from mhn.common.utils import error_response
-from mhn.auth.models import User, PasswdReset
+from mhn.auth.models import User, PasswdReset, ApiKey
 from mhn.auth import errors
 from mhn.auth import (
     get_datastore, login_required, roles_accepted, current_user)
 from mhn.api import errors as apierrors
-
+import uuid
 
 auth = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -61,8 +61,14 @@ def create_user():
                 password=encrypt_password(request.json.get('password')))
         userrole = user_datastore.find_role('admin')
         user_datastore.add_role_to_user(user, userrole)
+
         try:
             db.session.add(user)
+            db.session.flush()
+
+            apikey = ApiKey(user_id=user.id, api_key=str(uuid.uuid4()).replace("-", ""))
+            db.session.add(apikey)
+
             db.session.commit()
         except IntegrityError:
             return error_response(errors.AUTH_USERNAME_EXISTS, 400)

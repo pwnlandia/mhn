@@ -11,7 +11,7 @@ from mhn.api import errors
 from mhn.api.models import (
         Sensor, Rule, DeployScript as Script,
         DeployScript, RuleSource)
-from mhn.api.decorators import deploy_auth, sensor_auth
+from mhn.api.decorators import deploy_auth, sensor_auth, token_auth
 from mhn.common.utils import error_response
 from mhn.common.clio import Clio
 from mhn.auth import current_user, login_required
@@ -114,31 +114,31 @@ def _get_query_resource(resource, query):
 
 
 @api.route('/feed/<feed_id>/', methods=['GET'])
-@login_required
+@token_auth
 def get_feed(feed_id):
     return _get_one_resource(Clio().hpfeed, feed_id)
 
 
 @api.route('/session/<session_id>/', methods=['GET'])
-@login_required
+@token_auth
 def get_session(session_id):
     return _get_one_resource(Clio().session, session_id)
 
 
 @api.route('/feed/', methods=['GET'])
-@login_required
+@token_auth
 def get_feeds():
     return _get_query_resource(Clio().hpfeed, request.args.to_dict())
 
 
 @api.route('/session/', methods=['GET'])
-@login_required
+@token_auth
 def get_sessions():
     return _get_query_resource(Clio().session, request.args.to_dict())
 
 
 @api.route('/top_attackers/', methods=['GET'])
-@login_required
+@token_auth
 def top_attackers():
     options = request.args.to_dict()
     limit = int(options.get('limit', '1000'))
@@ -158,7 +158,7 @@ def top_attackers():
     )    
 
 @api.route('/rule/<rule_id>/', methods=['PUT'])
-@login_required
+@token_auth
 def update_rule(rule_id):
     rule = Rule.query.filter_by(id=rule_id).first_or_404()
     for field in request.json.keys():
