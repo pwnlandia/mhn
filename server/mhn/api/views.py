@@ -97,7 +97,19 @@ def _get_one_resource(resource, res_id):
 
 
 def _get_query_resource(resource, query):
-    return jsonify(data=[r.to_dict() for r in resource.get(**query)])
+    options = {}
+    if 'limit' in query:
+        options['limit'] = int(query['limit'])
+    
+    results = list(resource.get(options, **query))
+    return jsonify(
+        data=[r.to_dict() for r in results],
+        meta={
+            'size': len(results),
+            'query': query,
+            'options': options
+        }
+    )
 # Now let's make use these methods in the views.
 
 
@@ -124,6 +136,26 @@ def get_feeds():
 def get_sessions():
     return _get_query_resource(Clio().session, request.args.to_dict())
 
+
+@api.route('/top_attackers/', methods=['GET'])
+@login_required
+def top_attackers():
+    options = request.args.to_dict()
+    limit = int(options.get('limit', '1000'))
+    hours_ago = int(options.get('hours_ago', '4'))
+    for name in options.keys():
+        if name not in ('hours_ago', 'limit',):
+            del options[name]
+
+    results = Clio().session._tops('source_ip', top=limit, hours_ago=hours_ago)
+    return jsonify(
+        data=[r for r in results],
+        meta={
+            'size': len(results),
+            'query': 'top_attackers',
+            'options': options
+        }
+    )    
 
 @api.route('/rule/<rule_id>/', methods=['PUT'])
 @login_required

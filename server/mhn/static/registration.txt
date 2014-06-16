@@ -12,6 +12,8 @@ deploy_key=$2
 honeypot=$3
 hostname=$(hostname)
 
+sudo apt-get install -y curl
+
 curl -s -X POST -H "Content-Type: application/json" -d "{
 	\"name\": \"$hostname\", 
 	\"hostname\": \"$hostname\", 
