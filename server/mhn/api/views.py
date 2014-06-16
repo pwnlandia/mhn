@@ -149,7 +149,7 @@ def top_attackers():
 
     results = Clio().session._tops('source_ip', top=limit, hours_ago=hours_ago)
     return jsonify(
-        data=[r for r in results],
+        data=[dict(ip=r['_id'], count=r['count']) for r in results],
         meta={
             'size': len(results),
             'query': 'top_attackers',
