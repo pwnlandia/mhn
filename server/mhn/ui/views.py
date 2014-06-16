@@ -65,7 +65,7 @@ def dashboard():
 @login_required
 def get_attacks():
     clio = Clio()
-    options = paginate_options()
+    options = paginate_options(limit=10)
     options['order_by'] = '-timestamp'
     total = clio.session.count(**request.args.to_dict())
     sessions = clio.session.get(
