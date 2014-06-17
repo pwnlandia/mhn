@@ -15,7 +15,7 @@
                 <h3>Attacks in the last 24 hours:</h3>
             </div>
             <div class="small-6 columns">
-                <h3><strong>{{ attackcount }}</strong></h3>
+                <h3><strong>{{ attackcount | number_format }}</strong></h3>
             </div>
         </div>
         <div class="row" style="margin-top:30px;">
@@ -28,8 +28,8 @@
                 <ol>
                 {% for ip in top_attackers %}
                     <li><strong>
-                    <img src="{{ get_flag_ip(ip._id) }}" width=25 height=50 />
-                    {{ ip._id }} ({{ ip.count }} attacks)
+                    <img src="{{ get_flag_ip(ip.source_ip) }}" width=25 height=50 />
+                    {{ ip.source_ip }} ({{ ip.count | number_format }} attacks)
                     </li></strong>
                 {% endfor %}
                 </ol>
@@ -45,7 +45,7 @@
                 <ol>
                 {% for port in top_ports %}
                     <li><strong>
-                    {{ port._id }} ({{ port.count }} times)
+                    {{ port.destination_port }} ({{ port.count | number_format }} times)
                     </li></strong>
                 {% endfor %}
                 </ol>
@@ -61,7 +61,7 @@
                 <ol>
                 {% for sig in freq_signs %}
                     <li><strong>
-                    {{ sig.signature }} / {{ sig.classification }} ({{ sig.count }} times)
+                    {{ sig.signature }} / {{ sig.classification }} ({{ sig.count | number_format }} times)
                     </li></strong>
                 {% endfor %}
                 </ol>

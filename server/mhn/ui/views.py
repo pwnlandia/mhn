@@ -18,7 +18,11 @@ from mhn.common.utils import (
 from mhn.common.clio import Clio
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
+from mhn import mhn as app
 
+@app.template_filter()
+def number_format(value):
+    return '{:,d}'.format(value)
 
 @ui.before_request
 def check_page():
@@ -46,12 +50,11 @@ def login_user():
 def dashboard():
     clio = Clio()
     # Number of attacks in the last 24 hours.
-    attackcount = clio.session.count(
-             timestamp_lte=datetime.utcnow() - timedelta(hours=24))
+    attackcount = clio.session.count(hours_ago=24)
     # TOP 5 attacker ips.
-    top_attackers = clio.session.top_attackers(top=5)
+    top_attackers = clio.session.top_attackers(top=5, hours_ago=24)
     # TOP 5 attacked ports
-    top_ports = clio.session.top_targeted_ports(top=5)
+    top_ports = clio.session.top_targeted_ports(top=5, hours_ago=24)
 
     return render_template('ui/dashboard.html',
                            attackcount=attackcount,
