@@ -235,18 +235,24 @@ class Session(ResourceMixin):
 
         return clean
 
-    def _tops(self, attrname, top=5, hours_ago=None):
-        # A bit of Javascript-like formatting
-        # has never killed anybody.
+    def _tops(self, fields, top=5, hours_ago=None):
+        if isinstance(fields, basestring):
+            fields = [fields,]
+
+        match_query = dict([ (field, {'$ne': None}) for field in fields ])
+
+        if hours_ago:
+            match_query['timestamp'] = {
+                '$gte': datetime.datetime.now() - datetime.timedelta(hours=hours_ago) 
+            }
+               
         query = [
             {
-                '$match': {
-                    attrname: {'$ne': None},
-                }
+                '$match': match_query
             },
             {
                 '$group': {
-                    '_id': '$' + attrname,
+                    '_id': dict( [(field, '${}'.format(field)) for field in fields] ),
                     'count': {'$sum': 1}
                 }
             },
@@ -255,19 +261,21 @@ class Session(ResourceMixin):
             }
         ]
 
-        if hours_ago:
-            query[0]['$match']['timestamp'] = {
-                '$gte': datetime.datetime.now() - datetime.timedelta(hours=hours_ago) 
-            }
-
         res = self.collection.aggregate(query)
-        if 'ok' in res:
-            return res.get('result', [])[:top]
+        def format_result(r):
+            result = dict(r['_id'])
+            result['count'] = r['count']
+            return result
 
-    def top_attackers(self, top=5, hours_ago=24):
+        if 'ok' in res:
+            return [
+                format_result(r) for r in res.get('result', [])[:top]
+            ]
+
+    def top_attackers(self, top=5, hours_ago=None):
         return self._tops('source_ip', top, hours_ago)
 
-    def top_targeted_ports(self, top=5, hours_ago=24):
+    def top_targeted_ports(self, top=5, hours_ago=None):
         return self._tops('destination_port', top, hours_ago)
 
 
