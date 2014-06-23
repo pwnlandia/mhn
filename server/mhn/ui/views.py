@@ -11,15 +11,18 @@ from mhn.api.models import (
         Sensor, Rule, DeployScript as Script,
         RuleSource)
 from mhn.auth import login_required, current_user
-from mhn.auth.models import User, PasswdReset
+from mhn.auth.models import User, PasswdReset, ApiKey
 from mhn import db, mhn
 from mhn.common.utils import (
         paginate_options, alchemy_pages, mongo_pages)
 from mhn.common.clio import Clio
 
-
 ui = Blueprint('ui', __name__, url_prefix='/ui')
+from mhn import mhn as app
 
+@app.template_filter()
+def number_format(value):
+    return '{:,d}'.format(value)
 
 @ui.before_request
 def check_page():
@@ -47,12 +50,11 @@ def login_user():
 def dashboard():
     clio = Clio()
     # Number of attacks in the last 24 hours.
-    attackcount = clio.session.count(
-             timestamp_lte=datetime.utcnow() - timedelta(hours=24))
+    attackcount = clio.session.count(hours_ago=24)
     # TOP 5 attacker ips.
-    top_attackers = clio.session.top_attackers(top=5)
+    top_attackers = clio.session.top_attackers(top=5, hours_ago=24)
     # TOP 5 attacked ports
-    top_ports = clio.session.top_targeted_ports(top=5)
+    top_ports = clio.session.top_targeted_ports(top=5, hours_ago=24)
 
     return render_template('ui/dashboard.html',
                            attackcount=attackcount,
@@ -65,7 +67,7 @@ def dashboard():
 @login_required
 def get_attacks():
     clio = Clio()
-    options = paginate_options()
+    options = paginate_options(limit=10)
     options['order_by'] = '-timestamp'
     total = clio.session.count(**request.args.to_dict())
     sessions = clio.session.get(
@@ -136,7 +138,10 @@ def honeymap():
 @login_required
 def settings():
     return render_template(
-            'ui/settings.html', users=User.query.filter_by(active=True))
+        'ui/settings.html', 
+        users=User.query.filter_by(active=True),
+        apikey=ApiKey.query.filter_by(user_id=current_user.id).first()
+    )
 
 
 @ui.route('/forgot-password/<hashstr>/', methods=['GET'])

@@ -8,6 +8,7 @@ import pymongo
 from dateutil.parser import parse as parse_date
 
 from bson import ObjectId, son
+import datetime
 
 
 class Clio():
@@ -70,6 +71,12 @@ class ResourceMixin(object):
             # with values passed in kwargs.
             if dirty.get(arg):
                 clean[arg] = dirty.get(arg)
+
+        if 'hours_ago' in dirty:
+            clean['timestamp'] = {
+                '$gte': datetime.datetime.now() - datetime.timedelta(hours=int(dirty['hours_ago'])) 
+            }
+
         return clean
 
     @classmethod
@@ -117,6 +124,7 @@ class ResourceMixin(object):
         return todict
 
     def get(self, options={}, **kwargs):
+
         if self.client is None:
             raise ValueError
         else:
@@ -124,6 +132,7 @@ class ResourceMixin(object):
                 kwargs['_id'] = ObjectId(kwargs['_id'])
                 return self.__class__.from_dict(
                         self.collection.find_one(kwargs), self.client)
+
             query = self.__class__._clean_query(kwargs)
             queryset = self.collection.find(query)
             if options:
@@ -181,11 +190,15 @@ class Session(ResourceMixin):
     collection_name = 'session'
     expected_filters = ('protocol', 'source_ip', 'source_port',
                         'destination_ip', 'destination_port',
-                        'honeypot', 'timestamp', '_id', 'identifier')
+                        'honeypot', 'timestamp', '_id', 'identifier',)
 
     @classmethod
     def _clean_query(cls, dirty):
         clean = super(Session, cls)._clean_query(dirty)
+
+        def date_to_datetime(d):
+            return datetime.datetime.combine(d, datetime.datetime.min.time())
+
         def clean_integer(field_name, query):
             # Integer fields in mongo need to be int type, GET queries
             # are passed as str so this method converts the str to
@@ -206,7 +219,7 @@ class Session(ResourceMixin):
             if field in clean:
                 clean = clean_integer(field, dirty)
 
-        if 'timestamp' in clean:
+        if 'timestamp' in clean and isinstance(clean['timestamp'], basestring):
             # Transforms timestamp queries into
             # timestamp_lte queries.
             try:
@@ -214,37 +227,56 @@ class Session(ResourceMixin):
             except (ValueError, TypeError):
                 pass
             else:
-                clean['timestamp'] = {'$gte': timestamp}
+
+                clean['timestamp'] = {
+                    '$gte': date_to_datetime(timestamp.date()),
+                    '$lt': date_to_datetime(timestamp.date() + datetime.timedelta(days=1))
+                }
 
         return clean
 
-    def _tops(self, attrname, top=5):
-        # A bit of Javascript-like formatting
-        # has never killed anybody.
-        res = self.collection.aggregate([
+    def _tops(self, fields, top=5, hours_ago=None):
+        if isinstance(fields, basestring):
+            fields = [fields,]
+
+        match_query = dict([ (field, {'$ne': None}) for field in fields ])
+
+        if hours_ago:
+            match_query['timestamp'] = {
+                '$gte': datetime.datetime.now() - datetime.timedelta(hours=hours_ago) 
+            }
+               
+        query = [
             {
-                '$match': {
-                    attrname: {'$ne': None},
-                }
+                '$match': match_query
             },
             {
                 '$group': {
-                    '_id': '$' + attrname,
+                    '_id': dict( [(field, '${}'.format(field)) for field in fields] ),
                     'count': {'$sum': 1}
                 }
             },
             {
                 '$sort': son.SON([('count', -1)])
             }
-        ])
+        ]
+
+        res = self.collection.aggregate(query)
+        def format_result(r):
+            result = dict(r['_id'])
+            result['count'] = r['count']
+            return result
+
         if 'ok' in res:
-            return res.get('result', [])[:top]
+            return [
+                format_result(r) for r in res.get('result', [])[:top]
+            ]
 
-    def top_attackers(self, top=5):
-        return self._tops('source_ip', top)
+    def top_attackers(self, top=5, hours_ago=None):
+        return self._tops('source_ip', top, hours_ago)
 
-    def top_targeted_ports(self, top=5):
-        return self._tops('destination_port', top)
+    def top_targeted_ports(self, top=5, hours_ago=None):
+        return self._tops('destination_port', top, hours_ago)
 
 
 class SessionProtocol(ResourceMixin):
