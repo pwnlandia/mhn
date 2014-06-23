@@ -23,8 +23,8 @@ It also allows systems administrators to:
 ### INSTALLING SERVER (tested Ubuntu 12.0.4.3 x86_64)
     
     $ cd /opt/
-    $ git clone https://github.com/threatstream/MHN.git
-    $ cd MHN/scripts/
+    $ git clone https://github.com/threatstream/mhn.git
+    $ cd mhn/scripts/
     $ sudo ./install_hpfeeds.sh
     $ sudo ./install_mnemosyne.sh
     $ sudo ./install_honeymap.sh
@@ -60,11 +60,11 @@ be prompted for some configuration options.  See below for how this looks.
 If the installation scripts ran successfully you should have a number of services running on your
 MHN server.  See below for checking these.
 
-    user@precise64:/opt/MHN/scripts$ sudo /etc/init.d/nginx status
+    user@precise64:/opt/mhn/scripts$ sudo /etc/init.d/nginx status
      * nginx is running
-    user@precise64:/opt/MHN/scripts$ sudo /etc/init.d/supervisor status
+    user@precise64:/opt/mhn/scripts$ sudo /etc/init.d/supervisor status
      is running
-    user@precise64:/opt/MHN/scripts$ sudo supervisorctl status
+    user@precise64:/opt/mhn/scripts$ sudo supervisorctl status
     geoloc                           RUNNING    pid 31443, uptime 0:00:12
     honeymap                         RUNNING    pid 30826, uptime 0:08:54
     hpfeeds-broker                   RUNNING    pid 10089, uptime 0:36:42
@@ -76,8 +76,7 @@ MHN server.  See below for checking these.
 
 ### Data
 
-The MHN server reports anonymized attack data back to ThreatStream.  If you are interested in this data please contact: mhn@threatstream.com.  This data reporting can be disabled by running the following command from the MHN server after completing the initial installation steps outlined above: `/opt/MHN/scripts/disable_collector.sh`
-
+The MHN server reports anonymized attack data back to ThreatStream.  If you are interested in this data please contact: mhn@threatstream.com.  This data reporting can be disabled by running the following command from the MHN server after completing the initial installation steps outlined above: `/opt/mhn/scripts/disable_collector.sh`
 
 ## LICENSE
 
