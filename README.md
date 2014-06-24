@@ -43,7 +43,7 @@ be prompted for some configuration options.  See below for how this looks.
     Do you wish to run in Debug mode?: y/n n
     Superuser email: YOUR_EMAIL@YOURSITE.COM
     Superuser password: 
-    Server base url ["http://1.2.3.4:8080"]: 
+    Server base url ["http://1.2.3.4"]: 
     Honeymap url ["http://1.2.3.4:3000"]:
     Mail server address ["localhost"]: 
     Mail server port [25]: 

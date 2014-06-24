@@ -16,7 +16,7 @@ rand_str = lambda n: ''.join(choice(el) for _ in range(n))
 
 def generate_config():
     pub_ip = json.load(urlopen('http://httpbin.org/ip'))['origin']
-    default_base_url = 'http://{}:8080'.format(pub_ip)
+    default_base_url = 'http://{}'.format(pub_ip)
     default_honeymap_url = 'http://{}:3000'.format(pub_ip)
     default_log_path = 'mhn.log'
     localconfig = {}
