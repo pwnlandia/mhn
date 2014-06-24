@@ -18,6 +18,7 @@ chmod 755 registration.sh
 
 apt-get update
 apt-get install -y git libsmi2ldbl snmp-mibs-downloader python-pip python-dev libxml2-dev libxslt-dev
+apt-get install zlib1g-dev # needed for Ubuntu 14.04
 pip install --upgrade distribute
 pip install virtualenv
 
