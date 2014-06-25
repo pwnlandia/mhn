@@ -21,6 +21,8 @@ echo "  MHN Configuration"
 echo "==========================================================="
 
 python generateconfig.py
+
+echo -e "\nInitializing database, please be patient. This can take several minutes"
 python initdatabase.py
 cd $MHN_HOME
 
