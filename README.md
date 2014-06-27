@@ -89,6 +89,17 @@ If email based password resets are not working for you.  Here is another method.
     Enter new password (again): 
     user found, updating password
 
+### Deploying honeypots with MHN
+
+MHN was designed to make scalable deployment of honeypots easier.  Here are the steps for deploying a honeypot with MHN:
+
+1. Login to your MHN server web app
+2. Click the "Deploy" link in the upper left hand corner
+3. Select a type of honeypot from the drop down menu (e.g. "Ubuntu 12.04 Dionaea")
+4. Copy the deployment command
+5. Login to a honeypot server and run this command as root
+6. Thats it.
+
 ### Data
 
 The MHN server reports anonymized attack data back to ThreatStream.  If you are interested in this data please contact: mhn@threatstream.com.  This data reporting can be disabled by running the following command from the MHN server after completing the initial installation steps outlined above: `/opt/mhn/scripts/disable_collector.sh`
