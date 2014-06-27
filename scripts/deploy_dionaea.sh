@@ -458,6 +458,8 @@ sed -i 's/log\//\/var\/dionaea\/log\//g' /etc/dionaea/dionaea.conf
 sed -i 's/levels = "all"/levels = "warning,error"/1' /etc/dionaea/dionaea.conf
 sed -i 's/mode = "getifaddrs"/mode = "manual"/1' /etc/dionaea/dionaea.conf
 
+mkdir -p /var/dionaea/bistreams 
+chown nobody:nogroup /var/dionaea/bistreams
 
 # Config for supervisor.
 cat > /etc/supervisor/conf.d/dionaea.conf <<EOF

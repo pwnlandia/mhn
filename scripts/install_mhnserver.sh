@@ -107,6 +107,7 @@ autorestart=true
 startsecs=10
 EOF
 
+touch $MHN_HOME/server/mhn.log
 mkdir -p /var/log/uwsgi
 chown www-data:www-data -R $MHN_HOME/server/*
 

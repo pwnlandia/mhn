@@ -43,6 +43,9 @@ file = mnemosyne.log
 [loggly_log]
 enabled = False
 token =
+
+[normalizer]
+ignore_rfc1918 = True
 EOF
 
 deactivate
