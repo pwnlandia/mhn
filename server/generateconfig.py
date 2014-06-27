@@ -26,8 +26,28 @@ def generate_config():
     while debug not in ['y', 'n']:
         debug = raw_input('Please y or n ')
     localconfig['DEBUG'] = 'y' == debug
-    localconfig['SUPERUSER_EMAIL'] = raw_input('Superuser email: ')
-    localconfig['SUPERUSER_PASSWORD'] = getpass('Superuser password: ')
+
+    email = raw_input('Superuser email: ')
+    while '@' not in email:
+        email = raw_input('Superuser email (must be valid): ')
+    localconfig['SUPERUSER_EMAIL'] = email
+
+
+    while True:
+        password = getpass('Superuser password: ')
+        while not password:
+            password = getpass('Superuser password (cannot be blank): ')
+
+        password2 = getpass('Superuser password: (again): ')
+        while not password2:
+            password2 = getpass('Superuser password (again; cannot be blank): ')
+
+        if password == password2:
+            localconfig['SUPERUSER_PASSWORD'] = password
+            break
+        else:
+            print "Passwords did not match. Try again"
+
     server_base_url = raw_input('Server base url ["{}"]: '.format(default_base_url))
     if server_base_url.endswith('/'):
         server_base_url = server_base_url[:-1]
