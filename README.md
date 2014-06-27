@@ -22,7 +22,7 @@ It also allows systems administrators to:
 
 ### INSTALLING SERVER (tested Ubuntu 12.0.4.3 x86_64)
 
-Note, if you run into trouble during the install, please checkout the [troubleshooting guide](https://github.com/threatstream/MHN/wiki/MHN-Troubleshooting-Guide) on the wiki.
+Note, if you run into trouble during the install, please checkout the [troubleshooting guide](https://github.com/threatstream/MHN/wiki/MHN-Troubleshooting-Guide) on the wiki.  If you only want to experiment with MHN on some virtual machines, please check out the [Getting up and Running with Vagrant](https://github.com/threatstream/mhn/wiki/Getting-up-and-running-using-Vagrant) guide on the wiki.
     
     $ cd /opt/
     $ git clone https://github.com/threatstream/mhn.git
