@@ -10,7 +10,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "hashicorp/precise64"
+  config.vm.define "server" do |server|
+    server.vm.box = "hashicorp/precise64"
+    server.vm.network "private_network", ip: "10.254.254.100"
+    
+    server.vm.provision :shell, inline: 'echo mhn-server > /etc/hostname'
+    server.vm.provision :shell, inline: 'echo "127.0.1.1 mhn-server" >> /etc/hosts'
+    server.vm.provision :shell, inline: 'hostname mhn-server'
+  end
+
+  config.vm.define "honeypot" do |honeypot|
+    honeypot.vm.box = "hashicorp/precise64"
+    honeypot.vm.network "private_network", ip: "10.254.254.101"
+    
+    honeypot.vm.provision :shell, inline: 'echo mhn-honeypot > /etc/hostname'
+    honeypot.vm.provision :shell, inline: 'echo "127.0.1.1 mhn-honeypot" >> /etc/hosts'
+    honeypot.vm.provision :shell, inline: 'hostname mhn-honeypot'
+  end
+
+
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
