@@ -21,6 +21,8 @@ It also allows systems administrators to:
 
 
 ### INSTALLING SERVER (tested Ubuntu 12.0.4.3 x86_64)
+
+Note, if you run into trouble during the install, please checkout the [troubleshooting guide](https://github.com/threatstream/MHN/wiki/MHN-Troubleshooting-Guide) on the wiki.
     
     $ cd /opt/
     $ git clone https://github.com/threatstream/mhn.git
