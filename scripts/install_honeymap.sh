@@ -18,7 +18,8 @@ cat > config.json <<EOF
    "host": "localhost",
    "port": 10000,
    "ident": "honeymap",
-   "auth": "$SECRET"
+   "auth": "$SECRET",
+   "channel": "geoloc.events"
 }
 EOF
 
