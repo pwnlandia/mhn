@@ -33,8 +33,11 @@ useradd -d /home/kippo -s /bin/bash -m kippo -g sudo
 
 # Get the Kippo source
 cd /opt
-git clone https://github.com/fygrave/kippo
+git clone https://github.com/gregcmartin/kippo
 cd kippo
+
+# Install HPFeeds
+pip install https://github.com/rep/hpfeeds/tarball/master
 
 
 # Configure Kippo
@@ -52,32 +55,31 @@ chmod 777 /etc/authbind/byport/22
 # Setup HPFeeds
 cat >> /opt/kippo/kippo.cfg <<EOF
 
-[hpfriends]
-enabled = True
+[database_hpfeed]
 host = $HPF_HOST
 port = $HPF_PORT
+channel = kippo.sessions
 ident = $HPF_IDENT
 secret = $HPF_SECRET
-channels = ["kippo.events", ]
+
 EOF
 
 # Setup kippo to start at boot
-#sed -i 's/twistd -y kippo/authbind --deep twistd -y kippo/g' /opt/kippo/start.sh
-#echo "/opt/kippo/start.sh" >> /etc/rc.local
+sed -i 's/twistd -y kippo/authbind --deep twistd -y kippo/g' /opt/kippo/start.sh
+echo "/opt/kippo/start.sh" >> /etc/rc.local
 
 
 # Config for supervisor.
-cat > /etc/supervisor/conf.d/kippo.conf <<EOF
-[program:kippo]
-command=authbind --deep twistd -y kippo.tac -l log/kippo.log --pidfile kippo.pid -u kippo -g sudo
-directory=/opt/kippo
-stdout_logfile=/opt/kippo/log/kippo.out
-stderr_logfile=/opt/kippo/log/kippo.err
-autostart=true
-autorestart=true
-redirect_stderr=true
-stopsignal=QUIT
-EOF
+#cat > /etc/supervisor/conf.d/kippo.conf <<EOF
+#[program:kippo]
+#command=authbind --deep twistd -y kippo.tac -l log/kippo.log --pidfile kippo.pid -u kippo -g sudo
+#directory=/opt/kippo
+#stdout_logfile=/opt/kippo/log/kippo.out
+#stderr_logfile=/opt/kippo/log/kippo.err
+#autostart=true
+#autorestart=true
+#redirect_stderr=true
+#stopsignal=QUIT
+#EOF
 
-supervisorctl update
-
+#supervisorctl update
