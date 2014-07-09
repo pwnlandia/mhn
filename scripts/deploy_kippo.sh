@@ -55,7 +55,7 @@ chmod 777 /etc/authbind/byport/22
 # Setup HPFeeds
 cat >> /opt/kippo/kippo.cfg <<EOF
 
-[database_hpfeed]
+[database_hpfeeds]
 server = $HPF_HOST
 port = $HPF_PORT
 identifier = $HPF_IDENT
