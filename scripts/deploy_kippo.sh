@@ -73,6 +73,7 @@ echo "/opt/kippo/start.sh" >> /etc/rc.local
 cat > /etc/supervisor/conf.d/kippo.conf <<EOF
 [program:kippo]
 command=/opt/kippo/start.sh
+#command=su kippo -c "authbind --deep twistd -y kippo.tac -l log\/kippo.log --pidfile kippo.pid
 directory=/opt/kippo
 stdout_logfile=/opt/kippo/log/kippo.out
 stderr_logfile=/opt/kippo/log/kippo.err
