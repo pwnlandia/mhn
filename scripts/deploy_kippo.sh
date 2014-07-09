@@ -29,12 +29,15 @@ sed -i 's/Port 22/Port 2222/g' /etc/ssh/sshd_config
 reload ssh
 
 # Create Kippo user
-useradd -d /home/kippo -s /bin/bash -m kippo -g sudo
+useradd -d /home/kippo -s /bin/bash -m kippo -g users
 
 # Get the Kippo source
 cd /opt
-git clone https://github.com/desaster/kippo.git
+git clone https://github.com/threatstream/kippo
 cd kippo
+
+# Install HPFeeds
+#pip install https://github.com/rep/hpfeeds/tarball/master
 
 
 # Configure Kippo
@@ -49,15 +52,28 @@ touch /etc/authbind/byport/22
 chown kippo /etc/authbind/byport/22
 chmod 777 /etc/authbind/byport/22
 
+# Setup HPFeeds
+cat >> /opt/kippo/kippo.cfg <<EOF
+
+[database_hpfeeds]
+server = $HPF_HOST
+port = $HPF_PORT
+identifier = $HPF_IDENT
+secret = $HPF_SECRET
+debug = false
+
+EOF
+
 # Setup kippo to start at boot
-#sed -i 's/twistd -y kippo/authbind --deep twistd -y kippo/g' /opt/kippo/start.sh
-#echo "/opt/kippo/start.sh" >> /etc/rc.local
+sed -i 's/twistd -y kippo.tac -l log\/kippo.log --pidfile kippo.pid/su kippo -c "authbind --deep twistd -y kippo.tac -l log\/kippo.log --pidfile kippo.pid"/g'  /opt/kippo/start.sh
+echo "/opt/kippo/start.sh" >> /etc/rc.local
 
 
 # Config for supervisor.
 cat > /etc/supervisor/conf.d/kippo.conf <<EOF
 [program:kippo]
-command=authbind --deep twistd -y kippo.tac -l log/kippo.log --pidfile kippo.pid -u kippo -g sudo
+command=/opt/kippo/start.sh
+#command=su kippo -c "authbind --deep twistd -y kippo.tac -l log\/kippo.log --pidfile kippo.pid
 directory=/opt/kippo
 stdout_logfile=/opt/kippo/log/kippo.out
 stderr_logfile=/opt/kippo/log/kippo.err
