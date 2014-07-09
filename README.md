@@ -5,7 +5,7 @@ Multi-snort and honeypot sensor management, uses a network of VMs, small footpri
 
 ### HONEYPOT
 
-Deployed sensors with intrusion detection software installed: SNORT, Conpot, and Dionaea. 
+Deployed sensors with intrusion detection software installed: Snort, Kippo, Conpot, and Dionaea. 
 
 ### MANAGEMENT SERVER
 
