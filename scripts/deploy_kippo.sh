@@ -29,15 +29,15 @@ sed -i 's/Port 22/Port 2222/g' /etc/ssh/sshd_config
 reload ssh
 
 # Create Kippo user
-useradd -d /home/kippo -s /bin/bash -m kippo -g sudo
+useradd -d /home/kippo -s /bin/bash -m kippo -g users
 
 # Get the Kippo source
 cd /opt
-git clone https://github.com/gregcmartin/kippo
+git clone https://github.com/threatstream/kippo
 cd kippo
 
 # Install HPFeeds
-pip install https://github.com/rep/hpfeeds/tarball/master
+#pip install https://github.com/rep/hpfeeds/tarball/master
 
 
 # Configure Kippo
@@ -56,18 +56,18 @@ chmod 777 /etc/authbind/byport/22
 cat >> /opt/kippo/kippo.cfg <<EOF
 
 [database_hpfeed]
-host = $HPF_HOST
+server = $HPF_HOST
 port = $HPF_PORT
-channel = kippo.sessions
-ident = $HPF_IDENT
+identifier = $HPF_IDENT
 secret = $HPF_SECRET
+debug = false
 
 EOF
 
 # Setup kippo to start at boot
-sed -i 's/twistd -y kippo/authbind --deep twistd -y kippo/g' /opt/kippo/start.sh
+sed -i 's/twistd -y kippo/su - kippo -c authbind --deep twistd -y kippo/g' /opt/kippo/start.sh
 echo "/opt/kippo/start.sh" >> /etc/rc.local
-
+/opt/kippo/start.sh
 
 # Config for supervisor.
 #cat > /etc/supervisor/conf.d/kippo.conf <<EOF
