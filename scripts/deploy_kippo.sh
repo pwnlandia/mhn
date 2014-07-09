@@ -65,21 +65,21 @@ debug = false
 EOF
 
 # Setup kippo to start at boot
-sed -i 's/twistd -y kippo/su - kippo -c authbind --deep twistd -y kippo/g' /opt/kippo/start.sh
+sed -i 's/twistd -y kippo/su kippo -c "authbind --deep twistd/g' /opt/kippo/start.sh
 echo "/opt/kippo/start.sh" >> /etc/rc.local
-/opt/kippo/start.sh
+#/opt/kippo/start.sh
 
 # Config for supervisor.
-#cat > /etc/supervisor/conf.d/kippo.conf <<EOF
-#[program:kippo]
-#command=authbind --deep twistd -y kippo.tac -l log/kippo.log --pidfile kippo.pid -u kippo -g sudo
-#directory=/opt/kippo
-#stdout_logfile=/opt/kippo/log/kippo.out
-#stderr_logfile=/opt/kippo/log/kippo.err
-#autostart=true
-#autorestart=true
-#redirect_stderr=true
-#stopsignal=QUIT
-#EOF
+cat > /etc/supervisor/conf.d/kippo.conf <<EOF
+[program:kippo]
+command=/opt/kippo/start.sh
+directory=/opt/kippo
+stdout_logfile=/opt/kippo/log/kippo.out
+stderr_logfile=/opt/kippo/log/kippo.err
+autostart=true
+autorestart=true
+redirect_stderr=true
+stopsignal=QUIT
+EOF
 
-#supervisorctl update
+supervisorctl update
