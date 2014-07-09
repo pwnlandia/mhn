@@ -131,10 +131,12 @@ def create_clean_db():
         #|-- deploy_conpot.sh
         #|-- deploy_dionaea.sh
         #|-- deploy_snort.sh
+        #|-- deploy_kippo.sh
         deployscripts = {
             'Conpot': path.abspath('../scripts/deploy_conpot.sh'),
             'Dionaea': path.abspath('../scripts/deploy_dionaea.sh'),
             'Snort': path.abspath('../scripts/deploy_snort.sh'),
+            'Kippo': path.abspath('../scripts/deploy_kippo.sh'),
         }
         for honeypot, deploypath in deployscripts.iteritems():
 
@@ -143,7 +145,7 @@ def create_clean_db():
                 initdeploy.script = deployfile.read()
                 initdeploy.notes = 'Initial deploy script for {}'.format(honeypot)
                 initdeploy.user = superuser
-                initdeploy.name = 'Ubuntu 12.04 {}'.format(honeypot)
+                initdeploy.name = 'Ubuntu {}'.format(honeypot)
                 db.session.add(initdeploy)
 
         # Creating an initial rule source.
