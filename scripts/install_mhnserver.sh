@@ -27,6 +27,7 @@ python initdatabase.py
 cd $MHN_HOME
 
 apt-get install -y nginx
+mkdir -p /opt/www
 cat > /etc/nginx/sites-available/default <<EOF 
 server {
     listen       80;
@@ -36,7 +37,7 @@ server {
         try_files \$uri @mhnserver; 
     }
     
-    root $MHN_HOME/server;
+    root /opt/www;
 
     location @mhnserver {
       include uwsgi_params;

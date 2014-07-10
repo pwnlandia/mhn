@@ -18,8 +18,6 @@ chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "kippo"
 
-# Add ppa to apt sources (Needed for Dionaea).
-apt-get update
 apt-get update
 apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twisted git python-pip supervisor authbind
 
@@ -35,10 +33,6 @@ useradd -d /home/kippo -s /bin/bash -m kippo -g users
 cd /opt
 git clone https://github.com/threatstream/kippo
 cd kippo
-
-# Install HPFeeds
-#pip install https://github.com/rep/hpfeeds/tarball/master
-
 
 # Configure Kippo
 mv kippo.cfg.dist kippo.cfg
@@ -73,7 +67,6 @@ echo "/opt/kippo/start.sh" >> /etc/rc.local
 cat > /etc/supervisor/conf.d/kippo.conf <<EOF
 [program:kippo]
 command=/opt/kippo/start.sh
-#command=su kippo -c "authbind --deep twistd -y kippo.tac -l log\/kippo.log --pidfile kippo.pid
 directory=/opt/kippo
 stdout_logfile=/opt/kippo/log/kippo.out
 stderr_logfile=/opt/kippo/log/kippo.err

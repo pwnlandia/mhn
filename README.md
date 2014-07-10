@@ -5,7 +5,7 @@ Multi-snort and honeypot sensor management, uses a network of VMs, small footpri
 
 ### HONEYPOT
 
-Deployed sensors with intrusion detection software installed: SNORT, Conpot, and Dionaea. 
+Deployed sensors with intrusion detection software installed: Snort, Kippo, Conpot, and Dionaea. 
 
 ### MANAGEMENT SERVER
 
@@ -103,6 +103,14 @@ MHN was designed to make scalable deployment of honeypots easier.  Here are the 
 ### Data
 
 The MHN server reports anonymized attack data back to ThreatStream.  If you are interested in this data please contact: mhn@threatstream.com.  This data reporting can be disabled by running the following command from the MHN server after completing the initial installation steps outlined above: `/opt/mhn/scripts/disable_collector.sh`
+
+### Support or Contact
+MHN is an open source project brought to you by the passionate folks at ThreatStream. Please checkout our troubleshooting guide on the wiki. We will also lend a hand if needed, find us at: mhn@threatstream.com
+
+### Credit and Thanks
+MHN leverages and extends upon several awesome projects by the Honeynet project. Please show them your support by way of donation.
+
+
 
 ## LICENSE
 
