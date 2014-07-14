@@ -35,6 +35,9 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y snort
 # emerging threats.
 sed -i 's,include \$RULE_PATH/community-sip.rules,#include \$RULE_PATH/community-sip.rules,1' /etc/snort/snort.conf
 
+# turn on 'full' snort alert logging
+sed -i 's/DEBIAN_SNORT_OPTIONS=.*/DEBIAN_SNORT_OPTIONS="-A full"/' /etc/snort/snort.debian.con
+
 SNORT_HPF_HOME=/opt/snort_hpfeeds
 mkdir -p $SNORT_HPF_HOME
 cd $SNORT_HPF_HOME
