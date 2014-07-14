@@ -29,10 +29,24 @@ apt-get install -y dionaea supervisor patch
 
 cp /etc/dionaea/dionaea.conf.dist /etc/dionaea/dionaea.conf
 cat > /tmp/dionaea.hpfeeds.patch <<EOF
-index 43e17b4..7b16529 100644
 --- /etc/dionaea/dionaea.conf
 +++ /etc/dionaea/dionaea.conf.new
-@@ -344,6 +344,16 @@ modules = {
+@@ -252,10 +252,10 @@
+ 		tftp = {
+ 			root = "var/dionaea/wwwroot"
+ 		}
+-		http = {
+-			root = "var/dionaea/wwwroot"
+-			max-request-size = "32768" // maximum size in kbytes of the request (32MB)
+-		}
++		//http = {
++		//	root = "var/dionaea/wwwroot"
++		//	max-request-size = "32768" // maximum size in kbytes of the request (32MB)
++		//}
+ 		sip = {
+ 			udp = {
+ 				port = "5060"
+@@ -350,6 +350,16 @@
  			user = "" 		// username (optional)
  			pass = ""		// password (optional)
  		}
@@ -49,15 +63,15 @@ index 43e17b4..7b16529 100644
  		logsql = {
  			mode = "sqlite" // so far there is only sqlite
  			sqlite = {
-@@ -457,6 +467,7 @@ modules = {
- //			"virustotal",
+@@ -466,6 +476,7 @@
  //			"mwserv",
  //			"submit_http",
-+			"hpfeeds",
  //			"logxmpp",
++			"hpfeeds",
  //			"nfq",
  //			"p0f",
-index 5b40dd7..8bddc63 100644
+ //			"surfids",
+
 --- /usr/lib/dionaea/python/dionaea/ihandlers.py
 +++ /usr/lib/dionaea/python/dionaea/ihandlers.py.new
 @@ -129,6 +129,13 @@ def new():
