@@ -29,11 +29,11 @@ class Sensor(db.Model, APIModel):
 
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(36), unique=True)
-    name = db.Column(db.String(50), unique=True)
+    name = db.Column(db.String(50))
     created_date = db.Column(
             db.DateTime(), default=datetime.utcnow)
     ip = db.Column(db.String(15))
-    hostname = db.Column(db.String(50), unique=True)
+    hostname = db.Column(db.String(50))
     identifier = db.Column(db.String(50), unique=True)
     honeypot = db.Column(db.String(50))
 
