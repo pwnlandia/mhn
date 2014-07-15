@@ -206,7 +206,7 @@ class Session(ResourceMixin):
             # If it's not a proper integer it will be remove
             # from the query.
             try:
-                integer = int(_query[field_name])
+                integer = int(query[field_name])
             except (ValueError, TypeError):
                 query.pop(field_name)
             else:
