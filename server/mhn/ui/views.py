@@ -72,7 +72,7 @@ def get_attacks():
     total = clio.session.count(**request.args.to_dict())
     sessions = clio.session.get(
             options=options, **request.args.to_dict())
-    sessions = mongo_pages(sessions, total)
+    sessions = mongo_pages(sessions, total, limit=10)
     return render_template('ui/attacks.html', attacks=sessions,
                            sensors=Sensor.query, view='ui.get_attacks',
                            get_flag_ip=get_flag_ip, **request.args.to_dict())
@@ -106,7 +106,7 @@ def get_sensors():
     pag = paginate_options(limit=10)
     sensors = sensors[pag['skip']:pag['skip'] + pag['limit']]
     # Using mongo_pages because it expects paginated iterables.
-    sensors = mongo_pages(sensors, total)
+    sensors = mongo_pages(sensors, total, limit=10)
     return render_template('ui/sensors.html', sensors=sensors,
                            view='ui.get_sensors', pag=pag)
 

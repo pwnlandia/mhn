@@ -20,8 +20,9 @@ def alchemy_pages(query, **kwargs):
     return Pagination(page, page_size, query.count(), items)
 
 
-def mongo_pages(result, total):
-    return Pagination(g.page, PAGE_SIZE, total, result)
+def mongo_pages(result, total, **kwargs):
+    page_size = kwargs.get('limit', PAGE_SIZE)
+    return Pagination(g.page, page_size, total, result)
 
 
 def paginate_options(**kwargs):
