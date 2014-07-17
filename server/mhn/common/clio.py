@@ -216,7 +216,7 @@ class Session(ResourceMixin):
 
         intfields = ('destination_port', 'source_port',)
         for field in intfields:
-            if field in clean:
+            if field in clean.copy():
                 clean = clean_integer(field, clean)
 
         if 'timestamp' in clean and isinstance(clean['timestamp'], basestring):
