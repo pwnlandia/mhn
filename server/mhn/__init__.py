@@ -1,4 +1,3 @@
-import itertools
 from urlparse import urljoin
 
 from flask import Flask, request, jsonify, abort, url_for
@@ -120,7 +119,7 @@ def create_clean_db():
 
         apikey = ApiKey(user_id=superuser.id, api_key=str(uuid.uuid4()).replace("-", ""))
         db.session.add(apikey)
-        db.session.flush()        
+        db.session.flush()
 
         from os import path
 
