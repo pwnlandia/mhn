@@ -6,6 +6,8 @@ server/mhn.log
 server/mhn/mhn.log
 
 
+*.log.*
+
 *test-mhn.db
 
 celerybeat-schedule
