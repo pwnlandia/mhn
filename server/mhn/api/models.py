@@ -124,12 +124,13 @@ class Rule(db.Model, APIModel):
         self.is_active = True
 
     def insert_refs(self, refs):
-        for r in refs:
-            ref = Reference()
-            ref.rule = self
-            ref.text = r
-            db.session.add(ref)
-        db.session.commit()
+#        for r in refs:
+#            ref = Reference()
+#            ref.rule = self
+#            ref.text = r
+#            db.session.add(ref)
+#        db.session.commit()
+        pass
 
     def to_dict(self):
         return dict(sid=self.sid, rev=self.rev, msg=self.message,
@@ -147,10 +148,10 @@ class Rule(db.Model, APIModel):
         sid = 'sid:{}'.format(self.sid)
         rev = 'rev:{}'.format(self.rev)
         reference = ''
-        for r in self.references:
-            reference += 'reference:{}; '.format(r.text)
+#        for r in self.references:
+#            reference += 'reference:{}; '.format(r.text)
         # Remove trailing '; ' from references.
-        reference = reference[:-2]
+#        reference = reference[:-2]
         return self.rule_format.format(msg=msg, sid=sid, rev=rev,
                                        classtype=classtype, reference=reference)
 
