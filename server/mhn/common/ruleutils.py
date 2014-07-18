@@ -1,35 +1,32 @@
 import re
 
-
-def _parse_plain(r):
-    """
-    Takes in a plain text rule and returns a dictionary
-    object containing the parsed information.
-
-    Adapted from: jasonish/idstools.py at GitHub.
-    """
-    option_patterns = (
+option_patterns = (
         re.compile("(msg)\s*:\s*\"(.*?)\";"),
         re.compile("(sid)\s*:\s*(\d+);"),
         re.compile("(rev)\s*:\s*(\d+);"),
         re.compile("(reference)\s*:\s*(.*?);"),
         re.compile("(classtype)\s*:\s*(.*?);"),
     )
-    actions = ("alert", "log", "pass", "activate",
-            "dynamic", "drop", "reject", "sdrop")
-    rule_pattern = re.compile(
-        r"^(?P<enabled>#)*\s*"      # Enabled/disabled
-        r"(?P<raw>"
-        r"(?P<action>%s)\s*"        # Action
-        r"[^\s]*\s*"                # Protocol
-        r"[^\s]*\s*"                # Source address(es)
-        r"[^\s]*\s*"                # Source port
-        r"[-><]+\s*"                # Direction
-        r"[^\s]*\s*"                # Destination address(es)
-        r"[^\s]*\s*"                # Destination port
-        r"\((?P<options>.*)\)\s*"   # Options
-        r")"
-        % "|".join(actions))
+
+actions = ("alert", "log", "pass", "activate",
+        "dynamic", "drop", "reject", "sdrop")
+
+rule_pattern = re.compile(
+    r"^(?P<enabled>#)*\s*"      # Enabled/disabled
+    r"(?P<raw>"
+    r"(?P<action>%s)\s*"        # Action
+    r"[^\s]*\s*"                # Protocol
+    r"[^\s]*\s*"                # Source address(es)
+    r"[^\s]*\s*"                # Source port
+    r"[-><]+\s*"                # Direction
+    r"[^\s]*\s*"                # Destination address(es)
+    r"[^\s]*\s*"                # Destination port
+    r"\((?P<options>.*)\)\s*"   # Options
+    r")"
+    % "|".join(actions))
+
+
+def _parse_plain(r):
     rule = {}
     rule['references'] = []
     # 'Escaping' brackets for safe string formatting.
