@@ -101,10 +101,10 @@ MHN was designed to make scalable deployment of honeypots easier.  Here are the 
 
 ### Data
 
-The MHN server reports anonymized attack data back to ThreatStream.  If you are interested in this data please contact: [mhn@threatstream.com](mhn@threatstream.com]).  This data reporting can be disabled by running the following command from the MHN server after completing the initial installation steps outlined above: `/opt/mhn/scripts/disable_collector.sh`
+The MHN server reports anonymized attack data back to ThreatStream.  If you are interested in this data please contact: <mhn@threatstream.com>.  This data reporting can be disabled by running the following command from the MHN server after completing the initial installation steps outlined above: `/opt/mhn/scripts/disable_collector.sh`
 
 ### Support or Contact
-MHN is an open source project brought to you by the passionate folks at ThreatStream. Please check out our troubleshooting guide on the wiki. We will also lend a hand, if needed. Find us at: [mhn@threatstream.com](mhn@threatstream.com]).
+MHN is an open source project brought to you by the passionate folks at ThreatStream. Please check out our troubleshooting guide on the wiki. We will also lend a hand, if needed. Find us at: <mhn@threatstream.com>.
 
 ### Credit and Thanks
 MHN leverages and extends upon several awesome projects by the Honeynet project. Please show them your support by way of donation.
