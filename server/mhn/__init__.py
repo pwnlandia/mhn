@@ -137,6 +137,7 @@ def create_clean_db():
             'Dionaea': path.abspath('../scripts/deploy_dionaea.sh'),
             'Snort': path.abspath('../scripts/deploy_snort.sh'),
             'Kippo': path.abspath('../scripts/deploy_kippo.sh'),
+	    'Raspberry Pi': path.abspath('../scripts/deploy_raspberrypi.sh'),
         }
         for honeypot, deploypath in deployscripts.iteritems():
 
