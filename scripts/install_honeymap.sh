@@ -47,7 +47,7 @@ wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz && gz
 wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCityv6-beta/GeoLiteCityv6.dat.gz && gzip -d GeoLiteCityv6.dat.gz
 
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
-/opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py geoloc $SECRET "geoloc.events" dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,kippo.alerts
+/opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py geoloc $SECRET "geoloc.events" amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,kippo.alerts
 
 cat > /opt/hpfeeds/geoloc.json <<EOF
 {
@@ -62,7 +62,8 @@ cat > /opt/hpfeeds/geoloc.json <<EOF
         "beeswarm.hive",
         "kippo.sessions",
         "conpot.events",
-        "snort.alerts"
+        "snort.alerts",
+        "amun.events"
     ],
     "GEOLOC_CHAN": "geoloc.events"
 }
