@@ -7,7 +7,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="small-12 large-centered columns">
+        <div class="small-8 large-centered columns">
             <div class="row">
                 <div class="small-4 columns">
                     <h4>Search Filters</h4>
@@ -15,22 +15,22 @@
             </div>
             <form id="payload-filter" action="" method="get">
                 <div class="row">
-                    <div class="small-3 columns">
+                    <div class="small-4 columns">
                         <label>Feed</label>
                     </div>
-                    <div class="small-3 pull-6 columns">
+                    <div class="small-4 pull-4 columns">
                         <label>Regex Term</label>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="small-3 columns">
+                    <div class="small-4 columns">
                         <select name="channel">
                             {% for c in channel_list %}
                             <option {% if c  == channel %}selected{% endif %} value="{{ c }}">{{ c }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="small-3 columns">
+                    <div class="small-4 columns">
                         <input type="text" name="payload" value="{{ payload }}" placeholder="pcre regex" />
                     </div>
                     <div class="small-2 columns">

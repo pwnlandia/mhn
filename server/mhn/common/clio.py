@@ -302,9 +302,6 @@ class HpFeed(ResourceMixin):
         if 'payload' in req_args:
             req_args['payload'] = {'$regex':req_args['payload']}
         
-        if 'channel' not in req_args:
-            req_args['channel']='snort.alerts'
-
         cnt_query = super(HpFeed, self)._clean_query(req_args)
         count = self.collection.find(cnt_query).count()
 

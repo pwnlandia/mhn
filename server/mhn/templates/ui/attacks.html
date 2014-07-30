@@ -18,16 +18,16 @@
                     <div class="small-3 columns">
                         <label>Sensor</label>
                     </div>
-                    <div class="small-3 columns">
+                    <div class="small-2 columns">
                         <label>Honeypot</label>
                     </div>
-                    <div class="small-3 columns">
+                    <div class="small-2 columns">
                         <label>Date</label>
                     </div>
-                    <div class="small-3 columns">
+                    <div class="small-1 columns">
                         <label>Port</label>
                     </div>
-                    <div class="small-3 columns pull-9">
+                    <div class="small-2 pull-2 columns">
                         <label>IP Address</label>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="small-3 columns">
+                    <div class="small-2 columns">
                         <select name="honeypot">
                             <option value="">All</option>
                             {% for pot in settings.supported_honeypots %}
@@ -48,13 +48,13 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="small-3 columns">
+                    <div class="small-2 columns">
                         <input type="text" name="timestamp" value="{{ timestamp }}" placeholder="MM-DD-YYYY" />
                     </div>
-                    <div class="small-3 columns">
+                    <div class="small-1 columns">
                         <input type="text" name="destination_port" value="{{ destination_port }}" placeholder="445" />
                     </div>
-                    <div class="small-3 columns">
+                    <div class="small-2 columns">
                         <input type="text" name="source_ip" value="{{ source_ip }}" placeholder="8.8.8.8" />
                     </div>
                     <div class="small-2 columns">
