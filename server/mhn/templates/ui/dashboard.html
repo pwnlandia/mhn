@@ -9,7 +9,7 @@
     </div>
 </div>
 <div class="row" style="margin-top:30px;">
-    <div class="small-10 small-centered columns">
+    <div class="small-12 small-centered columns">
         <div class="row">
             <div class="small-6 columns">
                 <h3>Attacks in the last 24 hours:</h3>
@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="small-6 push-6 columns">
+            <div class="small-10 push-2 columns">
                 <ol>
                 {% for ip in top_attackers %}
                     <li><strong>
@@ -41,7 +41,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="small-6 push-6 columns">
+            <div class="small-10 push-2 columns">
                 <ol>
                 {% for port in top_ports %}
                     <li><strong>
@@ -57,11 +57,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="small-6 push-6 columns">
+            <div class="small-10 push-2 columns">
                 <ol>
-                {% for sig in freq_signs %}
+                {% for sig in freq_sigs %}
                     <li><strong>
-                    {{ sig.signature }} / {{ sig.classification }} ({{ sig.count | number_format }} times)
+                    {{ sig['signature'] }} ({{ sig['count'] | number_format }} times)
                     </li></strong>
                 {% endfor %}
                 </ol>

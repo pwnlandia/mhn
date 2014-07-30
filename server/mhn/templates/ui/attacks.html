@@ -7,7 +7,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="small-7 large-centered columns">
+        <div class="small-12 large-centered columns">
             <div class="row">
                 <div class="small-4 columns">
                     <h4>Search Filters</h4>
@@ -15,18 +15,24 @@
             </div>
             <form id="attack-filter" action="" method="get">
                 <div class="row">
-                    <div class="small-4 columns">
+                    <div class="small-3 columns">
                         <label>Sensor</label>
                     </div>
                     <div class="small-3 columns">
                         <label>Honeypot</label>
                     </div>
-                    <div class="small-3 pull-2 columns">
+                    <div class="small-3 columns">
                         <label>Date</label>
+                    </div>
+                    <div class="small-3 columns">
+                        <label>Port</label>
+                    </div>
+                    <div class="small-3 columns pull-9">
+                        <label>IP Address</label>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="small-4 columns">
+                    <div class="small-3 columns">
                         <select name="identifier">
                             <option value="">All</option>
                             {% for s in sensors %}
@@ -45,6 +51,12 @@
                     <div class="small-3 columns">
                         <input type="text" name="timestamp" value="{{ timestamp }}" placeholder="MM-DD-YYYY" />
                     </div>
+                    <div class="small-3 columns">
+                        <input type="text" name="destination_port" value="{{ destination_port }}" placeholder="445" />
+                    </div>
+                    <div class="small-3 columns">
+                        <input type="text" name="source_ip" value="{{ source_ip }}" placeholder="8.8.8.8" />
+                    </div>
                     <div class="small-2 columns">
                         <input class="tiny button" type="submit" value="GO" />
                     </div>
@@ -59,6 +71,7 @@
                     <tr>
                         <th></th>
                         <th>Date</th>
+                        <th>Sensor</th>
                         <th>Country</th>
                         <th>Src IP</th>
                         <th>Dst port</th>
@@ -69,8 +82,9 @@
                 <tbody>
                     {% for at in attacks.items %}
                     <tr>
-                        <td>{{ loop.index }}</td>
-                        <td>{{ at.timestamp|fdate }}</td>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ at.timestamp|fdate }}</td>
+                        <td>{{ get_sensor_name(at.identifier) }}</td>
                         <td><img src="{{ get_flag_ip(at.source_ip) }}" width=25 height=50 /></td>
                         <td>{{ at.source_ip }}</td>
                         <td>{{ at.destination_port }}</td>

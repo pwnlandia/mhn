@@ -6,8 +6,9 @@ ThreatStream 2014
 """
 import pymongo
 from dateutil.parser import parse as parse_date
-
+from collections import Counter
 from bson import ObjectId, son
+import json
 import datetime
 
 
@@ -74,7 +75,7 @@ class ResourceMixin(object):
 
         if 'hours_ago' in dirty:
             clean['timestamp'] = {
-                '$gte': datetime.datetime.now() - datetime.timedelta(hours=int(dirty['hours_ago'])) 
+                '$gte': datetime.datetime.utcnow() - datetime.timedelta(hours=int(dirty['hours_ago'])) 
             }
 
         return clean
@@ -292,7 +293,50 @@ class HpFeed(ResourceMixin):
     collection_name = 'hpfeed'
     expected_filters = ('ident', 'channel', 'last_error', 'last_error_timestamp',
                         'normalized', 'payload', '_id')
+    channel_map = {'snort.alerts':['date', 'sensor', 'source_ip', 'destination_port', 'priority', 'classification', 'signature'],
+                   'dionaea.capture':['url', 'daddr', 'saddr', 'dport', 'sport', 'sha512', 'md5']}
 
+    def get_payloads(self, options, req_args):
+        payloads = []
+        columns = []
+        if 'payload' in req_args:
+            req_args['payload'] = {'$regex':req_args['payload']}
+        
+        if 'channel' not in req_args:
+            req_args['channel']='snort.alerts'
+
+        cnt_query = super(HpFeed, self)._clean_query(req_args)
+        count = self.collection.find(cnt_query).count()
+
+        columns = self.channel_map.get(req_args['channel'])
+        
+        feed_rows = self.get(options=options, **req_args)
+        for row in feed_rows:
+            payload = json.loads(row.payload)
+            payloads.append(payload)
+        
+        return count,columns,payloads
+        
+    def _tops(self, field, chan, top=5, hours_ago=None):
+        query = {'channel': chan}
+
+        if hours_ago:
+            query['hours_ago'] = hours_ago
+
+        res = self.get(options={}, **query)
+        val_list = [json.loads(r.payload)[field] for r in res]
+        cnt = Counter()
+        for val in val_list:
+            cnt[val] += 1
+        results = [dict({field:val, 'count':num}) for val,num in cnt.most_common(top)]
+
+        return results
+
+    def top_sigs(self, top=5, hours_ago=24):
+        return self._tops('signature', 'snort.alerts', top, hours_ago)
+
+    def top_files(self, top=5, hours_ago=24):
+        return self._tops('destination_port', top, hours_ago)
 
 class Url(ResourceMixin):
 
