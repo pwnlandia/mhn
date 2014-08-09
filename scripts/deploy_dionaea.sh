@@ -71,6 +71,15 @@ cat > /tmp/dionaea.hpfeeds.patch <<EOF
  //			"nfq",
  //			"p0f",
  //			"surfids",
+@@ -474,7 +485,7 @@
+ 		}
+ 
+ 		services = {
+-			serve = ["http", "https", "tftp", "ftp", "mirror", "smb", "epmap", "sip","mssql", "mysql"]
++			serve = ["tftp", "ftp", "mirror", "smb", "epmap", "sip","mssql", "mysql"]
+ 		}
+ 
+ 	}
 
 --- /usr/lib/dionaea/python/dionaea/ihandlers.py
 +++ /usr/lib/dionaea/python/dionaea/ihandlers.py.new
