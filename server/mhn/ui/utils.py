@@ -1,14 +1,15 @@
 import requests
 from flask import current_app as app
-
 from mhn.ui import constants
 from config import MHN_SERVER_HOME
 import os
 from werkzeug.contrib.cache import SimpleCache
-flag_cache = SimpleCache(threshold=1000, default_timeout=300)
-
 import socket
 import struct
+from mhn.api.models import Sensor
+
+flag_cache = SimpleCache(threshold=1000, default_timeout=300)
+sensor_cache = SimpleCache(threshold=1000, default_timeout=300)
 
 def is_RFC1918_addr(ip):
     # 10.0.0.0 = 167772160
@@ -34,6 +35,17 @@ def get_flag_ip(ipaddr):
         flag = _get_flag_ip(ipaddr)
         flag_cache.set(ipaddr, flag)
     return flag
+
+def get_sensor_name(sensor_id):
+    sensor_name = sensor_cache.get(sensor_id)
+    if not sensor_name:
+        for s in Sensor.query:
+	    if s.uuid == sensor_id:
+		sensor_name = s.hostname
+                sensor_cache.set(sensor_id, sensor_name)
+            
+    print 'Name: %s' % sensor_name
+    return sensor_name
 
 def _get_flag_ip(ipaddr):
     """

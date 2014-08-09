@@ -9,13 +9,13 @@
     </div>
 </div>
 <div class="row" style="margin-top:30px;">
-    <div class="small-10 small-centered columns">
+    <div class="small-12 small-centered columns">
         <div class="row">
             <div class="small-6 columns">
                 <h3>Attacks in the last 24 hours:</h3>
             </div>
-            <div class="small-6 columns">
-                <h3><strong>{{ attackcount | number_format }}</strong></h3>
+            <div class="small-6 pull-1 columns">
+                <h3><strong><a href="{{ url_for('ui.get_attacks', hours_ago='24') }}">{{ attackcount | number_format }}</a></strong></h3>
             </div>
         </div>
         <div class="row" style="margin-top:30px;">
@@ -24,12 +24,12 @@
             </div>
         </div>
         <div class="row">
-            <div class="small-6 push-6 columns">
+            <div class="small-10 push-2 columns">
                 <ol>
                 {% for ip in top_attackers %}
                     <li><strong>
                     <img src="{{ get_flag_ip(ip.source_ip) }}" width=25 height=50 />
-                    {{ ip.source_ip }} ({{ ip.count | number_format }} attacks)
+                    <a href="{{ url_for('ui.get_attacks', source_ip=ip.source_ip) }}">{{ ip.source_ip }} ({{ ip.count | number_format }} attacks)</a>
                     </li></strong>
                 {% endfor %}
                 </ol>
@@ -41,11 +41,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="small-6 push-6 columns">
+            <div class="small-10 push-2 columns">
                 <ol>
                 {% for port in top_ports %}
                     <li><strong>
-                    {{ port.destination_port }} ({{ port.count | number_format }} times)
+                    <a href="{{ url_for('ui.get_attacks', destination_port=port.destination_port) }}">{{ port.destination_port }} ({{ port.count | number_format }} times)</a>
                     </li></strong>
                 {% endfor %}
                 </ol>
@@ -57,11 +57,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="small-6 push-6 columns">
+            <div class="small-10 push-2 columns">
                 <ol>
-                {% for sig in freq_signs %}
+                {% for sig in freq_sigs %}
                     <li><strong>
-                    {{ sig.signature }} / {{ sig.classification }} ({{ sig.count | number_format }} times)
+                    <a href="{{ url_for('ui.get_feeds', payload=sig['signature'], channel='snort.alerts') }}">{{ sig['signature'] }} ({{ sig['count'] | number_format }} times)</a>
                     </li></strong>
                 {% endfor %}
                 </ol>
