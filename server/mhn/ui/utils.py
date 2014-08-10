@@ -17,14 +17,19 @@ def is_RFC1918_addr(ip):
     # 192.168.0.0 = 3232235520
     RFC1918_net_bits = ((167772160, 8), (2886729728, 12), (3232235520, 16))
 
-    # ip to decimal
-    ip = struct.unpack("!L", socket.inet_aton(ip))[0]
+    try:
+        # ip to decimal
+        ip = struct.unpack("!L", socket.inet_aton(ip))[0]
 
-    for net, mask_bits in RFC1918_net_bits:
-        ip_masked = ip & (2 ** 32 - 1 << (32 - mask_bits))
-        if ip_masked == net:
-            return True
+        for net, mask_bits in RFC1918_net_bits:
+            ip_masked = ip & (2 ** 32 - 1 << (32 - mask_bits))
+            if ip_masked == net:
+                return True
+    except Exception as e:
+        print 'Error ({}) on is_RFC1918_addr: {}'.format(e, ip)
+
     return False
+
 
 def get_flag_ip(ipaddr):
     if is_RFC1918_addr(ipaddr):
