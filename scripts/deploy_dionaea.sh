@@ -28,6 +28,7 @@ apt-get update
 apt-get install -y dionaea supervisor patch
 
 cp /etc/dionaea/dionaea.conf.dist /etc/dionaea/dionaea.conf
+sed --in-place='.bak' 's/addrs = { eth0 = \["::"\] }/addrs = { eth0 = ["::", "0.0.0.0"] }/' /etc/dionaea/dionaea.conf
 cat > /tmp/dionaea.hpfeeds.patch <<EOF
 --- /etc/dionaea/dionaea.conf
 +++ /etc/dionaea/dionaea.conf.new
