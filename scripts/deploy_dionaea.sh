@@ -480,6 +480,7 @@ sed -i 's/var\/dionaea\///g' /etc/dionaea/dionaea.conf
 sed -i 's/log\//\/var\/dionaea\/log\//g' /etc/dionaea/dionaea.conf
 sed -i 's/levels = "all"/levels = "warning,error"/1' /etc/dionaea/dionaea.conf
 sed -i 's/mode = "getifaddrs"/mode = "manual"/1' /etc/dionaea/dionaea.conf
+sed --in-place='.bak' 's/addrs = { eth0 = \["::"\] }/addrs = { eth0 = ["::", "0.0.0.0"] }/' /etc/dionaea/dionaea.conf
 
 mkdir -p /var/dionaea/bistreams 
 chown nobody:nogroup /var/dionaea/bistreams
