@@ -8,6 +8,7 @@ from flask.ext.mail import Mail
 from werkzeug.contrib.atom import AtomFeed
 import xmltodict
 import uuid
+from flaskext.csrf import csrf
 
 db = SQLAlchemy()
 # After defining `db`, import auth models due to
@@ -18,6 +19,9 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 mhn = Flask(__name__)
 mhn.config.from_object('config')
+
+# Set csrf protection for the whole app
+csrf(mhn)
 
 # Email app setup.
 mail = Mail()

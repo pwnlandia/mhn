@@ -13,3 +13,4 @@ xmltodict
 uwsgi
 pymongo
 -e git+https://github.com/threatstream/hpfeeds/#egg=hpfeeds-dev
+-e git+http://github.com/sjl/flask-csrf.git@v0.9.1#egg=flask-csrf
