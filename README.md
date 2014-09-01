@@ -25,7 +25,8 @@ It also allows systems administrators to:
 Note: if you run into trouble during the install, please checkout the [troubleshooting guide](https://github.com/threatstream/MHN/wiki/MHN-Troubleshooting-Guide) on the wiki.  If you only want to experiment with MHN on some virtual machines, please check out the [Getting up and Running with Vagrant](https://github.com/threatstream/mhn/wiki/Getting-up-and-running-using-Vagrant) guide on the wiki.
     
     $ cd /opt/
-    $ git clone https://github.com/threatstream/mhn.git
+    $ sudo apt-get install git -y
+    $ sudo git clone https://github.com/threatstream/mhn.git
     $ cd mhn/scripts/
     $ sudo ./install_hpfeeds.sh
     $ sudo ./install_mnemosyne.sh
