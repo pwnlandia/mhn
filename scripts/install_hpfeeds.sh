@@ -11,9 +11,9 @@ bash $SCRIPTS/install_mongo.sh
 pip install virtualenv
 
 cd /tmp
-wget http://dist.schmorp.de/libev/libev-4.15.tar.gz
-tar zxvf libev-4.15.tar.gz 
-cd libev-4.15
+wget http://dist.schmorp.de/libev/libev-4.18.tar.gz
+tar zxvf libev-4.18.tar.gz
+cd libev-4.18
 ./configure && make && make install
 ldconfig
 
