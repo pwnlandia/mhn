@@ -25,8 +25,8 @@ apt-get --yes --force-yes install libglib2.0-dev libssl-dev libcurl4-openssl-dev
 
 cp /opt/dionaea/etc/dionaea/dionaea.conf.dist /opt/dionaea/etc/dionaea/dionaea.conf
 chown nobody:nogroup /opt/dionaea/var/dionaea -R
-export PATH=$PATH:/opt/dionaea/bin
-dionaea -u nobody -g nogroup -r /opt/dionaea -w /opt/dionaea -p /opt/dionaea/var/dionaea.pid
+#export PATH=$PATH:/opt/dionaea/bin
+#dionaea -u nobody -g nogroup -r /opt/dionaea -w /opt/dionaea -p /opt/dionaea/var/dionaea.pid
 
 # previous .conf file, but no difference
 cp /opt/dionaea/etc/dionaea/dionaea.conf.dist /opt/dionaea/etc/dionaea/dionaea.conf
