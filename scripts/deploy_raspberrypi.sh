@@ -25,8 +25,6 @@ apt-get --yes --force-yes install libglib2.0-dev libssl-dev libcurl4-openssl-dev
 
 cp /opt/dionaea/etc/dionaea/dionaea.conf.dist /opt/dionaea/etc/dionaea/dionaea.conf
 chown nobody:nogroup /opt/dionaea/var/dionaea -R
-#export PATH=$PATH:/opt/dionaea/bin
-#dionaea -u nobody -g nogroup -r /opt/dionaea -w /opt/dionaea -p /opt/dionaea/var/dionaea.pid
 
 # previous .conf file, but no difference
 cp /opt/dionaea/etc/dionaea/dionaea.conf.dist /opt/dionaea/etc/dionaea/dionaea.conf
@@ -73,6 +71,15 @@ cat > /tmp/dionaea.hpfeeds.patch <<EOF
  //			"nfq",
  //			"p0f",
  //			"surfids",
+@@ -474,7 +485,7 @@
+ 		}
+ 
+ 		services = {
+-			serve = ["http", "https", "tftp", "ftp", "mirror", "smb", "epmap", "sip","mssql", "mysql"]
++			serve = ["tftp", "ftp", "mirror", "smb", "epmap", "sip","mssql", "mysql"]
+ 		}
+ 
+ 	}
 
 --- /opt/dionaea/lib/dionaea/python/dionaea/ihandlers.py
 +++ /opt/dionaea/lib/dionaea/python/dionaea/ihandlers.py.new
