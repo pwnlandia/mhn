@@ -65,4 +65,5 @@ HONEYPOT_CHANNELS = {
     'glastopf': ['glastopf.files', 'glastopf.events'],
     'amun': ['amun.events'],
     'wordpot': ['wordpot.events'],
+    'shockpot': ['shockpot.events'],
 }
