@@ -143,11 +143,16 @@ def top_attackers():
     options = request.args.to_dict()
     limit = int(options.get('limit', '1000'))
     hours_ago = int(options.get('hours_ago', '4'))
+    
+    extra = dict(options)
+    for name in  ('hours_ago', 'limit', 'api_key',):
+        if name in extra:
+            del extra[name]
+
     for name in options.keys():
         if name not in ('hours_ago', 'limit',):
             del options[name]
-
-    results = Clio().session._tops(['source_ip', 'honeypot'], top=limit, hours_ago=hours_ago)
+    results = Clio().session._tops(['source_ip', 'honeypot'], top=limit, hours_ago=hours_ago, **extra)
     return jsonify(
         data=results,
         meta={
