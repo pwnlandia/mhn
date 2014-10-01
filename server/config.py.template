@@ -63,5 +63,7 @@ HONEYPOT_CHANNELS = {
     'kippo': ['kippo.sessions'],
     'thug': ['thug.files', 'thug.events'],
     'glastopf': ['glastopf.files', 'glastopf.events'],
-    'amun': ['amun.events']
+    'amun': ['amun.events'],
+    'wordpot': ['wordpot.events'],
+    'shockpot': ['shockpot.events'],
 }

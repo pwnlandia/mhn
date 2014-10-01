@@ -45,10 +45,10 @@ def get_sensor_name(sensor_id):
     sensor_name = sensor_cache.get(sensor_id)
     if not sensor_name:
         for s in Sensor.query:
-	    if s.uuid == sensor_id:
-		sensor_name = s.hostname
+            if s.uuid == sensor_id:
+                sensor_name = s.hostname
                 sensor_cache.set(sensor_id, sensor_name)
-            
+                break
     print 'Name: %s' % sensor_name
     return sensor_name
 

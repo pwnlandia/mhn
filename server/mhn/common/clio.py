@@ -236,11 +236,14 @@ class Session(ResourceMixin):
 
         return clean
 
-    def _tops(self, fields, top=5, hours_ago=None):
+    def _tops(self, fields, top=5, hours_ago=None, **kwargs):
         if isinstance(fields, basestring):
             fields = [fields,]
 
         match_query = dict([ (field, {'$ne': None}) for field in fields ])
+
+        for name, value in kwargs.items():
+            match_query[name] = value
 
         if hours_ago:
             match_query['timestamp'] = {
