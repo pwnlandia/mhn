@@ -63,7 +63,9 @@ cat > /opt/hpfeeds/geoloc.json <<EOF
         "kippo.sessions",
         "conpot.events",
         "snort.alerts",
-        "amun.events"
+        "amun.events",
+        "wordpot.events",
+        "shockpot.events"
     ],
     "GEOLOC_CHAN": "geoloc.events"
 }
