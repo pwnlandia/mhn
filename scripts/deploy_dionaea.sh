@@ -25,7 +25,7 @@ add-apt-repository -y ppa:honeynet/nightly
 apt-get update
 
 # Installing Dionaea.
-if [[ `lsb_release -cs` == "trusty"]]
+if [[ `lsb_release -cs` == "trusty" ]]
 	then
 		apt-get install -y dionaea-phibo supervisor patch
 	else
