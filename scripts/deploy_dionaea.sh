@@ -25,7 +25,12 @@ add-apt-repository -y ppa:honeynet/nightly
 apt-get update
 
 # Installing Dionaea.
-apt-get install -y dionaea supervisor patch
+if [[ `lsb_release -cs` == "trusty"]]
+	then
+		apt-get install -y dionaea-phibo supervisor patch
+	else
+		apt-get install -y dionaea supervisor patch
+fi
 
 cp /etc/dionaea/dionaea.conf.dist /etc/dionaea/dionaea.conf
 cat > /tmp/dionaea.hpfeeds.patch <<EOF
