@@ -65,7 +65,8 @@ cat > /opt/hpfeeds/geoloc.json <<EOF
         "snort.alerts",
         "amun.events",
         "wordpot.events",
-        "shockpot.events"
+        "shockpot.events",
+        "p0f.events"
     ],
     "GEOLOC_CHAN": "geoloc.events"
 }
