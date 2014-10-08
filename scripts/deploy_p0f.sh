@@ -51,26 +51,14 @@ EOF
 
 cat > /etc/supervisor/conf.d/p0f.conf <<EOF
 [program:p0f]
-command=/opt/p0f/p0f -i eth0 -o /var/log/p0f.json.log -u p0f-user -j -l            
-directory=/opt/p0f     
+command=/opt/p0f/p0f_wrapper.sh 
+directory=/opt/p0f
 stdout_logfile=/var/log/p0f.out         
 stderr_logfile=/var/log/p0f.err          
 autostart=true
 autorestart=true
 redirect_stderr=true
-stopsignal=QUIT
-EOF
-
-cat > /etc/supervisor/conf.d/p0f-collector.conf <<EOF
-[program:p0f-collector]
-command=/opt/p0f/hpfeeds/hpfeeds_collector.sh
-directory=/opt/p0f     
-stdout_logfile=/var/log/p0f-collector.out         
-stderr_logfile=/var/log/p0f-collector.err          
-autostart=true
-autorestart=true
-redirect_stderr=true
-stopsignal=QUIT
+stopsignal=TERM
 EOF
 
 supervisorctl update
