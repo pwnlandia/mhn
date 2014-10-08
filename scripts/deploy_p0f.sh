@@ -19,9 +19,8 @@ chmod 755 registration.sh
 . ./registration.sh $server_url $deploy_key "p0f"
 
 apt-get update
-apt-get -y install git python-pip supervisor libpcap-dev libjansson-dev
+apt-get -y install git python-pip supervisor libpcap-dev libjansson-dev python-dev
 pip install virtualenv
-
 
 # install p0f
 cd /opt
@@ -35,7 +34,11 @@ mkdir -p -m 755 /var/empty/p0f
 cd hpfeeds
 virtualenv env
 . env/bin/activate
+
 pip install -e git+https://github.com/threatstream/hpfeeds.git#egg=hpfeeds-dev
+pip install ujson
+pip install cachetools
+
 cat > p0f_hpfeeds.json <<EOF
 {
 	"HOST":   "$HPF_HOST",
