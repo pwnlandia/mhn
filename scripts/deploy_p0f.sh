@@ -19,7 +19,7 @@ chmod 755 registration.sh
 . ./registration.sh $server_url $deploy_key "p0f"
 
 apt-get update
-apt-get -y install git python-pip supervisor libpcap-dev libjansson-dev python-dev
+apt-get -y install git python-pip supervisor libpcap-dev libjansson-dev python-dev gcc
 pip install virtualenv
 
 # install p0f
