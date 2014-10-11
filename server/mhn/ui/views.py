@@ -78,7 +78,8 @@ def get_attacks():
     sessions = mongo_pages(sessions, total, limit=10)
     return render_template('ui/attacks.html', attacks=sessions,
                            sensors=Sensor.query, view='ui.get_attacks',
-                           get_flag_ip=get_flag_ip, get_sensor_name=get_sensor_name, **request.args.to_dict())
+                           get_flag_ip=get_flag_ip, get_sensor_name=get_sensor_name,
+                           **request.args.to_dict())
 
 @ui.route('/feeds/', methods=['GET'])
 @login_required
@@ -89,16 +90,25 @@ def get_feeds():
     count,columns,feeds = clio.hpfeed.get_payloads(options, request.args.to_dict())
     channel_list = clio.hpfeed.channel_map.keys()
     feeds = mongo_pages(feeds, count, limit=10)
-    return render_template('ui/feeds.html', feeds=feeds, columns=columns, channel_list=channel_list, view='ui.get_feeds', **request.args.to_dict())
+    return render_template('ui/feeds.html', feeds=feeds, columns=columns,
+                           channel_list=channel_list, view='ui.get_feeds',
+                           **request.args.to_dict())
 
 @ui.route('/rules/', methods=['GET'])
 @login_required
 def get_rules():
-    rules = db.session.query(Rule, func.count(Rule.rev).label('nrevs')).\
-               group_by(Rule.sid).\
-               order_by(desc(Rule.date))
+    if 'sig_name' in request.args:
+        search = '%%%s%%' % request.args.get('sig_name')
+        rules = db.session.query(Rule, func.count(Rule.rev).label('nrevs')).\
+            filter(Rule.message.like(search)).\
+            group_by(Rule.sid).\
+            order_by(desc(Rule.date))
+    else:
+        rules = db.session.query(Rule, func.count(Rule.rev).label('nrevs')).\
+            group_by(Rule.sid).\
+            order_by(desc(Rule.date))
     rules = alchemy_pages(rules, limit=10)
-    return render_template('ui/rules.html', rules=rules, view='ui.get_rules')
+    return render_template('ui/rules.html', rules=rules, view='ui.get_rules', **request.args.to_dict())
 
 
 @ui.route('/rule-sources/', methods=['GET'])
