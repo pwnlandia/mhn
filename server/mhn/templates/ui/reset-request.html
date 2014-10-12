@@ -7,6 +7,7 @@
         </div>
     </div>
     <form id="reset-req-form" action="{{ url_for('auth.reset_passwd_request') }}" method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <div class="row">
             <div class="small-5 large-centered columns">
                 <label>

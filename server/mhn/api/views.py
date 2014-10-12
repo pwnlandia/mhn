@@ -15,12 +15,14 @@ from mhn.api.decorators import deploy_auth, sensor_auth, token_auth
 from mhn.common.utils import error_response
 from mhn.common.clio import Clio
 from mhn.auth import current_user, login_required
+from flaskext.csrf import csrf, csrf_exempt
 
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
 
 # Endpoints for the Sensor resource.
+@csrf_exempt
 @api.route('/sensor/', methods=['POST'])
 @deploy_auth
 def create_sensor():
@@ -42,7 +44,7 @@ def create_sensor():
         else:
             return jsonify(sensor.to_dict())
 
-
+@csrf_exempt
 @api.route('/sensor/<uuid>/', methods=['PUT'])
 def update_sensor(uuid):
     sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()
@@ -63,7 +65,7 @@ def update_sensor(uuid):
                     errors.API_SENSOR_EXISTS.format(request.json['name']), 400)
         return jsonify(sensor.to_dict())
 
-
+@csrf_exempt
 @api.route('/sensor/<uuid>/', methods=['DELETE'])
 @login_required
 def delete_sensor(uuid):
@@ -73,7 +75,7 @@ def delete_sensor(uuid):
     db.session.commit()
     return jsonify({})
 
-
+@csrf_exempt
 @api.route('/sensor/<uuid>/connect/', methods=['POST'])
 @sensor_auth
 def connect_sensor(uuid):
@@ -112,31 +114,31 @@ def _get_query_resource(resource, query):
     )
 # Now let's make use these methods in the views.
 
-
+@csrf_exempt
 @api.route('/feed/<feed_id>/', methods=['GET'])
 @token_auth
 def get_feed(feed_id):
     return _get_one_resource(Clio().hpfeed, feed_id)
 
-
+@csrf_exempt
 @api.route('/session/<session_id>/', methods=['GET'])
 @token_auth
 def get_session(session_id):
     return _get_one_resource(Clio().session, session_id)
 
-
+@csrf_exempt
 @api.route('/feed/', methods=['GET'])
 @token_auth
 def get_feeds():
     return _get_query_resource(Clio().hpfeed, request.args.to_dict())
 
-
+@csrf_exempt
 @api.route('/session/', methods=['GET'])
 @token_auth
 def get_sessions():
     return _get_query_resource(Clio().session, request.args.to_dict())
 
-
+@csrf_exempt
 @api.route('/top_attackers/', methods=['GET'])
 @token_auth
 def top_attackers():
@@ -162,6 +164,7 @@ def top_attackers():
         }
     )    
 
+@csrf_exempt
 @api.route('/rule/<rule_id>/', methods=['PUT'])
 @token_auth
 def update_rule(rule_id):
@@ -180,6 +183,7 @@ def update_rule(rule_id):
         return jsonify(rule.to_dict())
 
 
+@csrf_exempt
 @api.route('/rule/', methods=['GET'])
 @sensor_auth
 def get_rules():
@@ -199,6 +203,7 @@ def get_rules():
         return resp
 
 
+@csrf_exempt
 @api.route('/rulesources/', methods=['POST'])
 @login_required
 def create_rule_source():
@@ -218,6 +223,7 @@ def create_rule_source():
             return jsonify(rsource.to_dict())
 
 
+@csrf_exempt
 @api.route('/rulesources/<rs_id>/', methods=['DELETE'])
 @login_required
 def delete_rule_source(rs_id):
@@ -227,6 +233,7 @@ def delete_rule_source(rs_id):
     return jsonify({})
 
 
+@csrf_exempt
 @api.route('/script/', methods=['POST'])
 @login_required
 def create_script():
@@ -242,6 +249,7 @@ def create_script():
         return jsonify(script.to_dict())
 
 
+@csrf_exempt
 @api.route('/script/', methods=['PUT', 'PATCH'])
 @login_required
 def update_script():
@@ -255,6 +263,7 @@ def update_script():
     return jsonify(script.to_dict())
 
 
+@csrf_exempt
 @api.route('/script/', methods=['GET'])
 def get_script():
     if request.args.get('script_id'):
