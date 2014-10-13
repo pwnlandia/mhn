@@ -203,7 +203,7 @@ def top_attackers():
 def intel_feed_csv():
     results = get_intel_feed()    
     outf = StringIO()
-    wr = csv.DictWriter(outf, fieldnames=['count', 'source_ip', 'protocol', 'honeypot', 'destination_port', 'app', 'os', 'link', 'uptime'], delimter='\t')
+    wr = csv.DictWriter(outf, fieldnames=['count', 'source_ip', 'protocol', 'honeypot', 'destination_port', 'app', 'os', 'link', 'uptime'], delimeter='\t')
     wr.writeheader()
     for rec in results['data']:
         meta = rec['meta']
