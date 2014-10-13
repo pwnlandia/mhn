@@ -31,6 +31,10 @@ class Clio():
         return Session(self.client)
 
     @property
+    def counts(self):
+        return Counts(self.client)
+
+    @property
     def session_protocol(self):
         return SessionProtocol(self.client)
 
@@ -185,6 +189,15 @@ class ResourceMixin(object):
             setattr(doc, at, dict_.get(at))
         return doc
 
+class Counts(ResourceMixin):
+    collection_name = 'counts'
+    expected_filters = ('identifier', 'date', 'event_count',)
+
+    def get_count(self, identifier, date=None):
+        query = {'identifier': identifier}
+        if date:
+            query['date'] = date
+        return sum([rec['event_count'] for rec in self.collection.find(query)])
 
 class Session(ResourceMixin):
 
