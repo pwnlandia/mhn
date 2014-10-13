@@ -219,8 +219,14 @@ def intel_feed_csv():
             'honeypot': rec['honeypot'],
             'destination_port': rec['destination_port'],
         }
+        def clean(val):
+            if val:
+                return val.replace('\t', ' ')
+            else:
+                return val
+
         for meta_key in ['app', 'os', 'link', 'uptime', ]:
-            outrec[meta_key] = meta.get(meta_key, '').replace('\t', '')
+            outrec[meta_key] = clean(meta.get(meta_key))
         wr.writerow(outrec)
         response_data = outf.getvalue()
         outf.close()
