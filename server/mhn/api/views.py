@@ -232,7 +232,7 @@ def intel_feed_csv():
         outf.close()
 
         response = make_response(response_data)
-        response.headers['Content-type'] = 'text/csv'
+        response.headers['Content-type'] = 'text/plain'
         return response
 
 @api.route('/intel_feed/', methods=['GET'])
