@@ -1,4 +1,7 @@
 import json
+from StringIO import StringIO
+import csv
+
 from uuid import uuid1
 
 from sqlalchemy import func
@@ -195,9 +198,39 @@ def top_attackers():
         }
     )
 
+@api.route('/intel_feed.csv/', methods=['GET'])
+@token_auth
+def intel_feed_csv():
+    results = get_intel_feed()    
+    with StringIO() as outf:
+        wr = csv.DictWriter(outf, fieldnames=['count', 'source_ip', 'protocol', 'honeypot', 'destination_port', 'app', 'os', 'link', 'uptime'], delimter='\t')
+        wr.writeheader()
+        for rec in results['data']:
+            meta = rec['meta']
+            if len(meta) > 0:
+                meta = meta[0]
+            else:
+                meta = {}
+
+            outrec = {
+                'count': rec['count'],
+                'source_ip': rec['source_ip'],
+                'protocol': rec['protocol'],
+                'honeypot': rec['honeypot'],
+                'destination_port': rec['destination_port'],
+            }
+            for meta_key in ['app', 'os', 'link', 'uptime', ]:
+                outrec[meta_key] = meta.get(meta_key, '').replace('\t', '')
+            wr.writerow(outrec)
+        return make_response(outf.getvalue())
+
 @api.route('/intel_feed/', methods=['GET'])
 @token_auth
-def intel_feed():
+def intel_feed():    
+    results = get_intel_feed()
+    return jsonify(**results)
+
+def get_intel_feed():
     options = request.args.to_dict()
     limit = int(options.get('limit', '1000'))
     hours_ago = int(options.get('hours_ago', '4'))
@@ -223,14 +256,15 @@ def intel_feed():
             cache[source_ip] = [m.to_dict() for m in Clio().metadata.get(ip=r['source_ip'])]            
         r['meta'] = cache[source_ip]
 
-    return jsonify(
-        data=results,
-        meta={
+    return {
+        'data':results,
+        'meta':{
             'size': len(results),
             'query': 'intel_feed',
             'options': options
         }
-    )
+    }
+    
 
 @api.route('/rule/<rule_id>/', methods=['PUT'])
 @token_auth
