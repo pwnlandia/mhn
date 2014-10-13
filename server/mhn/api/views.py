@@ -100,7 +100,7 @@ def _get_query_resource(resource, query):
     options = {}
     if 'limit' in query:
         options['limit'] = int(query['limit'])
-    
+
     results = list(resource.get(options, **query))
     return jsonify(
         data=[r.to_dict() for r in results],
@@ -143,7 +143,7 @@ def top_attackers():
     options = request.args.to_dict()
     limit = int(options.get('limit', '1000'))
     hours_ago = int(options.get('hours_ago', '4'))
-    
+
     extra = dict(options)
     for name in  ('hours_ago', 'limit', 'api_key',):
         if name in extra:
@@ -160,7 +160,33 @@ def top_attackers():
             'query': 'top_attackers',
             'options': options
         }
-    )    
+    )
+
+@api.route('/intel_feed/', methods=['GET'])
+@token_auth
+def intel_feed():
+    options = request.args.to_dict()
+    limit = int(options.get('limit', '1000'))
+    hours_ago = int(options.get('hours_ago', '4'))
+
+    extra = dict(options)
+    for name in  ('hours_ago', 'limit', 'api_key',):
+        if name in extra:
+            del extra[name]
+
+    for name in options.keys():
+        if name not in ('hours_ago', 'limit',):
+            del options[name]
+
+    results = Clio().session._tops(['source_ip', 'honeypot', 'protocol', 'destination_port'], top=limit, hours_ago=hours_ago, **extra)
+    return jsonify(
+        data=results,
+        meta={
+            'size': len(results),
+            'query': 'top_attackers',
+            'options': options
+        }
+    )
 
 @api.route('/rule/<rule_id>/', methods=['PUT'])
 @token_auth

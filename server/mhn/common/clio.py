@@ -256,7 +256,18 @@ class Session(ResourceMixin):
         match_query = dict([ (field, {'$ne': None}) for field in fields ])
 
         for name, value in kwargs.items():
-            match_query[name] = value
+            if name.startswith('ne__'):
+                match_query[name[4:]] = {'$ne': value}
+            elif name.startswith('gt__'):
+                match_query[name[4:]] = {'$gt': value}
+            elif name.startswith('lt__'):
+                match_query[name[4:]] = {'$lt': value}
+            elif name.startswith('gte__'):
+                match_query[name[5:]] = {'$gte': value}
+            elif name.startswith('lte__'):
+                match_query[name[5:]] = {'$lte': value}
+            else:
+                match_query[name] = value
 
         if hours_ago:
             match_query['timestamp'] = {
