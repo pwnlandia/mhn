@@ -136,6 +136,11 @@ def get_url(url_id):
 def get_file(file_id):
     return _get_one_resource(Clio().file, file_id)
 
+@api.route('/metadata/<metadata_id>/', methods=['GET'])
+@token_auth
+def get_metadatum(metadata_id):
+    return _get_one_resource(Clio().metadata, file_id)
+
 
 @api.route('/feed/', methods=['GET'])
 @token_auth
@@ -158,6 +163,12 @@ def get_urls():
 @token_auth
 def get_files():
     return _get_query_resource(Clio().file, request.args.to_dict())
+
+@api.route('/metadata/', methods=['GET'])
+@token_auth
+def get_metadata():
+    return _get_query_resource(Clio().metadata, request.args.to_dict())
+
 
 @api.route('/top_attackers/', methods=['GET'])
 @token_auth
