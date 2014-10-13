@@ -113,8 +113,6 @@ def rule_sources_mgmt():
 def get_sensors():
     sensors = Sensor.query.all()
     total = Sensor.query.count()
-    sensors = sorted(
-            sensors, key=lambda s: s.attacks_count, reverse=True)
     # Paginating the list.
     pag = paginate_options(limit=10)
     sensors = sensors[pag['skip']:pag['skip'] + pag['limit']]

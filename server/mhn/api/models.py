@@ -68,7 +68,7 @@ class Sensor(db.Model, APIModel):
 
     @property
     def attacks_count(self):
-        return Clio().session.count(identifier=self.uuid)
+        return Clio().counts.get_count(identifier=self.uuid)
 
     @property
     def authkey(self):
@@ -173,6 +173,7 @@ class Rule(db.Model, APIModel):
         This method must be called within a Flask app
         context.
         """
+        cnt = 0
         for ru in rulelist:
             # Checking for rules with this sid.
             if cls.query.\
@@ -188,6 +189,10 @@ class Rule(db.Model, APIModel):
                     filter_by(sid=ru['sid']).\
                     filter(cls.rev < ru['rev']).\
                     update({'is_active': False}, False)
+            cnt += 1
+            if cnt % 500 == 0:
+                print 'Imported {} rules so far...'.format(cnt)
+        print 'Finished Importing {} rules.  Committing data'.format(cnt)
         db.session.commit()
 
 
