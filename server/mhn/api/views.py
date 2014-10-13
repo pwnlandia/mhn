@@ -228,12 +228,12 @@ def intel_feed_csv():
         for meta_key in ['app', 'os', 'link', 'uptime', ]:
             outrec[meta_key] = clean(meta.get(meta_key))
         wr.writerow(outrec)
-        response_data = outf.getvalue()
-        outf.close()
+    response_data = outf.getvalue()
+    outf.close()
 
-        response = make_response(response_data)
-        response.headers['Content-type'] = 'text/plain'
-        return response
+    response = make_response(response_data)
+    response.headers['Content-type'] = 'text/plain'
+    return response
 
 @api.route('/intel_feed/', methods=['GET'])
 @token_auth
