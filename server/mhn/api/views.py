@@ -125,6 +125,18 @@ def get_session(session_id):
     return _get_one_resource(Clio().session, session_id)
 
 
+@api.route('/url/<url_id>/', methods=['GET'])
+@token_auth
+def get_url(url_id):
+    return _get_one_resource(Clio().url, url_id)
+
+
+@api.route('/file/<file_id>/', methods=['GET'])
+@token_auth
+def get_file(file_id):
+    return _get_one_resource(Clio().file, file_id)
+
+
 @api.route('/feed/', methods=['GET'])
 @token_auth
 def get_feeds():
@@ -136,6 +148,16 @@ def get_feeds():
 def get_sessions():
     return _get_query_resource(Clio().session, request.args.to_dict())
 
+
+@api.route('/url/', methods=['GET'])
+@token_auth
+def get_urls():
+    return _get_query_resource(Clio().url, request.args.to_dict())
+
+@api.route('/file/', methods=['GET'])
+@token_auth
+def get_files():
+    return _get_query_resource(Clio().file, request.args.to_dict())
 
 @api.route('/top_attackers/', methods=['GET'])
 @token_auth
@@ -179,6 +201,8 @@ def intel_feed():
             del options[name]
 
     results = Clio().session._tops(['source_ip', 'honeypot', 'protocol', 'destination_port'], top=limit, hours_ago=hours_ago, **extra)
+    results = [r for r in results if r['protocol'] != 'pcap' and r['protocol'] != 'ftpdatalisten']
+    
     return jsonify(
         data=results,
         meta={

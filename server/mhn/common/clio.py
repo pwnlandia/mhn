@@ -318,8 +318,8 @@ class SessionProtocol(ResourceMixin):
 class HpFeed(ResourceMixin):
 
     collection_name = 'hpfeed'
-    expected_filters = ('ident', 'channel', 'last_error', 'last_error_timestamp',
-                        'normalized', 'payload', '_id')
+    expected_filters = ('ident', 'channel', 'payload', '_id', 'timestamp', )
+
     channel_map = {'snort.alerts':['date', 'sensor', 'source_ip', 'destination_port', 'priority', 'classification', 'signature'],
                    'dionaea.capture':['url', 'daddr', 'saddr', 'dport', 'sport', 'sha512', 'md5']}
 
