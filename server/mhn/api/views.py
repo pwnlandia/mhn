@@ -202,27 +202,30 @@ def top_attackers():
 @token_auth
 def intel_feed_csv():
     results = get_intel_feed()    
-    with StringIO() as outf:
-        wr = csv.DictWriter(outf, fieldnames=['count', 'source_ip', 'protocol', 'honeypot', 'destination_port', 'app', 'os', 'link', 'uptime'], delimter='\t')
-        wr.writeheader()
-        for rec in results['data']:
-            meta = rec['meta']
-            if len(meta) > 0:
-                meta = meta[0]
-            else:
-                meta = {}
+    outf = StringIO()
+    wr = csv.DictWriter(outf, fieldnames=['count', 'source_ip', 'protocol', 'honeypot', 'destination_port', 'app', 'os', 'link', 'uptime'], delimter='\t')
+    wr.writeheader()
+    for rec in results['data']:
+        meta = rec['meta']
+        if len(meta) > 0:
+            meta = meta[0]
+        else:
+            meta = {}
 
-            outrec = {
-                'count': rec['count'],
-                'source_ip': rec['source_ip'],
-                'protocol': rec['protocol'],
-                'honeypot': rec['honeypot'],
-                'destination_port': rec['destination_port'],
-            }
-            for meta_key in ['app', 'os', 'link', 'uptime', ]:
-                outrec[meta_key] = meta.get(meta_key, '').replace('\t', '')
-            wr.writerow(outrec)
-        return make_response(outf.getvalue())
+        outrec = {
+            'count': rec['count'],
+            'source_ip': rec['source_ip'],
+            'protocol': rec['protocol'],
+            'honeypot': rec['honeypot'],
+            'destination_port': rec['destination_port'],
+        }
+        for meta_key in ['app', 'os', 'link', 'uptime', ]:
+            outrec[meta_key] = meta.get(meta_key, '').replace('\t', '')
+        wr.writerow(outrec)
+        response_data = outf.getvalue()
+        outf.close()
+
+        return make_response(response_data)
 
 @api.route('/intel_feed/', methods=['GET'])
 @token_auth
