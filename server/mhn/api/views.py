@@ -231,7 +231,9 @@ def intel_feed_csv():
         response_data = outf.getvalue()
         outf.close()
 
-        return make_response(response_data)
+        response = make_response(response_data)
+        response.headers['Content-type'] = 'text/csv'
+        return response
 
 @api.route('/intel_feed/', methods=['GET'])
 @token_auth
