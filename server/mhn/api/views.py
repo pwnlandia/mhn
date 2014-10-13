@@ -139,7 +139,7 @@ def get_file(file_id):
 @api.route('/metadata/<metadata_id>/', methods=['GET'])
 @token_auth
 def get_metadatum(metadata_id):
-    return _get_one_resource(Clio().metadata, file_id)
+    return _get_one_resource(Clio().metadata, metadata_id)
 
 
 @api.route('/feed/', methods=['GET'])
@@ -214,6 +214,14 @@ def intel_feed():
     results = Clio().session._tops(['source_ip', 'honeypot', 'protocol', 'destination_port'], top=limit, hours_ago=hours_ago, **extra)
     results = [r for r in results if r['protocol'] != 'pcap' and r['protocol'] != 'ftpdatalisten']
     
+    cache = {}
+    for r in results:
+        source_ip = r['source_ip']
+        if source_ip not in cache:
+            # TODO: may want to make one big query to mongo here...
+            cache[source_ip] = Clio().metadata.get(ip=r['source_ip'])
+        r['meta'] = cache[source_ip]
+
     return jsonify(
         data=results,
         meta={
