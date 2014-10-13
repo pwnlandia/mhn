@@ -197,7 +197,7 @@ class Counts(ResourceMixin):
         query = {'identifier': identifier}
         if date:
             query['date'] = date
-        return sum([rec['event_count'] for rec in self.collection.find(query)])
+        return int(sum([rec['event_count'] for rec in self.collection.find(query)]))
 
 class Session(ResourceMixin):
 
