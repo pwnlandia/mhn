@@ -377,7 +377,7 @@ class Url(ResourceMixin):
 class File(ResourceMixin):
 
     collection_name = 'file'
-    expected_filters = ('_id', 'content_guess', 'encoding', 'hashes', 'hpfeed_ids',)
+    expected_filters = ('_id', 'content_guess', 'encoding', 'hashes',)
 
 class Metadata(ResourceMixin):
 
