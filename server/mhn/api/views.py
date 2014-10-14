@@ -139,6 +139,11 @@ def get_url(url_id):
 def get_file(file_id):
     return _get_one_resource(Clio().file, file_id)
 
+@api.route('/dork/<dork_id>/', methods=['GET'])
+@token_auth
+def get_dork(dork_id):
+    return _get_one_resource(Clio().dork, dork_id)
+
 @api.route('/metadata/<metadata_id>/', methods=['GET'])
 @token_auth
 def get_metadatum(metadata_id):
@@ -166,6 +171,11 @@ def get_urls():
 @token_auth
 def get_files():
     return _get_query_resource(Clio().file, request.args.to_dict())
+
+@api.route('/dork/', methods=['GET'])
+@token_auth
+def get_dorks():
+    return _get_query_resource(Clio().dork, request.args.to_dict())
 
 @api.route('/metadata/', methods=['GET'])
 @token_auth
@@ -198,36 +208,35 @@ def top_attackers():
         }
     )
 
+def get_tags(rec):
+    tags = [rec['honeypot'], rec['protocol'], 'port-{}'.format(rec['destination_port']),]
+
+    meta = rec['meta']
+    if len(meta) > 0:
+        meta = meta[0]
+    else:
+        meta = {}
+
+    for meta_key in ['app', 'os', 'link',]:
+        value = meta.get(meta_key)
+        if value:
+            tags.append(value.replace(',', '').replace('\t', ' '))
+    return tags
+
 @api.route('/intel_feed.csv/', methods=['GET'])
 @token_auth
 def intel_feed_csv():
-    results = get_intel_feed()    
+    fieldnames = ['source_ip', 'count', 'tags', ]
+    results = get_intel_feed()
     outf = StringIO()
-    wr = csv.DictWriter(outf, fieldnames=['count', 'source_ip', 'protocol', 'honeypot', 'destination_port', 'app', 'os', 'link', 'uptime'], delimiter='\t')
+    wr = csv.DictWriter(outf, fieldnames=fieldnames, delimiter='\t')
     wr.writeheader()
     for rec in results['data']:
-        meta = rec['meta']
-        if len(meta) > 0:
-            meta = meta[0]
-        else:
-            meta = {}
-
-        outrec = {
+        wr.writerow({
             'count': rec['count'],
             'source_ip': rec['source_ip'],
-            'protocol': rec['protocol'],
-            'honeypot': rec['honeypot'],
-            'destination_port': rec['destination_port'],
-        }
-        def clean(val):
-            if val:
-                return val.replace('\t', ' ')
-            else:
-                return val
-
-        for meta_key in ['app', 'os', 'link', 'uptime', ]:
-            outrec[meta_key] = clean(meta.get(meta_key))
-        wr.writerow(outrec)
+            'tags': ','.join(get_tags(rec)),
+        })
     response_data = outf.getvalue()
     outf.close()
 
@@ -237,7 +246,7 @@ def intel_feed_csv():
 
 @api.route('/intel_feed/', methods=['GET'])
 @token_auth
-def intel_feed():    
+def intel_feed():
     results = get_intel_feed()
     return jsonify(**results)
 
@@ -258,13 +267,13 @@ def get_intel_feed():
     extra['ne__protocol'] = 'pcap'
     results = Clio().session._tops(['source_ip', 'honeypot', 'protocol', 'destination_port'], top=limit, hours_ago=hours_ago, **extra)
     results = [r for r in results if r['protocol'] != 'ftpdatalisten']
-    
+
     cache = {}
     for r in results:
         source_ip = r['source_ip']
         if source_ip not in cache:
             # TODO: may want to make one big query to mongo here...
-            cache[source_ip] = [m.to_dict() for m in Clio().metadata.get(ip=r['source_ip'])]            
+            cache[source_ip] = [m.to_dict() for m in Clio().metadata.get(ip=r['source_ip'], honeypot='p0f')]
         r['meta'] = cache[source_ip]
 
     return {
@@ -275,7 +284,7 @@ def get_intel_feed():
             'options': options
         }
     }
-    
+
 
 @api.route('/rule/<rule_id>/', methods=['PUT'])
 @token_auth
