@@ -55,6 +55,10 @@ class Clio():
         return File(self.client)
 
     @property
+    def dork(self):
+        return Dork(self.client)
+
+    @property
     def metadata(self):
         return Metadata(self.client)
 
@@ -378,6 +382,12 @@ class File(ResourceMixin):
 
     collection_name = 'file'
     expected_filters = ('_id', 'content_guess', 'encoding', 'hashes',)
+
+
+class Dork(ResourceMixin):
+
+    collection_name = 'dork'
+    expected_filters = ('_id', 'content', 'inurl', 'lasttime', 'count',)
 
 class Metadata(ResourceMixin):
 
