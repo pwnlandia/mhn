@@ -211,9 +211,12 @@ def top_attackers():
 @api.route('/intel_feed.csv/', methods=['GET'])
 @token_auth
 def intel_feed_csv():
+    fieldnames = ['source_ip', 'honeypot', 'protocol', 'destination_port', 'app', 'os', 'link', 'uptime', 'count',]
+    delimiter = '\t'
+
     results = get_intel_feed()    
     outf = StringIO()
-    wr = csv.DictWriter(outf, fieldnames=['count', 'source_ip', 'protocol', 'honeypot', 'destination_port', 'app', 'os', 'link', 'uptime'], delimiter='\t')
+    wr = csv.DictWriter(outf, fieldnames=fieldnames, delimiter=delimiter)
     wr.writeheader()
     for rec in results['data']:
         meta = rec['meta']
@@ -231,7 +234,7 @@ def intel_feed_csv():
         }
         def clean(val):
             if val:
-                return val.replace('\t', ' ')
+                return val.replace(delimiter, ' ')
             else:
                 return val
 
