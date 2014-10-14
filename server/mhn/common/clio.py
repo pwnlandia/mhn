@@ -377,12 +377,12 @@ class Url(ResourceMixin):
 class File(ResourceMixin):
 
     collection_name = 'file'
-    expected_filters = ('md5', 'sha1', 'sha512', '_id')
+    expected_filters = ('_id', 'content_guess', 'encoding', 'hashes', 'hpfeed_ids',)
 
 class Metadata(ResourceMixin):
 
     collection_name = 'metadata'
-    expected_filters = ('ip', 'date', 'os', 'link', 'app', 'uptime', '_id', 'honeypot', )
+    expected_filters = ('ip', 'date', 'os', 'link', 'app', 'uptime', '_id', 'honeypot', 'timestamp',)
 
 
 class AuthKey(ResourceMixin):
