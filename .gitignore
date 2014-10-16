@@ -4,6 +4,9 @@ server/mhn.db
 server/mhn/static/mhn.rules
 server/mhn.log
 server/mhn/mhn.log
+server/collector.*
+server/worker.*
+scripts/update_deploy_scripts.txt
 /.idea
 
 *.log.*
