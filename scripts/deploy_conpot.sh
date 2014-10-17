@@ -17,7 +17,7 @@ chmod 755 registration.sh
 
 
 apt-get update
-apt-get install -y git libsmi2ldbl snmp-mibs-downloader python-pip python-dev libxml2-dev libxslt-dev
+apt-get install -y git libsmi2ldbl snmp-mibs-downloader python-pip python-dev libxml2-dev libxslt-dev libmysqlclient-dev
 apt-get install -y zlib1g-dev # needed for Ubuntu 14.04
 pip install --upgrade distribute
 pip install virtualenv
@@ -27,6 +27,7 @@ mkdir -p $CONPOT_HOME
 cd $CONPOT_HOME
 virtualenv env
 . env/bin/activate
+pip install -U setuptools
 pip install -e git+https://github.com/threatstream/hpfeeds.git#egg=hpfeeds-dev
 pip install -e git+https://github.com/glastopf/conpot.git#egg=conpot-dev
 pip install -e git+https://github.com/glastopf/modbus-tk.git#egg=modbus-tk==0.4
@@ -36,6 +37,9 @@ cat > conpot.cfg <<EOF
 timeout = 30
 
 [sqlite]
+enabled = False
+
+[mysql]
 enabled = False
 
 [syslog]
@@ -75,8 +79,8 @@ apt-get install -y supervisor
 
 cat > /etc/supervisor/conf.d/conpot.conf <<EOF
 [program:conpot]
-command=$CONPOT_HOME/env/bin/conpot -c $CONPOT_HOME/conpot.cfg
-directory=$CONPOT_HOME
+command=/opt/conpot/env/bin/conpot --template default -c /opt/conpot/conpot.cfg -l /var/log/conpot.log
+directory=/opt/conpot
 stdout_logfile=/var/log/conpot.out
 stderr_logfile=/var/log/conpot.err
 autostart=true
