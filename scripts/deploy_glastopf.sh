@@ -47,8 +47,10 @@ update-rc.d -f  apache2 remove
 pip install --upgrade greenlet
 
 # Install glastopf
-pip install glastopf
-mkdir -p $GLASTOPF_HOME
+cd /opt
+sudo git clone https://github.com/kx499/glastopf.git
+cd glastopf
+sudo python setup.py install
 
 # Add the modified glastopf.cfg
 cat > $GLASTOPF_HOME/glastopf.cfg <<EOF
