@@ -1,4 +1,7 @@
 import json
+from StringIO import StringIO
+import csv
+
 from uuid import uuid1
 
 from sqlalchemy import func
@@ -100,7 +103,7 @@ def _get_query_resource(resource, query):
     options = {}
     if 'limit' in query:
         options['limit'] = int(query['limit'])
-    
+
     results = list(resource.get(options, **query))
     return jsonify(
         data=[r.to_dict() for r in results],
@@ -125,6 +128,28 @@ def get_session(session_id):
     return _get_one_resource(Clio().session, session_id)
 
 
+@api.route('/url/<url_id>/', methods=['GET'])
+@token_auth
+def get_url(url_id):
+    return _get_one_resource(Clio().url, url_id)
+
+
+@api.route('/file/<file_id>/', methods=['GET'])
+@token_auth
+def get_file(file_id):
+    return _get_one_resource(Clio().file, file_id)
+
+@api.route('/dork/<dork_id>/', methods=['GET'])
+@token_auth
+def get_dork(dork_id):
+    return _get_one_resource(Clio().dork, dork_id)
+
+@api.route('/metadata/<metadata_id>/', methods=['GET'])
+@token_auth
+def get_metadatum(metadata_id):
+    return _get_one_resource(Clio().metadata, metadata_id)
+
+
 @api.route('/feed/', methods=['GET'])
 @token_auth
 def get_feeds():
@@ -137,13 +162,34 @@ def get_sessions():
     return _get_query_resource(Clio().session, request.args.to_dict())
 
 
+@api.route('/url/', methods=['GET'])
+@token_auth
+def get_urls():
+    return _get_query_resource(Clio().url, request.args.to_dict())
+
+@api.route('/file/', methods=['GET'])
+@token_auth
+def get_files():
+    return _get_query_resource(Clio().file, request.args.to_dict())
+
+@api.route('/dork/', methods=['GET'])
+@token_auth
+def get_dorks():
+    return _get_query_resource(Clio().dork, request.args.to_dict())
+
+@api.route('/metadata/', methods=['GET'])
+@token_auth
+def get_metadata():
+    return _get_query_resource(Clio().metadata, request.args.to_dict())
+
+
 @api.route('/top_attackers/', methods=['GET'])
 @token_auth
 def top_attackers():
     options = request.args.to_dict()
     limit = int(options.get('limit', '1000'))
     hours_ago = int(options.get('hours_ago', '4'))
-    
+
     extra = dict(options)
     for name in  ('hours_ago', 'limit', 'api_key',):
         if name in extra:
@@ -160,7 +206,85 @@ def top_attackers():
             'query': 'top_attackers',
             'options': options
         }
-    )    
+    )
+
+def get_tags(rec):
+    tags = [rec['honeypot'], rec['protocol'], 'port-{}'.format(rec['destination_port']),]
+
+    meta = rec['meta']
+    if len(meta) > 0:
+        meta = meta[0]
+    else:
+        meta = {}
+
+    for meta_key in ['app', 'os', 'link',]:
+        value = meta.get(meta_key)
+        if value:
+            tags.append(value.replace(',', '').replace('\t', ' '))
+    return tags
+
+@api.route('/intel_feed.csv/', methods=['GET'])
+@token_auth
+def intel_feed_csv():
+    fieldnames = ['source_ip', 'count', 'tags', ]
+    results = get_intel_feed()
+    outf = StringIO()
+    wr = csv.DictWriter(outf, fieldnames=fieldnames, delimiter='\t')
+    wr.writeheader()
+    for rec in results['data']:
+        wr.writerow({
+            'count': rec['count'],
+            'source_ip': rec['source_ip'],
+            'tags': ','.join(get_tags(rec)),
+        })
+    response_data = outf.getvalue()
+    outf.close()
+
+    response = make_response(response_data)
+    response.headers['Content-type'] = 'text/plain'
+    return response
+
+@api.route('/intel_feed/', methods=['GET'])
+@token_auth
+def intel_feed():
+    results = get_intel_feed()
+    return jsonify(**results)
+
+def get_intel_feed():
+    options = request.args.to_dict()
+    limit = int(options.get('limit', '1000'))
+    hours_ago = int(options.get('hours_ago', '4'))
+
+    extra = dict(options)
+    for name in  ('hours_ago', 'limit', 'api_key',):
+        if name in extra:
+            del extra[name]
+
+    for name in options.keys():
+        if name not in ('hours_ago', 'limit',):
+            del options[name]
+
+    extra['ne__protocol'] = 'pcap'
+    results = Clio().session._tops(['source_ip', 'honeypot', 'protocol', 'destination_port'], top=limit, hours_ago=hours_ago, **extra)
+    results = [r for r in results if r['protocol'] != 'ftpdatalisten']
+
+    cache = {}
+    for r in results:
+        source_ip = r['source_ip']
+        if source_ip not in cache:
+            # TODO: may want to make one big query to mongo here...
+            cache[source_ip] = [m.to_dict() for m in Clio().metadata.get(ip=r['source_ip'], honeypot='p0f')]
+        r['meta'] = cache[source_ip]
+
+    return {
+        'data':results,
+        'meta':{
+            'size': len(results),
+            'query': 'intel_feed',
+            'options': options
+        }
+    }
+
 
 @api.route('/rule/<rule_id>/', methods=['PUT'])
 @token_auth

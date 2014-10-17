@@ -31,6 +31,10 @@ class Clio():
         return Session(self.client)
 
     @property
+    def counts(self):
+        return Counts(self.client)
+
+    @property
     def session_protocol(self):
         return SessionProtocol(self.client)
 
@@ -49,6 +53,14 @@ class Clio():
     @property
     def file(self):
         return File(self.client)
+
+    @property
+    def dork(self):
+        return Dork(self.client)
+
+    @property
+    def metadata(self):
+        return Metadata(self.client)
 
 
 class ResourceMixin(object):
@@ -185,6 +197,15 @@ class ResourceMixin(object):
             setattr(doc, at, dict_.get(at))
         return doc
 
+class Counts(ResourceMixin):
+    collection_name = 'counts'
+    expected_filters = ('identifier', 'date', 'event_count',)
+
+    def get_count(self, identifier, date=None):
+        query = {'identifier': identifier}
+        if date:
+            query['date'] = date
+        return int(sum([rec['event_count'] for rec in self.collection.find(query)]))
 
 class Session(ResourceMixin):
 
@@ -243,7 +264,18 @@ class Session(ResourceMixin):
         match_query = dict([ (field, {'$ne': None}) for field in fields ])
 
         for name, value in kwargs.items():
-            match_query[name] = value
+            if name.startswith('ne__'):
+                match_query[name[4:]] = {'$ne': value}
+            elif name.startswith('gt__'):
+                match_query[name[4:]] = {'$gt': value}
+            elif name.startswith('lt__'):
+                match_query[name[4:]] = {'$lt': value}
+            elif name.startswith('gte__'):
+                match_query[name[5:]] = {'$gte': value}
+            elif name.startswith('lte__'):
+                match_query[name[5:]] = {'$lte': value}
+            else:
+                match_query[name] = value
 
         if hours_ago:
             match_query['timestamp'] = {
@@ -294,8 +326,8 @@ class SessionProtocol(ResourceMixin):
 class HpFeed(ResourceMixin):
 
     collection_name = 'hpfeed'
-    expected_filters = ('ident', 'channel', 'last_error', 'last_error_timestamp',
-                        'normalized', 'payload', '_id')
+    expected_filters = ('ident', 'channel', 'payload', '_id', 'timestamp', )
+
     channel_map = {'snort.alerts':['date', 'sensor', 'source_ip', 'destination_port', 'priority', 'classification', 'signature'],
                    'dionaea.capture':['url', 'daddr', 'saddr', 'dport', 'sport', 'sha512', 'md5'],
                    'glastopf.events':['time', 'pattern', 'filename', 'source', 'request_url']}
@@ -350,7 +382,18 @@ class Url(ResourceMixin):
 class File(ResourceMixin):
 
     collection_name = 'file'
-    expected_filters = ('md5', 'sha1', 'sha512', '_id')
+    expected_filters = ('_id', 'content_guess', 'encoding', 'hashes',)
+
+
+class Dork(ResourceMixin):
+
+    collection_name = 'dork'
+    expected_filters = ('_id', 'content', 'inurl', 'lasttime', 'count',)
+
+class Metadata(ResourceMixin):
+
+    collection_name = 'metadata'
+    expected_filters = ('ip', 'date', 'os', 'link', 'app', 'uptime', '_id', 'honeypot', 'timestamp',)
 
 
 class AuthKey(ResourceMixin):
