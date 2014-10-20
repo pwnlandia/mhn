@@ -6,6 +6,30 @@
             <h2>Rules Management</h2>
         </div>
     </div>
+    <div class="row">
+        <div class="small-8 large-centered columns">
+            <div class="row">
+                <div class="small-4 columns">
+                    <h4>Search Filters</h4>
+                </div>
+            </div>
+            <form id="rule-filter" action="" method="get">
+                <div class="row">
+                    <div class="small-4 columns">
+                        <label>Signature Search String</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-4 columns">
+                        <input type="text" name="sig_name" value="{{ sig_name }}" placeholder="Signature Name" />
+                    </div>
+                    <div class="small-2 columns">
+                        <input class="tiny button" type="submit" value="GO" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <div style="max-width: 90.5rem;" class="row">
         <div class="small-12 columns">
             <table id="rule-table">

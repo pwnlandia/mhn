@@ -3,7 +3,7 @@ from celery import Celery
 from mhn import mhn
 
 
-celery = Celery()
+celery = Celery(include=['mhn.tasks.rules'])
 celery.conf.update(mhn.config)
 TaskBase = celery.Task
 class ContextTask(TaskBase):
