@@ -229,7 +229,7 @@ def intel_feed_csv():
     fieldnames = ['source_ip', 'count', 'tags', ]
     results = get_intel_feed()
     outf = StringIO()
-    wr = csv.DictWriter(outf, fieldnames=fieldnames, delimiter='\t')
+    wr = csv.DictWriter(outf, fieldnames=fieldnames, delimiter='\t', lineterminator='\n')
     wr.writeheader()
     for rec in results['data']:
         wr.writerow({
