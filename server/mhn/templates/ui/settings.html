@@ -55,6 +55,7 @@
                 </div>
             </div>
             <form id="user-form" action="{{ url_for('auth.create_user') }}" method="post">
+                <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
                 <div class="row">
                     <div class="small-10 large-centered columns">
                         <input id="email-edit" name="email" type="text" placeholder="Email" />
@@ -86,6 +87,7 @@
                 </div>
             </div>
             <form id="change-pass-form" action="{{ url_for('auth.change_passwd', user_id=user.id) }}" method="post">
+                <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
                 <input id="email-edit" name="email" type="hidden" value="{{ user.email }}" placeholder="Email" />
                 <div class="row">
                     <div class="small-10 large-centered columns">

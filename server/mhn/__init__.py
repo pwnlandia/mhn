@@ -54,8 +54,6 @@ mhn.context_processor(config_ctx)
 @mhn.before_request
 def csrf_protect():
     if request.method == "POST":
-        print request.form
-        print request.headers
         token = session.pop('_csrf_token', None)
         request_token = request.headers.get('Csrf-Token')
         if not request_token:

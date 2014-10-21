@@ -26,6 +26,7 @@
         </div>
     </div>
     <form id="src-form">
+        <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
         <div class="row">
             <div class="small-6 small-centered columns">
                 <input id="name" type="text" placeholder="Name" />
