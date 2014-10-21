@@ -27,7 +27,7 @@ $(document).ready(function() {
             $.ajax({
                 type: 'POST',
                 url: '/api/sensor/',
-                header: {'Csrf-Token': $('#_csrf_token').val()},
+                headers: {'Csrf-Token': $('#_csrf_token').val()},
                 data: JSON.stringify(sensorObj),
                 success: function(resp) {
                     $('#sensor-info').show();
@@ -96,7 +96,7 @@ $(document).ready(function() {
                 url: '/auth/login/',
                 data: JSON.stringify(data),
                 contentType: 'application/json',
-                header: {'Csrf-Token': $('#_csrf_token').val()},
+                headers: {'Csrf-Token': $('#_csrf_token').val()},
                 success: function() {
                     window.location.href = '/ui/dashboard/';
                 },
@@ -136,7 +136,7 @@ $(document).ready(function() {
         $.ajax({
             type: reqType,
             url: url,
-            header: {'Csrf-Token': $('#_csrf_token').val()},
+            headers: {'Csrf-Token': $('#_csrf_token').val()},
             data: JSON.stringify({
                 script: script,
                 notes: notes,
@@ -174,7 +174,7 @@ $(document).ready(function() {
             $.ajax({
                 type: 'POST',
                 url: '/api/rulesources/',
-                header: {'Csrf-Token': $('#_csrf_token').val()},
+                headers: {'Csrf-Token': $('#_csrf_token').val()},
                 data: JSON.stringify({
                     name: name,
                     uri: uri,
@@ -252,7 +252,7 @@ $(document).ready(function() {
             $.ajax({
                 type: 'POST',
                 url: '/auth/user/',
-                header: {'Csrf-Token': $('#_csrf_token').val()},
+                headers: {'Csrf-Token': $('#_csrf_token').val()},
                 data: JSON.stringify({
                     email: email,
                     password: password
@@ -303,7 +303,7 @@ $(document).ready(function() {
                 type: 'POST',
                 url: '/auth/changepass/',
                 contentType: 'application/json',
-                header: {'Csrf-Token': $('#_csrf_token').val()},
+                headers: {'Csrf-Token': $('#_csrf_token').val()},
                 data: JSON.stringify({
                     email: email,
                     password: password,
@@ -334,7 +334,7 @@ $(document).ready(function() {
                 type: 'POST',
                 url: $('#change-pass-form').attr('action'),
                 contentType: 'application/json',
-                header: {'Csrf-Token': $('#_csrf_token').val()},
+                headers: {'Csrf-Token': $('#_csrf_token').val()},
                 data: JSON.stringify({
                     password: password,
                     password_repeat: passwordRepeat,
@@ -365,7 +365,7 @@ $(document).ready(function() {
                 type: 'POST',
                 url: $('#reset-req-form').attr('action'),
                 contentType: 'application/json',
-                header: {'Csrf-Token': $('#_csrf_token').val()},
+                headers: {'Csrf-Token': $('#_csrf_token').val()},
                 data: JSON.stringify({email: email}),
                 success: function(resp) {
                     $('#alert-text').removeClass('warning').addClass('success');
