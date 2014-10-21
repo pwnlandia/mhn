@@ -1,7 +1,7 @@
 import hashlib
 from datetime import datetime
 
-from flask import Blueprint, request, jsonify, abort, session
+from flask import Blueprint, request, jsonify
 from flask.ext.mail import Message
 from sqlalchemy.exc import IntegrityError
 from flask_security.utils import (
