@@ -120,6 +120,7 @@ $(document).ready(function() {
         var name = $('#name-edit').val();
         var id = $('#id-edit').val();
         var url = $('#script-form').attr('action');
+        var csrf_token = $('#_csrf_token').val();
         var reqType;
 
         if (id) {
@@ -133,6 +134,7 @@ $(document).ready(function() {
         $.ajax({
             type: reqType,
             url: url,
+            headers: {"Csrf-Token": csrf_token},
             data: JSON.stringify({
                 script: script,
                 notes: notes,

@@ -38,6 +38,7 @@
             </div>
         </div>
         <form id="script-form" method="post" action="{{ url_for('api.create_script') }}">
+            <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
             {% if script.id %}
             <input id="id-edit" type="hidden" value={{ script.id }} />
             {% endif %}

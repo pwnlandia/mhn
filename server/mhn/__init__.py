@@ -1,6 +1,6 @@
 from urlparse import urljoin
 
-from flask import Flask, request, jsonify, abort, url_for
+from flask import Flask, request, jsonify, abort, url_for, session
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password as encrypt
@@ -8,7 +8,6 @@ from flask.ext.mail import Mail
 from werkzeug.contrib.atom import AtomFeed
 import xmltodict
 import uuid
-import session
 import random
 import string
 
@@ -55,8 +54,13 @@ mhn.context_processor(config_ctx)
 @mhn.before_request
 def csrf_protect():
     if request.method == "POST":
+        print request.form
+        print request.headers
         token = session.pop('_csrf_token', None)
-        if not token or token != request.form.get('_csrf_token'):
+        request_token = request.headers.get('Csrf-Token')
+        if not request_token:
+            request_token = request.form.get('_csrf_token')
+        if not token or token != request_token:
             abort(403)
 
 def generate_csrf_token():
