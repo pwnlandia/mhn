@@ -7,6 +7,7 @@
         </div>
         <div class="small-6 columns">
             <form id="login-form" action="" method="post">
+                <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
                 <fieldset>
                     <legend>Log In</legend>
                     <label>Email</label>
