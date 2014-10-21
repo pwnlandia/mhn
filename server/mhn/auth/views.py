@@ -1,7 +1,7 @@
 import hashlib
 from datetime import datetime
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort, session
 from flask.ext.mail import Message
 from sqlalchemy.exc import IntegrityError
 from flask_security.utils import (
@@ -17,9 +17,24 @@ from mhn.auth import (
     get_datastore, login_required, roles_accepted, current_user)
 from mhn.api import errors as apierrors
 import uuid
+import string
+import random
 
 auth = Blueprint('auth', __name__, url_prefix='/auth')
 
+@auth.before_request
+def csrf_protect():
+    if request.method == "POST":
+        token = session.pop('_csrf_token', None)
+        if not token or token != request.form.get('_csrf_token'):
+            abort(403)
+
+def generate_csrf_token():
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(20))
+    return session['_csrf_token']
+
+auth.jinja_env.globals['csrf_token'] = generate_csrf_token 
 
 @auth.route('/login/', methods=['POST'])
 def login_user():
