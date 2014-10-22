@@ -5,6 +5,7 @@ $(document).ready(function() {
         $.ajax({
             type: 'PUT',
             url: url,
+            headers: {'X-CSRFToken': $('#_csrf_token').val()},
             data: JSON.stringify(data),
             success: success,
             contentType: 'application/json',
@@ -195,6 +196,7 @@ $(document).ready(function() {
 
             $.ajax({
                 type: 'DELETE',
+                headers: {'X-CSRFToken': $('#_csrf_token').val()},
                 url: '/api/rulesources/' + rsId + '/',
                 success: function() {
                     window.location.reload();
@@ -278,6 +280,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: 'DELETE',
+            headers: {'X-CSRFToken': $('#_csrf_token').val()},
             url: '/auth/user/' + userId + '/',
             contentType: 'application/json',
             success: function(resp) {
