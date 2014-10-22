@@ -10,6 +10,8 @@ import xmltodict
 import uuid
 import random
 import string
+from flask_wtf.csrf import CsrfProtect
+csrf = CsrfProtect()
 
 db = SQLAlchemy()
 # After defining `db`, import auth models due to
@@ -20,6 +22,7 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 mhn = Flask(__name__)
 mhn.config.from_object('config')
+csrf.init_app(mhn)
 
 # Email app setup.
 mail = Mail()
@@ -50,22 +53,6 @@ mhn.context_processor(user_ctx)
 
 from mhn.common.contextprocessors import config_ctx
 mhn.context_processor(config_ctx)
-
-@mhn.before_request
-def csrf_protect():
-    if request.method == "POST":
-        token = session.pop('_csrf_token', None)
-        request_token = request.headers.get('Csrf-Token')
-        if not request_token:
-            request_token = request.form.get('_csrf_token')
-        if not token or token != request_token:
-            abort(403)
-
-def generate_csrf_token():
-    if '_csrf_token' not in session:
-        session['_csrf_token'] = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(20))
-    return session['_csrf_token']
-mhn.jinja_env.globals['csrf_token'] = generate_csrf_token
 
 import logging
 from logging.handlers import RotatingFileHandler

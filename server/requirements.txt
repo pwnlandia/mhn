@@ -1,5 +1,6 @@
 flask
 flask-sqlalchemy
+flask-wtf
 flask-security
 flask-migrate
 Flask-mail

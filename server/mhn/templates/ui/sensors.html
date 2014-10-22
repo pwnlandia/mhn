@@ -25,6 +25,7 @@
                     <tr>
                         <td>{{ pag.skip + loop.index  }}- <img class="del-sensor" data-sensor-id="{{ sr.uuid }}" src="/static/img/trash-24.png"/> </td>
                         <td>
+                            <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
                             <input data-sensor-id="{{ sr.uuid }}"
                                    type="text"
                                    data-field-name="name"

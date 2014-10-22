@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from flask import Blueprint, request, jsonify, make_response
 from bson.errors import InvalidId
 
-from mhn import db
+from mhn import db, csrf
 from mhn.api import errors
 from mhn.api.models import (
         Sensor, Rule, DeployScript as Script,
@@ -25,6 +25,7 @@ api = Blueprint('api', __name__, url_prefix='/api')
 
 # Endpoints for the Sensor resource.
 @api.route('/sensor/', methods=['POST'])
+@csrf.exempt
 @deploy_auth
 def create_sensor():
     missing = Sensor.check_required(request.json)
@@ -47,6 +48,7 @@ def create_sensor():
 
 
 @api.route('/sensor/<uuid>/', methods=['PUT'])
+@csrf.exempt
 def update_sensor(uuid):
     sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()
     for field in request.json.keys():
@@ -78,6 +80,7 @@ def delete_sensor(uuid):
 
 
 @api.route('/sensor/<uuid>/connect/', methods=['POST'])
+@csrf.exempt
 @sensor_auth
 def connect_sensor(uuid):
     sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()
