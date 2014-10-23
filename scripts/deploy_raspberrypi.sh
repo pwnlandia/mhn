@@ -479,6 +479,7 @@ sed -i 's/var\/dionaea\///g' /opt/dionaea/etc/dionaea/dionaea.conf
 sed -i 's/log\//\/var\/dionaea\/log\//g' /opt/dionaea/etc/dionaea/dionaea.conf
 sed -i 's/levels = "all"/levels = "warning,error"/1' /opt/dionaea/etc/dionaea/dionaea.conf
 sed -i 's/mode = "getifaddrs"/mode = "manual"/1' /opt/dionaea/etc/dionaea/dionaea.conf
+sed -i 's/addrs = { eth0 = \["::"\] }/addrs = { eth0 = ["::", "0.0.0.0"] }/' /opt/dionaea/etc/dionaea/dionaea.conf
 
 mkdir -p /opt/dionaea/var/dionaea/bistreams 
 chown nobody:nogroup /opt/dionaea/var/dionaea/bistreams
