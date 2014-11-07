@@ -13,6 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "server" do |server|
     server.vm.box = "hashicorp/precise64" # Ubuntu 12.04
     #server.vm.box = "ubuntu/trusty64" # Ubuntu 14.04
+    #server.vm.box = "chef/centos-6.5"  # Centos 6.5
     server.vm.network "private_network", ip: "10.254.254.100"
     
     server.vm.provision :shell, inline: 'echo mhn-server > /etc/hostname'
@@ -21,6 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.define "honeypot" do |honeypot|
+    #honeypot.vm.box = "chef/centos-6.5"  # Centos 6.5
     #honeypot.vm.box = "ubuntu/trusty64" # Ubuntu 14.04
     honeypot.vm.box = "hashicorp/precise64" # Ubuntu 12.04
     honeypot.vm.network "private_network", ip: "10.254.254.101"
