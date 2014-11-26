@@ -67,4 +67,5 @@ HONEYPOT_CHANNELS = {
     'wordpot': ['wordpot.events'],
     'shockpot': ['shockpot.events'],
     'p0f': ['p0f.events'],
+    'suricata': ['suricata.events'],
 }
