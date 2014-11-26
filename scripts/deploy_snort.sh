@@ -21,7 +21,7 @@ chmod 755 registration.sh
 . ./registration.sh $server_url $deploy_key "snort"
  
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libpcap-dev libjansson-dev libpcre3-dev libdnet-dev libdumbnet-dev libdaq-dev flex bison python-pip git make automake libtool
+DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libpcap-dev libjansson-dev libpcre3-dev libdnet-dev libdumbnet-dev libdaq-dev flex bison python-pip git make automake libtool zlib1g-dev
 
 pip install --upgrade distribute
 pip install virtualenv
