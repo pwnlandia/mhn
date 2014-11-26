@@ -1,5 +1,7 @@
 #!/bin/bash
 
+INTERFACE=eth0
+
 set -e
 set -x
 
@@ -17,45 +19,79 @@ wget $server_url/static/registration.txt -O registration.sh
 chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "snort"
-
+ 
 apt-get update
-apt-get install -y git python-pip python-dev
-#apt-get install -y python-software-properties
-#add-apt-repository -y ppa:honeynet/nightly
-apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libpcap-dev libjansson-dev libpcre3-dev libdnet-dev libdumbnet-dev libdaq-dev flex bison python-pip git make automake libtool
 
 pip install --upgrade distribute
 pip install virtualenv
 
-# Installing Snort
-DEBIAN_FRONTEND=noninteractive apt-get install -y snort
+# Install hpfeeds and required libs...
 
-# Editing configuration for Snort.
-# Disabling community-sip rules because of conflict with a rule from
-# emerging threats.
-sed -i 's,include \$RULE_PATH/community-sip.rules,#include \$RULE_PATH/community-sip.rules,1' /etc/snort/snort.conf
+cd /tmp
+rm -rf libev*
+wget https://github.com/threatstream/hpfeeds/releases/download/libev-4.15/libev-4.15.tar.gz
+tar zxvf libev-4.15.tar.gz 
+cd libev-4.15
+./configure && make && make install
+ldconfig
 
-# turn on 'full' snort alert logging
-# log the year
-# convert timestamps to UTC
-sed -i 's/DEBIAN_SNORT_OPTIONS=.*/DEBIAN_SNORT_OPTIONS="-A full -y -U"/' /etc/snort/snort.debian.conf
+cd /tmp
+rm -rf hpfeeds
+git clone https://github.com/threatstream/hpfeeds.git
+cd hpfeeds/appsupport/libhpfeeds
+autoreconf --install
+./configure && make && make install 
 
-SNORT_HPF_HOME=/opt/snort_hpfeeds
-mkdir -p $SNORT_HPF_HOME
-cd $SNORT_HPF_HOME
-virtualenv env
-. env/bin/activate
-pip install --process-dependency-links -e git+https://github.com/threatstream/snort_hpfeeds.git#egg=snort_hpfeeds-dev
+cd /tmp
+rm -rf snort
+git clone -b hpfeeds-support https://github.com/threatstream/snort.git
+export CPPFLAGS=-I/include
+cd snort
+./configure --prefix=/opt/snort && make && make install 
 
-cat > snort_hpfeeds.conf <<EOF
-{
-	"sensor_uuid": "$uuid",
-	"host":   "$HPF_HOST",
-	"port":   $HPF_PORT,
-	"ident":  "$HPF_IDENT",
-	"secret": "$HPF_SECRET",
-	"alert_file": "/var/log/snort/alert"
-}
+mkdir -p /opt/snort/etc /opt/snort/rules /opt/snort/lib/snort_dynamicrules /opt/snort/lib/snort_dynamicpreprocessor /var/log/snort/
+cd etc
+cp snort.conf classification.config reference.config threshold.conf unicode.map /opt/snort/etc/
+touch  /opt/snort/rules/white_list.rules
+touch  /opt/snort/rules/black_list.rules
+
+cd /opt/snort/etc/
+# out prefix is /opt/snort not /usr/local...
+sed -i 's#/usr/local/#/opt/snort/#' snort.conf 
+
+# disable all the built in rules
+sed -i -r 's,include \$RULE_PATH/(.*),# include $RULE_PATH/\1,' snort.conf
+
+# enable our local rules
+sed -i 's,# include $RULE_PATH/local.rules,include $RULE_PATH/local.rules,' snort.conf
+
+# enable hpfeeds
+sed -i "s/# hpfeeds/# hpfeeds\noutput log_hpfeeds: host $HPF_HOST, ident $HPF_IDENT, secret $HPF_SECRET, channel snort.alerts, port $HPF_PORT/" snort.conf 
+
+
+IP=$(ifconfig $INTERFACE | grep 'inet addr' | cut -f2 -d: | awk '{print $1}')
+sed -i "s/ipvar HOME_NET any/ipvar HOME_NET $IP/" snort.conf
+
+# Installing snort rules.
+# mhn.rules will be used as local.rules.
+rm -f /etc/snort/rules/local.rules
+ln -s /opt/mhn/rules/mhn.rules /opt/snort/rules/local.rules
+
+# Supervisor will manage snort-hpfeeds
+apt-get install -y supervisor
+
+# Config for supervisor.
+cat > /etc/supervisor/conf.d/snort.conf <<EOF
+[program:snort]
+command=/opt/snort/bin/snort -c /opt/snort/etc/snort.conf -i $INTERFACE
+directory=/opt/snort
+stdout_logfile=/var/log/snort.log
+stderr_logfile=/var/log/snort.err
+autostart=true
+autorestart=true
+redirect_stderr=true
+stopsignal=QUIT
 EOF
 
 cat > /etc/cron.daily/update_snort_rules.sh <<EOF
@@ -67,7 +103,7 @@ rm -f /opt/mhn/rules/mhn.rules.tmp
 echo "[`date`] Updating snort signatures ..."
 wget $server_url/static/mhn.rules -O /opt/mhn/rules/mhn.rules.tmp && \
 	mv /opt/mhn/rules/mhn.rules.tmp /opt/mhn/rules/mhn.rules && \
-	/etc/init.d/snort restart && \
+	(supervisorctl update ; supervisorctl restart snort ) && \
 	echo "[`date`] Successfully updated snort signatures" && \
 	exit 0
 
@@ -76,27 +112,5 @@ exit 1
 EOF
 chmod 755 /etc/cron.daily/update_snort_rules.sh
 /etc/cron.daily/update_snort_rules.sh
-
-# Installing snort rules.
-# mhn.rules will be used as local.rules.
-rm -f /etc/snort/rules/local.rules
-ln -s /opt/mhn/rules/mhn.rules /etc/snort/rules/local.rules
-
-
-# Supervisor will manage snort-hpfeeds
-apt-get install -y supervisor
-
-# Config for supervisor.
-cat > /etc/supervisor/conf.d/snort_hpfeeds.conf <<EOF
-[program:snort_hpfeeds]
-command=/opt/snort_hpfeeds/env/bin/python /opt/snort_hpfeeds/env/bin/snort_hpfeeds.py -c /opt/snort_hpfeeds/snort_hpfeeds.conf
-directory=/opt/snort_hpfeeds
-stdout_logfile=/var/log/snort_hpfeeds.out
-stderr_logfile=/var/log/snort_hpfeeds.err
-autostart=true
-autorestart=true
-redirect_stderr=true
-stopsignal=QUIT
-EOF
 
 supervisorctl update
