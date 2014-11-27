@@ -42,6 +42,7 @@ git clone https://github.com/threatstream/hpfeeds.git
 cd hpfeeds/appsupport/libhpfeeds
 autoreconf --install
 ./configure && make && make install 
+ldconfig
 
 cd /tmp
 rm -rf htp*
@@ -49,6 +50,7 @@ wget https://github.com/ironbee/libhtp/releases/download/0.5.15/htp-0.5.15.tar.g
 tar -xzvf htp-0.5.15.tar.gz
 cd htp-0.5.15
 ./configure && make && make install
+ldconfig
 
 mkdir -p /opt/suricata/etc/suricata/rules /opt/mhn/rules/
 
