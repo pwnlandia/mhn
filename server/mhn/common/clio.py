@@ -357,7 +357,7 @@ class HpFeed(ResourceMixin):
             query['hours_ago'] = hours_ago
 
         res = self.get(options={}, **query)
-        val_list = [json.loads(r.payload)[field] for r in res]
+        val_list = [rec.get(field) for rec in [json.loads(r.payload) for r in res] if field in rec]
         cnt = Counter()
         for val in val_list:
             cnt[val] += 1
