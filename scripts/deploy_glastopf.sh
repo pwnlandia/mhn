@@ -23,8 +23,18 @@ chmod 0755 registration.sh
 apt-get update
 
 # Install Prerequisites
-apt-get install -y python2.7 python-openssl python-gevent libevent-dev python2.7-dev build-essential make python-chardet python-requests python-sqlalchemy python-lxml python-beautifulsoup mongodb python-pip python-dev python-setuptools git php5 php5-dev liblapack-dev gfortran libmysqlclient-dev libxml2-dev libxslt-dev supervisor
-pip install --upgrade distribute
+apt-get install -y python2.7 python-openssl python-gevent libevent-dev python2.7-dev build-essential make python-chardet python-requests python-sqlalchemy python-lxml python-beautifulsoup mongodb python-dev python-setuptools git php5 php5-dev liblapack-dev gfortran libmysqlclient-dev libxml2-dev libxslt-dev supervisor
+
+easy_install pip
+
+pip uninstall --yes setuptools
+
+wget https://pypi.python.org/packages/source/d/distribute/distribute-0.6.35.tar.gz
+tar -xzvf distribute-0.6.35.tar.gz
+cd distribute-0.6.35
+python setup.py install
+
+pip install -e git+https://github.com/threatstream/hpfeeds.git#egg=hpfeeds-dev
 
 # Install and configure the PHP sandbox
 cd /opt
