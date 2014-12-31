@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# This script was successfully tested on Ubuntu12.04 and Ubuntu14.10
+# i386 and x64 architecture distros both
+#
 
 INTERFACE=eth0
 
