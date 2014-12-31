@@ -19,3 +19,8 @@ honeypot/mhnclient.conf
 /env
 
 index.html*
+
+# Emacs
+*~
+*#
+.#*
