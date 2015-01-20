@@ -349,6 +349,16 @@ class HpFeed(ResourceMixin):
             payloads.append(payload)
         
         return count,columns,payloads
+
+
+    def count_passwords(self,payloads):
+        passwords=[]
+        for creds in payloads:
+            if creds['credentials']!= None:
+                for cred in (creds['credentials']):
+                    passwords.append(cred[1])
+        return Counter(passwords)
+
         
     def _tops(self, field, chan, top=5, hours_ago=None):
         query = {'channel': chan}
