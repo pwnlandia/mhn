@@ -20,30 +20,21 @@ chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "snort"
 
-# 
-cron_path="/etc/cron.daily/update_snort_rules.sh"
-
 # linux distro detection module:
 
 if [ -f /etc/lsb-release ]; then linux_version="Ubuntu";
-    supervisor_conf_path="/etc/supervisor/conf.d/snort.conf";
 elif [ -f /etc/os-release ]; then linux_version="CentOS";
-    supervisor_conf_path="/etc/supervisord.d/snort.conf";
 <<EOF
 elif [ -f /etc/debian-version ]; then linux_version="Debian";
-    supervisor_conf_path="";
-    cron_path=""
 elif [ -f /etc/redhat-release ]; then linux_version="RedHat";
-    supervisor_conf_path="";
-    cron_path=""
 EOF
 fi
 
 if [ "$linux_version" == "Ubuntu" ]; then apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libpcap-dev libjansson-dev libpcre3-dev libdnet-dev libdumbnet-dev libdaq-dev flex bison python-pip git make automake libtool zlib1g-dev supervisor
+DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libpcap-dev libjansson-dev libpcre3-dev libdnet-dev libdumbnet-dev libdaq-dev flex bison python-pip git make automake libtool zlib1g-dev
 
 elif [ "$linux_version" == "CentOS" ]; then yum -y groupinstall 'Development Tools'
-yum -y install python-pip zlib-devel libdnet-devel libpcap-devel jansson-devel pcre-devel supervisor
+yum -y install python-pip zlib-devel libdnet-devel libpcap-devel jansson-devel pcre-devel
 wget https://www.snort.org/downloads/snort/daq-2.0.4.centos7.x86_64.rpm
 yum -y localinstall daq-2.0.4.centos7.x86_64.rpm
 fi
@@ -106,21 +97,8 @@ sed -i "s/ipvar HOME_NET any/ipvar HOME_NET $IP/" snort.conf
 rm -f /etc/snort/rules/local.rules
 ln -s /opt/mhn/rules/mhn.rules /opt/snort/rules/local.rules
 
-# Config for supervisor separately for different distro:
-# supervisord.d
-cat > "$supervisor_conf_path" <<EOF
-[program:snort]
-command=/opt/snort/bin/snort -c /opt/snort/etc/snort.conf -i $INTERFACE
-directory=/opt/snort
-stdout_logfile=/var/log/snort.log
-stderr_logfile=/var/log/snort.err
-autostart=true
-autorestart=true
-redirect_stderr=true
-stopsignal=QUIT
-EOF
 
-cat > "$cron_path" <<EOF
+cat > /etc/cron.daily/update_snort_rules.sh <<EOF
 #!/bin/bash
 
 mkdir -p /opt/mhn/rules
@@ -129,7 +107,6 @@ rm -f /opt/mhn/rules/mhn.rules.tmp
 echo "[`date`] Updating snort signatures ..."
 wget $server_url/static/mhn.rules -O /opt/mhn/rules/mhn.rules.tmp && \
 	mv /opt/mhn/rules/mhn.rules.tmp /opt/mhn/rules/mhn.rules && \
-	(supervisorctl update ; supervisorctl restart snort ) && \
 	echo "[`date`] Successfully updated snort signatures" && \
 	exit 0
 
@@ -139,4 +116,6 @@ EOF
 chmod 755 /etc/cron.daily/update_snort_rules.sh
 /etc/cron.daily/update_snort_rules.sh
 
-supervisorctl update
+ldconfig
+
+/opt/snort/bin/snort -c /opt/snort/etc/snort.conf -i eth0 < /dev/null &> /dev/null & disown
