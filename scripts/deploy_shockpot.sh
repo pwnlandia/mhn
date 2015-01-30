@@ -44,6 +44,10 @@ port     = $HPF_PORT
 identity = $HPF_IDENT
 secret   = $HPF_SECRET
 channel  = shockpot.events
+
+[fetch_public_ip]
+enabled = True
+urls = ["http://www.telize.com/ip", "http://queryip.net/ip/", "http://ifconfig.me/ip"]
 EOF
 
 # Config for supervisor.
