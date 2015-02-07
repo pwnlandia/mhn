@@ -100,6 +100,16 @@ MHN was designed to make scalable deployment of honeypots easier.  Here are the 
 5. Login to a honeypot server and run this command as root.
 6. That's it!
 
+### Integration with Splunk and ArcSight
+
+hpfeeds-logger can be used to integrate MHN with Splunk and (soon) ArcSight.  Installation below.
+
+    cd /opt/mhn/scripts/
+    sudo ./install_hpfeeds-logger.sh
+
+This will log to /var/log/mhn-splunk.log.  This log should be monitored by the SplunkUniveralForwarder.
+
+
 ### Data
 
 The MHN server reports anonymized attack data back to ThreatStream.  If you are interested in this data please contact: <mhn@threatstream.com>.  This data reporting can be disabled by running the following command from the MHN server after completing the initial installation steps outlined above: `/opt/mhn/scripts/disable_collector.sh`
