@@ -1,7 +1,12 @@
 #!/bin/bash
 
-apt-get install -y git golang mercurial make coffeescript
+apt-get install -y git golang mercurial make curl
 DEBIAN_FRONTEND=noninteractive apt-get install -y golang-go
+
+# Install coffeescript
+curl -sL https://deb.nodesource.com/setup | bash -
+apt-get install -y nodejs
+npm install -g coffee-script
 
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 /opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py honeymap $SECRET "" "geoloc.events"
