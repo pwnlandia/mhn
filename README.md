@@ -7,6 +7,8 @@ Multi-snort and honeypot sensor management, uses a network of VMs, small footpri
 
 Deployed sensors with intrusion detection software installed: Snort, Kippo, Conpot, and Dionaea. 
 
+See this blog post for a [overview of the honeypots supported by Modern Honey Netwrok](https://securityfoo.wordpress.com/2015/02/06/overview-of-honeypots-supported-by-mhn-threatstream/)
+
 ### MANAGEMENT SERVER
 
 Flask application that exposes an HTTP API that honeypots can use to:
