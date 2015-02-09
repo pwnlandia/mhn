@@ -10,6 +10,7 @@ import xmltodict
 import uuid
 import random
 import string
+import sys
 from flask_wtf.csrf import CsrfProtect
 csrf = CsrfProtect()
 
@@ -70,6 +71,8 @@ if mhn.config['DEBUG']:
     console.setLevel(logging.INFO)
     console.setFormatter(formatter)
     mhn.logger.addHandler(console)
+
+os_ver = sys.argv[1]
 
 
 @mhn.route('/feed.json')
@@ -137,16 +140,16 @@ def create_clean_db():
         #|-- deploy_snort.sh
         #|-- deploy_kippo.sh
         deployscripts = {
-            'Ubuntu - Conpot': path.abspath('../scripts/deploy_conpot.sh'),
-            'Ubuntu - Dionaea': path.abspath('../scripts/deploy_dionaea.sh'),
-            'Ubuntu - Snort': path.abspath('../scripts/deploy_snort.sh'),
-            'Ubuntu - Kippo': path.abspath('../scripts/deploy_kippo.sh'),
-            'Ubuntu - Amun': path.abspath('../scripts/deploy_amun.sh'),
-            'Ubuntu - Glastopf': path.abspath('../scripts/deploy_glastopf.sh'),
-            'Ubuntu - Wordpot': path.abspath('../scripts/deploy_wordpot.sh'),
-            'Ubuntu - Shockpot': path.abspath('../scripts/deploy_shockpot.sh'),
-            'Ubuntu - p0f': path.abspath('../scripts/deploy_p0f.sh'),
-            'Ubuntu - Suricata': path.abspath('../scripts/deploy_suricata.sh'),
+            'Ubuntu - Conpot': path.abspath('../scripts/'+os_ver+'/deploy_conpot.sh'),
+            'Ubuntu - Dionaea': path.abspath('../scripts/'+os_ver+'/deploy_dionaea.sh'),
+            'Ubuntu - Snort': path.abspath('../scripts/'+os_ver+'/deploy_snort.sh'),
+            'Ubuntu - Kippo': path.abspath('../scripts/'+os_ver+'/deploy_kippo.sh'),
+            'Ubuntu - Amun': path.abspath('../scripts/'+os_ver+'/deploy_amun.sh'),
+            'Ubuntu - Glastopf': path.abspath('../scripts/'+os_ver+'/deploy_glastopf.sh'),
+            'Ubuntu - Wordpot': path.abspath('../scripts/'+os_ver+'/deploy_wordpot.sh'),
+            'Ubuntu - Shockpot': path.abspath('../scripts/'+os_ver+'/deploy_shockpot.sh'),
+            'Ubuntu - p0f': path.abspath('../scripts/'+os_ver+'/deploy_p0f.sh'),
+            'Ubuntu - Suricata': path.abspath('../scripts/'+os_ver+'/deploy_suricata.sh'),
             #'Raspberry Pi - Dionaea': path.abspath('../scripts/deploy_raspberrypi.sh'),
         }
         for honeypot, deploypath in deployscripts.iteritems():

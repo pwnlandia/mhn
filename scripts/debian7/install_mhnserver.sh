@@ -6,9 +6,9 @@ apt-get update
 apt-get install -y git build-essential python-pip python-dev redis-server
 pip install virtualenv
 
-MHN_HOME=`dirname $0`/..
+MHN_HOME=/opt/mhn
+OSVER=$(basename `pwd`)
 cd $MHN_HOME
-MHN_HOME=`pwd`
 
 virtualenv env
 . env/bin/activate
@@ -23,7 +23,7 @@ echo "==========================================================="
 python generateconfig.py
 
 echo -e "\nInitializing database, please be patient. This can take several minutes"
-python initdatabase.py
+python initdatabase.py $OSVER
 cd $MHN_HOME
 
 apt-get install -y nginx
