@@ -6,7 +6,7 @@ apt-get update
 apt-get install -y git python-pip python-dev
 pip install virtualenv
 
-SCRIPTS=`dirname $0`
+SCRIPTS=`pwd`
 bash $SCRIPTS/install_mongo.sh
 
 cd /opt/
