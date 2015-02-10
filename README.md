@@ -5,9 +5,18 @@ Multi-snort and honeypot sensor management, uses a network of VMs, small footpri
 
 ### HONEYPOT
 
-Deployed sensors with intrusion detection software installed: Snort, Kippo, Conpot, and Dionaea. 
-
-See this blog post for a [overview of the honeypots supported by Modern Honey Netwrok](https://securityfoo.wordpress.com/2015/02/06/overview-of-honeypots-supported-by-mhn-threatstream/)
+Modern Honey Network supports the deployment of sensors with the
+following intrusion detection software:
+[Snort](https://snort.org/),
+[Kippo](https://github.com/desaster/kippo),
+[Conpot](http://conpot.org/),
+[Dionaea](http://edgis-security.org/honeypot/dionaea/).
+[Suricata](http://suricata-ids.org/)
+[glastopf](https://github.com/glastopf/)
+[amun](http://sourceforge.net/projects/amunhoney/)
+[wordpot](https://github.com/gbrindisi/wordpot)
+[shockpot](https://threatstream.com/blog/shockpot)
+[p0f](http://en.wikipedia.org/wiki/P0f).
 
 ### MANAGEMENT SERVER
 
