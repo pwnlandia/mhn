@@ -11,11 +11,12 @@ following intrusion detection software:
 [Kippo](https://github.com/desaster/kippo),
 [Conpot](http://conpot.org/),
 [Dionaea](http://edgis-security.org/honeypot/dionaea/).
-[Suricata](http://suricata-ids.org/)
-[glastopf](https://github.com/glastopf/)
-[amun](http://sourceforge.net/projects/amunhoney/)
-[wordpot](https://github.com/gbrindisi/wordpot)
-[shockpot](https://threatstream.com/blog/shockpot)
+[Suricata](http://suricata-ids.org/),
+[glastopf](https://github.com/glastopf/),
+[amun](http://sourceforge.net/projects/amunhoney/),
+[wordpot](https://github.com/gbrindisi/wordpot),
+[shockpot](https://threatstream.com/blog/shockpot),
+and
 [p0f](http://en.wikipedia.org/wiki/P0f).
 
 ### MANAGEMENT SERVER
