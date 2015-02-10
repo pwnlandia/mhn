@@ -16,11 +16,11 @@ virtualenv env
 pip install -r requirements.txt
 chmod 755 -R .
 
-IDENT=hpfeeds-logger
+IDENT=hpfeeds-logger-splunk
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 CHANNELS='amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,wordpot.events,shockpot.events,p0f.events'
 
-cat > /opt/hpfeeds-logger/logger.json <<EOF
+cat > /opt/hpfeeds-logger/splunk.json <<EOF
 {
     "host": "localhost",
     "port": 10000,
@@ -51,12 +51,12 @@ python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "" "$CHANNELS"
 
 apt-get install -y supervisor
 
-cat >> /etc/supervisor/conf.d/hpfeeds-logger.conf <<EOF 
-[program:hpfeeds-logger]
-command=/opt/hpfeeds-logger/env/bin/python logger.py logger.json
+cat >> /etc/supervisor/conf.d/hpfeeds-logger-splunk.conf <<EOF 
+[program:hpfeeds-logger-splunk]
+command=/opt/hpfeeds-logger/env/bin/python logger.py splunk.json
 directory=/opt/hpfeeds-logger
-stdout_logfile=/var/log/hpfeeds-logger.log
-stderr_logfile=/var/log/hpfeeds-logger.err
+stdout_logfile=/var/log/hpfeeds-logger-splunk.log
+stderr_logfile=/var/log/hpfeeds-logger-splunk.err
 autostart=true
 autorestart=true
 startsecs=1

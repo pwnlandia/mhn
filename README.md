@@ -102,12 +102,23 @@ MHN was designed to make scalable deployment of honeypots easier.  Here are the 
 
 ### Integration with Splunk and ArcSight
 
-hpfeeds-logger can be used to integrate MHN with Splunk and (soon) ArcSight.  Installation below.
+hpfeeds-logger can be used to integrate MHN with Splunk and ArcSight.  Installation below.
+
+#### Splunk
+
 
     cd /opt/mhn/scripts/
-    sudo ./install_hpfeeds-logger.sh
+    sudo ./install_hpfeeds-logger-splunk.sh
 
-This will log to /var/log/mhn-splunk.log.  This log should be monitored by the SplunkUniveralForwarder.
+This will log the events as key/value pairs to /var/log/mhn-splunk.log.  This log should be monitored by the SplunkUniveralForwarder.
+
+#### Arcsight
+
+
+    cd /opt/mhn/scripts/
+    sudo ./install_hpfeeds-logger-arcsight.sh
+
+This will log the events as CEF to /var/log/mhn-arcsight.log
 
 
 ### Data
