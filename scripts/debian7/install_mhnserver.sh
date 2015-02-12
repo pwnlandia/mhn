@@ -55,7 +55,7 @@ apt-get install -y supervisor
 
 cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
 [program:mhn-uwsgi]
-command=$MHN_HOME/env/bin/uwsgi -s /tmp/uwsgi.sock -w mhn:mhn -H $MHN_HOME/env --chmod-socket=666
+command=$MHN_HOME/env/bin/uwsgi -s /tmp/uwsgi.sock -w mhn:mhn --pyargv $OSVER -H $MHN_HOME/env --chmod-socket=666
 directory=$MHN_HOME/server
 stdout_logfile=/var/log/uwsgi/mhn.log
 stderr_logfile=/var/log/uwsgi/mhn.err
