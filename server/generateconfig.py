@@ -3,11 +3,13 @@ This is a helper script meant to generate a
 working config.py file from the config template.
 """
 
-import json
-from urllib2 import urlopen
-import string
-from random import choice
 from getpass import getpass
+import json
+import os.path
+from random import choice
+import string
+import sys
+from urllib2 import urlopen
 
 import argparse
 
@@ -17,6 +19,11 @@ rand_str = lambda n: ''.join(choice(el) for _ in range(n))
 
 
 def generate_config():
+    # Check if config file already exists
+    if os.path.isfile('config.py'):
+        print('config.py already exists')
+        sys.exit()
+
     pub_ip = json.load(urlopen('http://httpbin.org/ip'))['origin']
     default_base_url = 'http://{}'.format(pub_ip)
     default_honeymap_url = 'http://{}:3000'.format(pub_ip)
