@@ -39,6 +39,10 @@ def generate_config():
     parser = argparse.ArgumentParser(description=parser_description)
 
     subparsers = parser.add_subparsers(help='commands')
+
+    parser_generate = subparsers.add_parser('generate', help='Generate a config.py and prompt for options')
+    parser_generate.set_defaults(which='generate')
+
     parser_unatt = subparsers.add_parser('unattended', help='Unattended install')
     parser_unatt.set_defaults(which='unattended')
     parser_unatt.add_argument('-e', '--email', type=str, required=True,
@@ -68,7 +72,10 @@ def generate_config():
     parser_unatt.add_argument('-d', '--debug', action='store_true',
                               help='Run in debug mode')
 
-    args = parser.parse_args()
+    if (len(sys.argv) < 2):
+        args = parser.parse_args(['generate'])
+    else:
+        args = parser.parse_args(sys.argv[1:])
 
     # check for unattended install
     if args.which is 'unattended':
