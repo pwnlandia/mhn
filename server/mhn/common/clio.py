@@ -345,7 +345,10 @@ class HpFeed(ResourceMixin):
         
         feed_rows = self.get(options=options, **req_args)
         for row in feed_rows:
-            payload = json.loads(row.payload)
+            try:
+                payload = json.loads(row.payload)
+            except:
+                pass
             payloads.append(payload)
         
         return count,columns,payloads
