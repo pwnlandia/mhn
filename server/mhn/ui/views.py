@@ -200,7 +200,7 @@ def graph_users():
     clio=Clio()
     
     bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True)
-    bar_chart.title = "Top 15 Users"
+    bar_chart.title = "Top 10 Users"
     clio=Clio()
     top_users =clio.hpfeed.count_users(clio.hpfeed.get_payloads({'limit':10000},{"channel":"kippo.sessions"})[2])
     for user in top_users:
