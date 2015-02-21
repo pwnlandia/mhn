@@ -380,13 +380,6 @@ class HpFeed(ResourceMixin):
                     combos_count.append(combo[0]+": "+combo[1])
         return Counter(combos_count).most_common(10)
 
-    def diff_time(self,endTime,startTime):
-        d1 = dateutil.parser.parse(endTime)
-        d2 = dateutil.parser.parse(startTime)
-        res = res = d1 - d2
-        return res.total_seconds()  
-
-
 
     def _tops(self, field, chan, top=5, hours_ago=None):
         query = {'channel': chan}
