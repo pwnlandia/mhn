@@ -3,6 +3,9 @@ Modern Honey Network
 
 Multi-snort and honeypot sensor management, uses a network of VMs, small footprint SNORT installations, stealthy dionaeas, and a centralized server for management.
 
+For questions regarding installation please review the [MHN Troubleshooting Guide](https://github.com/threatstream/mhn/wiki/MHN-Troubleshooting-Guide).  Search past questions on the [modern-honey-network Google Group](https://groups.google.com/forum/#!forum/modern-honey-network).  Or send emails to <modern-honey-network@googlegroups.com>.
+
+
 ### HONEYPOT
 
 Deployed sensors with intrusion detection software installed: Snort, Kippo, Conpot, and Dionaea. 
