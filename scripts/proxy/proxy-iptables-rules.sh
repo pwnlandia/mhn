@@ -4,9 +4,11 @@
 iptables --flush
 iptables --table nat --flush
 
+iptables --append INPUT --in-interface eth0 --proto tcp --dport 1:21 --jump DROP
+iptables --append INPUT --in-interface eth0 --proto tcp --dport 23:1024 --jump DROP
+
 # allow 22
-for PORT in {1..21} {23..1024} 3000 8000 8080 8098 9001 11211; do
-    iptables --append INPUT --in-interface eth0 --proto tcp --dport $PORT --jump DROP
+for PORT in 3000 8000 8080 8098 9001 11211; do
     iptables --append INPUT --in-interface eth0 --proto tcp --sport $PORT --jump DROP
 done
 
