@@ -192,7 +192,7 @@ def graph_passwords():
     clio=Clio()
     
     bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Top 10 Passwords"
+    bar_chart.title = "Kippo Top Passwords"
     clio=Clio()
     top_passwords =clio.hpfeed.count_passwords(clio.hpfeed.get_payloads({'limit':10000},{"channel":"kippo.sessions"})[2])
     for password in top_passwords:
@@ -206,7 +206,7 @@ def graph_users():
     clio=Clio()
     
     bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Top 10 Users"
+    bar_chart.title = "Kippo Top Users"
     clio=Clio()
     top_users =clio.hpfeed.count_users(clio.hpfeed.get_payloads({'limit':10000},{"channel":"kippo.sessions"})[2])
     for user in top_users:
@@ -221,7 +221,7 @@ def graph_combos():
     clio=Clio()
     
     bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Top 10 Combos"
+    bar_chart.title = "Kippo Top User/Passwords"
     clio=Clio()
     top_combos =clio.hpfeed.count_combos(clio.hpfeed.get_payloads({'limit':10000},{"channel":"kippo.sessions"})[2])
     for combo in top_combos:
@@ -238,7 +238,7 @@ def graph_top_attackers():
     clio=Clio()
     
     bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Top 10 Successful Attackers"
+    bar_chart.title = "Kippo Top Attackers"
     clio=Clio()
     top_attackers =clio.session._tops('source_ip',10,honeypot='kippo')
     print top_attackers    
