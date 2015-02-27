@@ -15,3 +15,4 @@ xmltodict
 uwsgi
 pymongo
 -e git+https://github.com/threatstream/hpfeeds/#egg=hpfeeds-dev
+pygal==1.7.0
