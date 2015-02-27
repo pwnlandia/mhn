@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e 
+set -x
+
 apt-get install -y git golang mercurial make coffeescript
 DEBIAN_FRONTEND=noninteractive apt-get install -y golang-go
 
