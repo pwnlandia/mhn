@@ -21,6 +21,12 @@ from mhn.common.clio import Clio
 ui = Blueprint('ui', __name__, url_prefix='/ui')
 from mhn import mhn as app
 
+PYGAL_CONFIG = pygal.config.Config()
+PYGAL_CONFIG.js = (
+    'https://kozea.github.io/pygal.js/javascripts/svg.jquery.js',
+    'https://kozea.github.io/pygal.js/javascripts/pygal-tooltips.js',
+)
+
 @app.template_filter()
 def number_format(value):
     return '{:,d}'.format(value)
@@ -185,7 +191,7 @@ def reset_passwd():
 def graph_passwords():
     clio=Clio()
     
-    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True)
+    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
     bar_chart.title = "Top 10 Passwords"
     clio=Clio()
     top_passwords =clio.hpfeed.count_passwords(clio.hpfeed.get_payloads({'limit':10000},{"channel":"kippo.sessions"})[2])
@@ -199,7 +205,7 @@ def graph_passwords():
 def graph_users():
     clio=Clio()
     
-    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True)
+    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
     bar_chart.title = "Top 10 Users"
     clio=Clio()
     top_users =clio.hpfeed.count_users(clio.hpfeed.get_payloads({'limit':10000},{"channel":"kippo.sessions"})[2])
@@ -214,7 +220,7 @@ def graph_users():
 def graph_combos():
     clio=Clio()
     
-    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True)
+    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
     bar_chart.title = "Top 10 Combos"
     clio=Clio()
     top_combos =clio.hpfeed.count_combos(clio.hpfeed.get_payloads({'limit':10000},{"channel":"kippo.sessions"})[2])
@@ -231,7 +237,7 @@ def graph_combos():
 def graph_top_attackers():
     clio=Clio()
     
-    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True)
+    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
     bar_chart.title = "Top 10 Successful Attackers"
     clio=Clio()
     top_attackers =clio.session._tops('source_ip',10,honeypot='kippo')
@@ -245,11 +251,4 @@ def graph_top_attackers():
 
 @ui.route('/chart')
 def chart():
-    #bar_chart = pygal.HorizontalStackedBar()
-    #bar_chart.title = "Remarquable sequences"
-    #bar_chart.x_labels = map(str, range(11))
-    #bar_chart.add('Fibonacci', [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55])
-    #bar_chart.add('Padovan', [1, 1, 1, 2, 2, 3, 4, 5, 7, 9, 12]) 
-    #chart = bar_chart.render(is_unicode=True)
-    chart=None
-    return render_template('ui/chart.html',chart=chart)
+    return render_template('ui/chart.html')
