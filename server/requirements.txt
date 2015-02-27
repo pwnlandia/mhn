@@ -1,3 +1,4 @@
+argparse
 flask
 flask-sqlalchemy
 flask-wtf
