@@ -345,11 +345,42 @@ class HpFeed(ResourceMixin):
         
         feed_rows = self.get(options=options, **req_args)
         for row in feed_rows:
-            payload = json.loads(row.payload)
+            try:
+                payload = json.loads(row.payload)
+            except:
+                pass
             payloads.append(payload)
         
         return count,columns,payloads
-        
+
+
+    def count_passwords(self,payloads):
+        passwords=[]
+        for creds in payloads:
+            if creds['credentials']!= None:
+                for cred in (creds['credentials']):
+                    passwords.append(cred[1])
+        return Counter(passwords).most_common(10)
+    
+    
+    def count_users(self,payloads):
+        users=[]
+        for creds in payloads:
+            if creds['credentials']!= None:
+                for cred in (creds['credentials']):
+                    users.append(cred[0])                
+        return Counter(users).most_common(10)
+
+
+    def count_combos(self,payloads):
+        combos_count=[]
+        for combos in payloads:
+            if combos['credentials']!= None:
+                for combo in combos['credentials']:
+                    combos_count.append(combo[0]+": "+combo[1])
+        return Counter(combos_count).most_common(10)
+
+
     def _tops(self, field, chan, top=5, hours_ago=None):
         query = {'channel': chan}
 
