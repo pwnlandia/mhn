@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -e 
 set -x
 
 apt-get install -y git golang mercurial make coffeescript
