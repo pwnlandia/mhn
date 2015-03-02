@@ -364,24 +364,32 @@ $(document).ready(function() {
             $('#msg-container').hide();
 
             var email = $('#email-edit').val();
+            // ref: http://stackoverflow.com/questions/201323/using-a-regular-expression-to-validate-an-email-address/201336#201336
+            var pattern = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
 
-            $.ajax({
-                type: 'POST',
-                url: $('#reset-req-form').attr('action'),
-                contentType: 'application/json',
-                headers: {'X-CSRFToken': $('#_csrf_token').val()},
-                data: JSON.stringify({email: email}),
-                success: function(resp) {
-                    $('#alert-text').removeClass('warning').addClass('success');
-                    $('#error-txt').html('Email sent!');
-                    $('#msg-container').show();
-                },
-                error: function(resp) {
-                    $('#alert-text').removeClass('success').addClass('warning');
-                    $('#error-txt').html(resp.responseJSON.error);
-                    $('#msg-container').show();
-                }
-            });
+            if( pattern.test(email) ) {
+                $.ajax({
+                    type: 'POST',
+                    url: $('#reset-req-form').attr('action'),
+                    contentType: 'application/json',
+                    headers: {'X-CSRFToken': $('#_csrf_token').val()},
+                    data: JSON.stringify({email: email}),
+                    success: function(resp) {
+                        $('#alert-text').removeClass('warning').addClass('success');
+                        $('#error-txt').html('Email sent!');
+                        $('#msg-container').show();
+                    },
+                    error: function(resp) {
+                        $('#alert-text').removeClass('success').addClass('warning');
+                        $('#error-txt').html(resp.responseJSON.error);
+                        $('#msg-container').show();
+                    }
+                });    
+            } else {
+                $('#alert-text').removeClass('success').addClass('warning');
+                $('#error-txt').html('Not a valid email address');
+                $('#msg-container').show();
+            }
         });
     }
 });
