@@ -9,13 +9,19 @@ pip install virtualenv
 
 SCRIPTS=`dirname $0`
 
-cd /opt/
-git clone https://github.com/threatstream/hpfeeds-logger.git
-cd hpfeeds-logger
-virtualenv env
-. env/bin/activate
-pip install -r requirements.txt
-chmod 755 -R .
+if [ ! -d "/opt/hpfeeds-logger" ]
+then
+    cd /opt/
+    git clone https://github.com/threatstream/hpfeeds-logger.git
+    cd hpfeeds-logger
+    virtualenv env
+    . env/bin/activate
+    pip install -r requirements.txt
+    chmod 755 -R .
+    deactivate
+else
+    echo "It looks like hpfeeds-logger is already installed. Moving on to configuration."
+fi
 
 IDENT=hpfeeds-logger-splunk
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
@@ -44,8 +50,6 @@ cat > /opt/hpfeeds-logger/splunk.json <<EOF
     "formatter_name": "splunk"
 }
 EOF
-
-deactivate
 
 . /opt/hpfeeds/env/bin/activate
 python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "" "$CHANNELS"
