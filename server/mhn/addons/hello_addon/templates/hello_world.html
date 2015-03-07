@@ -1,10 +1,31 @@
 {% extends "base.html" %}
 {% block title %} Hello World Add-on{% endblock %}
 {% block content %}
-<h1>Hello World Add-on</h1>
-<p> This is the content of the Hello World Add-on</p>
+    <div class="row">
+        <div class="small-6 large-centered columns" style="text-align:center;">
+            <h2>Hello World Add-On</h2>
+        </div>
+        <div class="small-11 large-centered columns">
+            <div class="panel callout radius">
+                <h5><b>Here it is the Add-On Content.</b></h5>
+                <p>You could add everything you want here!!!</p>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block footer %}
-    <p> Add-on Developed by Miguel Ercolino</p>
+    <style>
+        #footer {
+            margin-top: 40px;
+            margin-bottom: 40px;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+    <div class="row" id="footer">
+        <div class="small-4 large-centered columns" style="text-align:center;">
+            <span><small>Hello World Add-on developed by John Doe</small><span>
+        </div>
+    </div>
 {% endblock %}
