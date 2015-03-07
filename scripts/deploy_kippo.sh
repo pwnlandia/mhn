@@ -24,7 +24,7 @@ apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twiste
 
 # Change real SSH Port to 2222
 sed -i 's/Port 22/Port 2222/g' /etc/ssh/sshd_config
-reload ssh
+L=$(cat /etc/issue); if [[ $L == Raspbian* ]]; then /etc/init.d/ssh reload; else reload ssh; fi
 
 # Create Kippo user
 useradd -d /home/kippo -s /bin/bash -m kippo -g users
