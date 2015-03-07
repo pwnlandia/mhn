@@ -257,3 +257,24 @@ class DeployScript(db.Model, APIModel):
     def to_dict(self):
         return dict(script=self.script, date=self.date, notes=self.notes,
                     user=self.user.email, id=self.id)
+
+
+class AddOns(db.Model):
+
+    __tablename__ = 'addons'
+
+    id = db.Column(db.Integer, primary_key=True)
+    menu_name = db.Column(db.String(50), nullable=False)
+    dir_name = db.Column(db.String(100), nullable=False, unique=True)
+    active = db.Column(db.Boolean, nullable=False)
+
+    def __init__(self, menu_name=None, dir_name=None, active=None):
+        self.menu_name = menu_name
+        self.dir_name = dir_name
+        self.active = active
+
+    def __repr__(self):
+        return '<Add-Ons>{}'.format(self.to_dict())
+
+    def to_dict(self):
+        return dict(menu_name=self.menu_name, dir_name=self.dir_name, active=self.active)
