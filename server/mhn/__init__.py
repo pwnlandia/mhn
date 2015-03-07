@@ -1,6 +1,6 @@
 from urlparse import urljoin
 
-from flask import Flask, request, jsonify, abort, url_for, session
+from flask import Flask, request, jsonify, abort, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password as encrypt
