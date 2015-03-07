@@ -42,10 +42,19 @@
                             <li><a href="{{ url_for('ui.add_sensor') }}">Add sensor</a></li>
                         </ul>
                     </li>
-            
-				
-				
-			 <li class="has-dropdown">
+
+			        {% if settings.add_ons_enabled %}
+			        <li class="has-dropdown">
+                        <a>Add-Ons</a>
+                        <ul class="dropdown">
+                            {% for item in settings.add_ons%}
+                                <li><a href="{{ url_for(item[0] ~ '.home') }}">{{ item[1] }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                    <li class="has-dropdown">
                         <a href="/ui/chart">Charts</a>
                         <ul class="dropdown">
                             <li><a href="/image/top_passwords.svg">Kippo Top Passwords</a></li>

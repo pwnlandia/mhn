@@ -8,8 +8,9 @@ from flask.ext.mail import Mail
 from werkzeug.contrib.atom import AtomFeed
 import xmltodict
 import uuid
-import random
-import string
+import os
+import imp
+
 from flask_wtf.csrf import CsrfProtect
 csrf = CsrfProtect()
 
@@ -34,7 +35,7 @@ db.init_app(mhn)
 # Setup flask-security for auth.
 Security(mhn, user_datastore)
 
-# Registering blueprints.
+# Registering core blueprints.
 from mhn.api.views import api
 mhn.register_blueprint(api)
 
@@ -43,6 +44,16 @@ mhn.register_blueprint(ui)
 
 from mhn.auth.views import auth
 mhn.register_blueprint(auth)
+
+# Registering Add-Ons (Blueprints)
+if mhn.config['ADD_ONS']:
+    addons_basedir = os.path.join(os.getcwd(), "mhn/addons/")
+    addons_dirs = next(os.walk(addons_basedir))[1]
+    for dirname in addons_dirs:
+        if dirname not in mhn.config['DISABLED_ADDONS']:
+            fp, pathname, description = imp.find_module('views', [os.path.join(addons_basedir, dirname)])
+            loaded_module = imp.load_module(dirname, fp, pathname, description)
+            mhn.register_blueprint(getattr(loaded_module, dirname))
 
 # Trigger templatetag register.
 from mhn.common.templatetags import format_date

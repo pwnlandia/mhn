@@ -1,8 +1,24 @@
 from math import ceil
 
-from flask import jsonify, g
+from flask import jsonify, g, current_app
 
 from mhn.constants import PAGE_SIZE
+
+from ConfigParser import SafeConfigParser
+
+import os
+
+
+def get_addons():
+    addons_basedir = os.path.join(os.getcwd(), "mhn/addons/")
+    addons_dirs = next(os.walk(addons_basedir))[1]
+    add_ons = []
+    parser = SafeConfigParser()
+    for dirname in addons_dirs:
+        if dirname not in current_app.config['DISABLED_ADDONS']:
+            parser.read(os.path.join(addons_basedir, dirname, 'addon.cfg'))
+            add_ons.append((dirname, parser.get('config', 'menu').replace('\'', '')))
+    return add_ons
 
 
 def error_response(message, status_code=400):
