@@ -157,10 +157,12 @@ def deploy_mgmt():
             'ui/script.html', scripts=Script.query.order_by(Script.date.desc()),
             script=script)
 
+
 @ui.route('/honeymap/', methods=['GET'])
 @login_required
 def honeymap():
     return render_template('ui/honeymap.html')
+
 
 @ui.route('/add-user/', methods=['GET'])
 @login_required
@@ -170,6 +172,12 @@ def user_settings():
         users=User.query.filter_by(active=True),
         apikey=ApiKey.query.filter_by(user_id=current_user.id).first()
     )
+
+
+@ui.route('/add-addon/', methods=['GET'])
+@login_required
+def addons_settings():
+    return render_template('ui/addons_settings.html')
 
 
 @ui.route('/forgot-password/<hashstr>/', methods=['GET'])
