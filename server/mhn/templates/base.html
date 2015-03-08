@@ -70,13 +70,17 @@
 				
                 <!-- Right Nav Section -->
                 <ul class="right">
+                    {% if current_user.has_role('admin') %}
+                    <li class="has-dropdown">
+                        <a>Settings</a>
+                        <ul class="dropdown">
+                            <li><a href="{{ url_for('ui.user_settings') }}">User Settings</a></li>
+                            <li><a href="#">Add-Ons Settings</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
                     <li class="active"><a id="out-btn" href="#">LOGOUT</a></li>
                 </ul>
-                {% if current_user.has_role('admin') %}
-                <ul class="right">
-                    <li class=""><a id="out-btn" href="{{ url_for('ui.settings') }}">Settings</a></li>
-                </ul>
-                {% endif %}
             </section>
         </nav>
         {% endif %}

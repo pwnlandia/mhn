@@ -164,9 +164,9 @@ def honeymap():
 
 @ui.route('/add-user/', methods=['GET'])
 @login_required
-def settings():
+def user_settings():
     return render_template(
-        'ui/settings.html', 
+        'ui/user_settings.html',
         users=User.query.filter_by(active=True),
         apikey=ApiKey.query.filter_by(user_id=current_user.id).first()
     )
