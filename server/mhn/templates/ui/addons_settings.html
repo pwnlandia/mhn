@@ -12,4 +12,56 @@
             </div>
         </div>
     </div>
+
+
+
+
+
+
+
+
+    <div class="row">
+        <div class="small-7 columns">
+            <div class="row" style="margin-top:30px;">
+                <div class="small-10 large-centered columns">
+                    <h5>Upload Add-On</h5>
+                </div>
+            </div>
+            <form id="user-form" action="{{ url_for('ui.load_addons') }}" method="post">
+                <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="addon_name-edit" name="addon_name" type="text" placeholder="Name of the Add-On (It shows in the Menu Add-Ons)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <div class="small-4 columns">
+                            <label for="addon_file-edit" class="right">Select Add-On:</label>
+                        </div>
+                        <div class="small-6 columns left">
+                            <input id="addon_file-edit" name="addon_file" type="file" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="addon_activate-edit" name="addon_activate" type="checkbox"><label for="addon_activate-edit">Activate the Add-On</label>
+                    </div>
+                </div>
+                <div id="msg-container" class="row" style="display:none;">
+                    <div class="small-10 large-centered columns">
+                        <div id="alert-text" data-alert class="alert-box success round">
+                            <div id="error-txt"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="submit-user" class="tiny button right" type="submit" value="LOAD" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}

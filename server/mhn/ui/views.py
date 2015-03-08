@@ -174,10 +174,16 @@ def user_settings():
     )
 
 
-@ui.route('/add-addon/', methods=['GET'])
+@ui.route('/add-addons/', methods=['GET'])
 @login_required
 def addons_settings():
     return render_template('ui/addons_settings.html')
+
+
+@ui.route('/load-addons/', methods=['POST'])
+@login_required
+def load_addons():
+    return "Uploaded"
 
 
 @ui.route('/forgot-password/<hashstr>/', methods=['GET'])
