@@ -3,20 +3,23 @@ from pygal.style import *
 import pygal
 from flask import (
         Blueprint, render_template, request, url_for,
-        redirect, g)
+        redirect, g, jsonify)
 from flask_security import logout_user as logout
 from sqlalchemy import desc, func
 
 from mhn.ui.utils import get_flag_ip, get_sensor_name
 from mhn.api.models import (
         Sensor, Rule, DeployScript as Script,
-        RuleSource)
+        RuleSource, AddOns)
 from mhn.auth import login_required, current_user
 from mhn.auth.models import User, PasswdReset, ApiKey
 from mhn import db, mhn
 from mhn.common.utils import (
         paginate_options, alchemy_pages, mongo_pages)
 from mhn.common.clio import Clio
+from mhn.api import errors as apierrors
+from mhn.common.utils import error_response
+from sqlalchemy.exc import IntegrityError
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
 from mhn import mhn as app
@@ -183,7 +186,47 @@ def addons_settings():
 @ui.route('/load-addons/', methods=['POST'])
 @login_required
 def load_addons():
-    return "Uploaded"
+    # missing = User.check_required(request.json)
+    # if missing:
+    #     return error_response(
+    #             apierrors.API_FIELDS_MISSING.format(missing), 400)
+    # else:
+    #     try:
+    #         user = get_datastore().create_user(
+    #             email=request.json.get('email'),
+    #             password=encrypt_password(request.json.get('password')))
+    #         userrole = user_datastore.find_role('admin')
+    #         user_datastore.add_role_to_user(user, userrole)
+    #
+    #         db.session.add(user)
+    #         db.session.flush()
+    #
+    #         apikey = ApiKey(user_id=user.id, api_key=str(uuid.uuid4()).replace("-", ""))
+    #         db.session.add(apikey)
+    #
+    #         db.session.commit()
+    #     except IntegrityError:
+    #         return error_response(errors.AUTH_USERNAME_EXISTS, 400)
+    #     else:
+    #         return jsonify(user.to_dict())
+    missing = AddOns.check_required(request.json)
+    if missing:
+        return error_response(apierrors.API_FIELDS_MISSING.format(missing), 400)
+    else:
+        try:
+            addon = AddOns()
+            addon.menu_name = request.json.get('menu_name')
+            filename = request.json.get('dir_name').replace("C:\\fakepath\\", "")
+            if (len(filename.split(".")) != 3) or (len(filename.split(".")[0].split(" ")) !=1):
+                return error_response(apierrors.API_ADDON_NAME_INVALID.format(filename), 400)
+            elif filename.split(".")[1] != 'tar' or filename.split(".")[2] != 'gz':
+                return error_response(apierrors.API_ADDON_EXTENSION_INVALID, 400)
+            addon.dir_name = filename.split(".")[0]
+            addon.active = request.json.get("active")
+        except IntegrityError:
+            return error_response(apierrors.API_ADDON_NAME_EXISTS.format(addon.dir_name), 400)
+        else:
+             return jsonify(addon.to_dict())
 
 
 @ui.route('/forgot-password/<hashstr>/', methods=['GET'])

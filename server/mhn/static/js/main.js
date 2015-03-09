@@ -274,6 +274,37 @@ $(document).ready(function() {
         });
     }
 
+    if ($('#addon-form').length >= 1) {
+        $('#submit-addon').click(function(e) {
+            var addon_name = $('#addon_name-edit').val();
+            var addon_file = $('#addon_file-edit').val();
+            var addon_activate = $('#addon_activate-edit').is(":checked");
+
+            e.preventDefault();
+            $('#msg-container').hide();
+            $.ajax({
+                type: 'POST',
+                url: '/ui/load-addons/',
+                headers: {'X-CSRFToken': $('#_csrf_token').val()},
+                data: JSON.stringify({
+                    addon_name: addon_name,
+                    addon_file: addon_file,
+                    addon_activate: addon_activate
+                }),
+                contentType: 'application/json',
+                success: function(resp) {
+                    window.location.reload();
+
+                },
+                error: function(resp) {
+                    $('#alert-text').removeClass('success').addClass('warning');
+                    $('#error-txt').html(resp.responseJSON.error);
+                    $('#msg-container').show();
+                }
+            });
+        });
+    }
+
     $('.delete-user').click(function(e) {
         e.preventDefault();
         var userId = $(this).attr('data-user-id');

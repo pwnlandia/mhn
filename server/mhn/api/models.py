@@ -259,7 +259,12 @@ class DeployScript(db.Model, APIModel):
                     user=self.user.email, id=self.id)
 
 
-class AddOns(db.Model):
+class AddOns(db.Model, APIModel):
+    all_fields = {
+        'menu_name': {'required': True, 'editable': True},
+        'dir_name': {'required': True, 'editable': False},
+        'active': {'required': False, 'editable': True},
+    }
 
     __tablename__ = 'addons'
 

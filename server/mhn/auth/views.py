@@ -11,7 +11,6 @@ from flask_security.utils import (
 from mhn import db, mail
 from mhn import user_datastore
 from mhn.common.utils import error_response
-from mhn.common.utils import error_response
 from mhn.auth.models import User, PasswdReset, ApiKey
 from mhn.auth import errors
 from mhn.auth import (
