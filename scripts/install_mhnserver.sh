@@ -7,6 +7,10 @@ apt-get update
 apt-get install -y git build-essential python-pip python-dev redis-server
 pip install virtualenv
 
+cd /opt
+wget http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz &&gzip -d GeoLite2-City.mmdb.gz
+cd -
+
 MHN_HOME=`dirname $0`/..
 cd $MHN_HOME
 MHN_HOME=`pwd`
