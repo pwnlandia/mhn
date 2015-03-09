@@ -214,6 +214,9 @@ def load_addons():
     if 'active' not in data:
         data['active'] = False
 
+    if 'dir_name' not in data:
+        data['dir_name'] = request.files['dir_name'].filename
+
     missing = AddOns.check_required(data)
     if missing:
         flash(apierrors.API_FIELDS_MISSING.format(missing), 'alert-box alert round')

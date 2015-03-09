@@ -27,7 +27,7 @@
                     <h5>Upload Add-On</h5>
                 </div>
             </div>
-            <form id="addon-form" action="{{ url_for('ui.load_addons') }}" method="post" enctype=multipart/form-data>
+            <form id="addon-form" action="{{ url_for('ui.load_addons') }}" method="post" enctype="multipart/form-data">
                 <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
                 <div class="row">
                     <div class="small-10 large-centered columns">
