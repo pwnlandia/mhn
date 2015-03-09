@@ -6,6 +6,7 @@ import os
 from werkzeug.contrib.cache import SimpleCache
 import socket
 import struct
+import maxminddb
 from mhn.api.models import Sensor
 
 flag_cache = SimpleCache(threshold=1000, default_timeout=300)
@@ -58,12 +59,12 @@ def _get_flag_ip(ipaddr):
     Defaults to static immge: '/static/img/unknown.png'
     """
     flag_path = '/static/img/flags-iso/shiny/64/{}.png'
-    geo_api = 'https://geospray.threatstream.com/ip/{}'
     try:
         # Using threatstream's geospray API to get
         # the country code for this IP address.
-        r = requests.get(geo_api.format(ipaddr))
-        ccode = r.json()['countryCode']
+      
+        r= maxminddb.open_database('/opt/GeoLite2-City.mmdb')
+        ccode = str(r.get(ipaddr)['country']['iso_code'])
     except Exception:
         app.logger.warning("Could not determine flag for ip: {}".format(ipaddr))
         return constants.DEFAULT_FLAG_URL
