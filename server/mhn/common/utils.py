@@ -27,7 +27,7 @@ def allowed_addon_filename(filename):
     """
     Function to check if the nam of the file to upload is valid
     :return:
-    return a tuple (Boolean, Error_Text, Error_Status)
+    return a tuple (Boolean, Error_Text)
     True: If the filename follows a pattern [name_of_the_file_without_spaces].allowed_extension, Error is empty
     False: Pattern is no correct, Error send
     """
@@ -40,9 +40,9 @@ def allowed_addon_filename(filename):
         extension = extensions[1]
 
     if (len(extensions) != 3) or (len(extensions[0].split(" ")) !=1):
-        return (False, apierrors.API_ADDON_NAME_INVALID.format(filename), 400)
+        return (False, apierrors.API_ADDON_NAME_INVALID.format(filename))
     elif extension not in ALLOWED_ADDON_EXTENSIONS:
-        return (False, apierrors.API_ADDON_EXTENSION_INVALID, 400)
+        return (False, apierrors.API_ADDON_EXTENSION_INVALID)
 
     return (True, '', '')
 

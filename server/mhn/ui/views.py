@@ -3,7 +3,7 @@ from pygal.style import *
 import pygal
 from flask import (
         Blueprint, render_template, request, url_for,
-        redirect, g, jsonify)
+        redirect, g, jsonify, flash)
 from flask_security import logout_user as logout
 from sqlalchemy import desc, func
 
@@ -210,24 +210,32 @@ def load_addons():
     #         return error_response(errors.AUTH_USERNAME_EXISTS, 400)
     #     else:
     #         return jsonify(user.to_dict())
-    missing = AddOns.check_required(request.json)
+    data = request.form.to_dict()
+    if 'active' not in data:
+        data['active'] = False
+
+    missing = AddOns.check_required(data)
     if missing:
-        return error_response(apierrors.API_FIELDS_MISSING.format(missing), 400)
+        flash(apierrors.API_FIELDS_MISSING.format(missing), 'alert-box alert round')
+        return redirect(url_for('ui.addons_settings'))
     else:
         try:
             addon = AddOns()
-            addon.menu_name = request.json.get('menu_name')
-            filename = request.json.get('dir_name').replace("C:\\fakepath\\", "")
+            addon.menu_name = data['menu_name']
+            filename = data['dir_name']
             resp = allowed_addon_filename(filename)
             if not resp[0]:
-                return error_response(resp[1], resp[2])
+                flash(resp[1], 'alert-box alert round')
+                return redirect(url_for('ui.addons_settings'))
 
             addon.dir_name = filename.split(".")[0]
-            addon.active = request.json.get("active")
+            addon.active = data['active']
         except IntegrityError:
-            return error_response(apierrors.API_ADDON_NAME_EXISTS.format(addon.dir_name), 400)
+            flash(apierrors.API_ADDON_NAME_EXISTS.format(addon.dir_name), 'alert-box alert round')
+            return redirect(url_for('ui.addons_settings'))
         else:
-             return jsonify(addon.to_dict())
+            flash('Add-On {} Successfully Loaded'.format(addon.dir_name), 'alert-box success round')
+            return redirect(url_for('ui.addons_settings'))
 
 
 @ui.route('/forgot-password/<hashstr>/', methods=['GET'])

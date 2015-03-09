@@ -27,35 +27,41 @@
                     <h5>Upload Add-On</h5>
                 </div>
             </div>
-            <form id="addon-form" action="{{ url_for('ui.addons_settings') }}" method="post" enctype=multipart/form-data>
+            <form id="addon-form" action="{{ url_for('ui.load_addons') }}" method="post" enctype=multipart/form-data>
                 <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
                 <div class="row">
                     <div class="small-10 large-centered columns">
-                        <input id="addon_name-edit" name="addon_name" type="text" placeholder="Name of the Add-On (It shows in the Menu Add-Ons)" />
+                        <input id="menu_name-edit" name="menu_name" type="text" placeholder="Name of the Add-On (It shows in the Menu Add-Ons)" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="small-10 large-centered columns">
                         <div class="small-4 columns">
-                            <label for="addon_file-edit" class="right">Select Add-On:</label>
+                            <label for="dir_name-edit" class="right">Select Add-On:</label>
                         </div>
                         <div class="small-8 columns left">
-                            <input id="addon_file-edit" name="addon_file" type="file" />
+                            <input id="dir_name-edit" name="dir_name" type="file" />
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="small-10 large-centered columns">
-                        <input id="addon_activate-edit" name="addon_activate" type="checkbox"><label for="addon_activate-edit">Activate the Add-On</label>
+                        <input id="active-edit" name="active" type="checkbox"><label for="active-edit">Activate the Add-On</label>
                     </div>
                 </div>
-                <div id="msg-container" class="row" style="display:none;">
-                    <div class="small-10 large-centered columns">
-                        <div id="alert-text" data-alert class="alert-box success round">
-                            <div id="error-txt"></div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="row">
+                            {% for category, message in messages %}
+                                <div class="small-10 large-centered columns">
+                                    <div data-alert class="{{ category }}">
+                                        {{ message  }}
+                                    </div>
+                                </div>
+                            {% endfor %}
                         </div>
-                    </div>
-                </div>
+                    {% endif %}
+                {% endwith %}
                 <div class="row">
                     <div class="small-10 large-centered columns">
                         <input id="submit-addon" class="tiny button right" type="submit" value="LOAD" />
