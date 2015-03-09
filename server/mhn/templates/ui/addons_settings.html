@@ -27,7 +27,7 @@
                     <h5>Upload Add-On</h5>
                 </div>
             </div>
-            <form id="addon-form" action="{{ url_for('ui.addons_settings') }}" method="post">
+            <form id="addon-form" action="{{ url_for('ui.addons_settings') }}" method="post" enctype=multipart/form-data>
                 <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
                 <div class="row">
                     <div class="small-10 large-centered columns">
@@ -39,7 +39,7 @@
                         <div class="small-4 columns">
                             <label for="addon_file-edit" class="right">Select Add-On:</label>
                         </div>
-                        <div class="small-6 columns left">
+                        <div class="small-8 columns left">
                             <input id="addon_file-edit" name="addon_file" type="file" />
                         </div>
                     </div>

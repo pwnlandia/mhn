@@ -2,11 +2,13 @@ from math import ceil
 
 from flask import jsonify, g, current_app
 
-from mhn.constants import PAGE_SIZE
+from mhn.constants import PAGE_SIZE, ALLOWED_ADDON_EXTENSIONS
 
 from ConfigParser import SafeConfigParser
 
 import os
+
+import mhn.api.errors as apierrors
 
 
 def get_addons():
@@ -19,6 +21,30 @@ def get_addons():
             parser.read(os.path.join(addons_basedir, dirname, 'addon.cfg'))
             add_ons.append((dirname, parser.get('config', 'menu').replace('\'', '')))
     return add_ons
+
+
+def allowed_addon_filename(filename):
+    """
+    Function to check if the nam of the file to upload is valid
+    :return:
+    return a tuple (Boolean, Error_Text, Error_Status)
+    True: If the filename follows a pattern [name_of_the_file_without_spaces].allowed_extension, Error is empty
+    False: Pattern is no correct, Error send
+    """
+    extensions = filename.split(".")
+    if len(extensions) > 2:
+        extension = extensions[1]
+        for subext in extensions[2:]:
+            extension = extension + "." + subext
+    else:
+        extension = extensions[1]
+
+    if (len(extensions) != 3) or (len(extensions[0].split(" ")) !=1):
+        return (False, apierrors.API_ADDON_NAME_INVALID.format(filename), 400)
+    elif extension not in ALLOWED_ADDON_EXTENSIONS:
+        return (False, apierrors.API_ADDON_EXTENSION_INVALID, 400)
+
+    return (True, '', '')
 
 
 def error_response(message, status_code=400):

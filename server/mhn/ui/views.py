@@ -15,11 +15,12 @@ from mhn.auth import login_required, current_user
 from mhn.auth.models import User, PasswdReset, ApiKey
 from mhn import db, mhn
 from mhn.common.utils import (
-        paginate_options, alchemy_pages, mongo_pages)
+        paginate_options, alchemy_pages, mongo_pages, allowed_addon_filename)
 from mhn.common.clio import Clio
 from mhn.api import errors as apierrors
 from mhn.common.utils import error_response
 from sqlalchemy.exc import IntegrityError
+from werkzeug import secure_filename
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
 from mhn import mhn as app
@@ -217,10 +218,10 @@ def load_addons():
             addon = AddOns()
             addon.menu_name = request.json.get('menu_name')
             filename = request.json.get('dir_name').replace("C:\\fakepath\\", "")
-            if (len(filename.split(".")) != 3) or (len(filename.split(".")[0].split(" ")) !=1):
-                return error_response(apierrors.API_ADDON_NAME_INVALID.format(filename), 400)
-            elif filename.split(".")[1] != 'tar' or filename.split(".")[2] != 'gz':
-                return error_response(apierrors.API_ADDON_EXTENSION_INVALID, 400)
+            resp = allowed_addon_filename(filename)
+            if not resp[0]:
+                return error_response(resp[1], resp[2])
+
             addon.dir_name = filename.split(".")[0]
             addon.active = request.json.get("active")
         except IntegrityError:
