@@ -82,8 +82,10 @@ def delete_user(user_id):
     user = User.query.get(user_id)
     if not user:
         return error_response(errors.AUTH_NOT_FOUND.format(user_id), 404)
-    user.active= False
-    db.session.add(user)
+    #user.active= False
+    #db.session.add(user)
+    #Lets delete the user instead of deactivate them
+    db.session.delete(user)
     db.session.commit()
     return jsonify({})
 
