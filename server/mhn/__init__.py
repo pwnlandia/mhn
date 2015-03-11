@@ -55,7 +55,7 @@ with mhn.test_request_context():
         addons = AddOns.query.all()
 
         for addon in addons:
-            if addon.dir_name not in mhn.config['DISABLED_ADDONS'] and addon.active == True:
+            if addon.dir_name not in mhn.config['DISABLED_ADDONS']:
                 fp, pathname, description = imp.find_module('views', [os.path.join(addons_basedir, addon.dir_name)])
                 loaded_module = imp.load_module(addon.dir_name, fp, pathname, description)
                 mhn.register_blueprint(getattr(loaded_module, addon.dir_name))
