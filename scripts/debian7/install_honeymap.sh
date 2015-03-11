@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 apt-get install -y git golang mercurial make curl
 DEBIAN_FRONTEND=noninteractive apt-get install -y golang-go
 

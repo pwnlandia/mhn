@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 
 apt-get update
 apt-get install -y git build-essential python-pip python-dev redis-server
