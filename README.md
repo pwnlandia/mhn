@@ -3,6 +3,9 @@ Modern Honey Network
 
 Multi-snort and honeypot sensor management, uses a network of VMs, small footprint SNORT installations, stealthy dionaeas, and a centralized server for management.
 
+For questions regarding installation please review the [MHN Troubleshooting Guide](https://github.com/threatstream/mhn/wiki/MHN-Troubleshooting-Guide).  Search past questions on the [modern-honey-network Google Group](https://groups.google.com/forum/#!forum/modern-honey-network).  Or send emails to <modern-honey-network@googlegroups.com>.
+
+
 ### HONEYPOT
 
 Deployed sensors with intrusion detection software installed: Snort, Kippo, Conpot, and Dionaea. 
@@ -100,9 +103,30 @@ MHN was designed to make scalable deployment of honeypots easier.  Here are the 
 5. Login to a honeypot server and run this command as root.
 6. That's it!
 
+### Integration with Splunk and ArcSight
+
+hpfeeds-logger can be used to integrate MHN with Splunk and ArcSight.  Installation below.
+
+#### Splunk
+
+
+    cd /opt/mhn/scripts/
+    sudo ./install_hpfeeds-logger-splunk.sh
+
+This will log the events as key/value pairs to /var/log/mhn-splunk.log.  This log should be monitored by the SplunkUniveralForwarder.
+
+#### Arcsight
+
+
+    cd /opt/mhn/scripts/
+    sudo ./install_hpfeeds-logger-arcsight.sh
+
+This will log the events as CEF to /var/log/mhn-arcsight.log
+
+
 ### Data
 
-The MHN server reports anonymized attack data back to ThreatStream.  If you are interested in this data please contact: <mhn@threatstream.com>.  This data reporting can be disabled by running the following command from the MHN server after completing the initial installation steps outlined above: `/opt/mhn/scripts/disable_collector.sh`
+The MHN server reports anonymized attack data back to ThreatStream.  If you are interested in this data please contact: <modern-honey-network@googlegroups.com>.  This data reporting can be disabled by running the following command from the MHN server after completing the initial installation steps outlined above: `/opt/mhn/scripts/disable_collector.sh`
 
 ### Support or Contact
 MHN is an open source project brought to you by the passionate folks at ThreatStream. Please check out our troubleshooting guide on the wiki. We will also lend a hand, if needed. Find us at: <modern-honey-network@googlegroups.com>.

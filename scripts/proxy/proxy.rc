@@ -1,0 +1,7 @@
+# proxy settings for Vagrant setup (Squid is running on the proxy VM)
+PROXY=http://10.254.253.102:3128
+export http_proxy=$PROXY
+export https_proxy=$PROXY
+export HTTP_PROXY=$PROXY
+export HTTPS_PROXY=$PROXY
+export no_proxy="localhost,127.0.0.1,127.0.1.1"

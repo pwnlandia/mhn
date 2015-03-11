@@ -27,7 +27,7 @@ apt-get install -y python2.7 python-openssl python-gevent libevent-dev python2.7
 
 easy_install pip
 
-pip uninstall --yes setuptools
+#pip uninstall --yes setuptools
 
 wget https://pypi.python.org/packages/source/d/distribute/distribute-0.6.35.tar.gz
 tar -xzvf distribute-0.6.35.tar.gz
