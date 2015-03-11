@@ -4,22 +4,33 @@ from flask import jsonify, g, current_app
 
 from mhn.constants import PAGE_SIZE, ALLOWED_ADDON_EXTENSIONS
 
-from ConfigParser import SafeConfigParser
+from mhn.api.models import AddOns
 
 import os
+import pwd
+import grp
 
 import mhn.api.errors as apierrors
 
+def change_own(path, user, group):
+    uid = pwd.getpwnam(user).pw_uid
+    gid = grp.getgrnam(group).gr_gid
+    os.chown(path, uid, gid)
+    for item in os.listdir(path):
+        itempath = os.path.join(path, item)
+        if os.path.isfile(itempath):
+            os.chown(itempath, uid, gid)
+        elif os.path.isdir(itempath):
+            os.chown(itempath, uid, gid)
+            change_own(itempath, user, group)
+
 
 def get_addons():
-    addons_basedir = os.path.join(os.getcwd(), "mhn/addons/")
-    addons_dirs = next(os.walk(addons_basedir))[1]
     add_ons = []
-    parser = SafeConfigParser()
-    for dirname in addons_dirs:
-        if dirname not in current_app.config['DISABLED_ADDONS']:
-            parser.read(os.path.join(addons_basedir, dirname, 'addon.cfg'))
-            add_ons.append((dirname, parser.get('config', 'menu').replace('\'', '')))
+    for addon in AddOns.query.all():
+        if addon.active == True and addon.reboot == False:
+            if addon.dir_name not in current_app.config['DISABLED_ADDONS']:
+                add_ons.append((addon.dir_name, addon.menu_name))
     return add_ons
 
 

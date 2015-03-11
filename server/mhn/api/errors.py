@@ -8,3 +8,7 @@ API_RESOURCE_NOT_FOUND = 'Requested resource was not found.'
 API_ADDON_NAME_INVALID = '"{}", Name not valid. ex: addon_name.tar.gz'
 API_ADDON_EXTENSION_INVALID = 'The addon should be a tar.gz file'
 API_ADDON_NAME_EXISTS = 'The name {} already exists!'
+API_ADDON_UPLOAD_PROBLEM = 'There was a problem uploading {}'
+API_ADDON_NOT_FOUND = "The Add-On doesn't exists"
+API_ADDON_NOT_DELETED = "The Add-On could not be deleted"
+API_ADDON_NOT_TARFILE = "It Appears that the file {} is not a tar.gz file"

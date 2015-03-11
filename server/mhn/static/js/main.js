@@ -293,6 +293,25 @@ $(document).ready(function() {
         });
     });
 
+    $('.delete-addon').click(function(e) {
+        e.preventDefault();
+        var addonId = $(this).attr('addon-id');
+
+        $.ajax({
+            type: 'DELETE',
+            headers: {'X-CSRFToken': $('#_csrf_token').val()},
+            url: '/ui/delete_addon/' + addonId + '/',
+            contentType: 'application/json',
+            success: function(resp) {
+                window.location.reload();
+
+            },
+            error: function(resp) {
+                alert('Could not delete add-on.');
+            }
+        });
+    });
+
     if ($('#pass-form').length >= 1) {
         $('#submit-pass').click(function(e) {
             e.preventDefault();

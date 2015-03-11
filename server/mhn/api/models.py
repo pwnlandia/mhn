@@ -264,6 +264,7 @@ class AddOns(db.Model, APIModel):
         'menu_name': {'required': True, 'editable': True},
         'dir_name': {'required': True, 'editable': False},
         'active': {'required': False, 'editable': True},
+        'reboot': {'required': False, 'editable': False}
     }
 
     __tablename__ = 'addons'
@@ -272,14 +273,16 @@ class AddOns(db.Model, APIModel):
     menu_name = db.Column(db.String(50), nullable=False)
     dir_name = db.Column(db.String(100), nullable=False, unique=True)
     active = db.Column(db.Boolean, nullable=False)
+    reboot = db.Column(db.Boolean, nullable=False)
 
-    def __init__(self, menu_name=None, dir_name=None, active=None):
+    def __init__(self, menu_name=None, dir_name=None, active=None, reboot=None):
         self.menu_name = menu_name
         self.dir_name = dir_name
         self.active = active
+        self.reboot = reboot
 
     def __repr__(self):
         return '<Add-Ons>{}'.format(self.to_dict())
 
     def to_dict(self):
-        return dict(menu_name=self.menu_name, dir_name=self.dir_name, active=self.active)
+        return dict(menu_name=self.menu_name, dir_name=self.dir_name, active=self.active, reboot=self.reboot)

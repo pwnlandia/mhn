@@ -46,14 +46,23 @@ from mhn.auth.views import auth
 mhn.register_blueprint(auth)
 
 # Registering Add-Ons (Blueprints)
-if mhn.config['ADD_ONS']:
-    addons_basedir = os.path.join(os.getcwd(), "mhn/addons/")
-    addons_dirs = next(os.walk(addons_basedir))[1]
-    for dirname in addons_dirs:
-        if dirname not in mhn.config['DISABLED_ADDONS']:
-            fp, pathname, description = imp.find_module('views', [os.path.join(addons_basedir, dirname)])
-            loaded_module = imp.load_module(dirname, fp, pathname, description)
-            mhn.register_blueprint(getattr(loaded_module, dirname))
+with mhn.test_request_context():
+    db.create_all()
+    from mhn.api.models import AddOns
+
+    if mhn.config['ADD_ONS']:
+        addons_basedir = os.path.join(os.getcwd(), "mhn/addons/")
+        addons = AddOns.query.all()
+
+        for addon in addons:
+            if addon.dir_name not in mhn.config['DISABLED_ADDONS'] and addon.active == True:
+                fp, pathname, description = imp.find_module('views', [os.path.join(addons_basedir, addon.dir_name)])
+                loaded_module = imp.load_module(addon.dir_name, fp, pathname, description)
+                mhn.register_blueprint(getattr(loaded_module, addon.dir_name))
+
+                addon.reboot = False
+                db.session.add(addon)
+                db.session.commit()
 
 # Trigger templatetag register.
 from mhn.common.templatetags import format_date
