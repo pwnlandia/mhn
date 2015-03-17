@@ -7,9 +7,9 @@ apt-get update
 apt-get install -y git build-essential python-pip python-dev redis-server
 pip install virtualenv
 
-MHN_HOME=`dirname $0`/..
+MHN_HOME=/opt/mhn
+OSVER=$(basename `pwd`)
 cd $MHN_HOME
-MHN_HOME=`pwd`
 
 virtualenv env
 . env/bin/activate
@@ -24,7 +24,7 @@ echo "==========================================================="
 python generateconfig.py
 
 echo -e "\nInitializing database, please be patient. This can take several minutes"
-python initdatabase.py
+python initdatabase.py $OSVER
 cd $MHN_HOME
 
 apt-get install -y nginx
@@ -56,7 +56,7 @@ apt-get install -y supervisor
 
 cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
 [program:mhn-uwsgi]
-command=$MHN_HOME/env/bin/uwsgi -s /tmp/uwsgi.sock -w mhn:mhn -H $MHN_HOME/env --chmod-socket=666
+command=$MHN_HOME/env/bin/uwsgi -s /tmp/uwsgi.sock -w mhn:mhn --pyargv $OSVER -H $MHN_HOME/env --chmod-socket=666
 directory=$MHN_HOME/server
 stdout_logfile=/var/log/uwsgi/mhn.log
 stderr_logfile=/var/log/uwsgi/mhn.err
