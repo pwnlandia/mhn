@@ -3,8 +3,6 @@
 set -e
 set -x
 
-#apt-get update
-
 # update the hpfeeds channels used by mnemosyne
 . /opt/hpfeeds/env/bin/activate
 
