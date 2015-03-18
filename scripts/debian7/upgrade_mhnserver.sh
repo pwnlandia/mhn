@@ -33,14 +33,14 @@ unset SUBSCRIBE_CHAN
 IDENT=geoloc
 SECRET=`python -c "import pymongo;print pymongo.MongoClient().hpfeeds.auth_key.find({'identifier':'$IDENT'},{'secret':'1','_id':0})[0]"|grep -o "[a-z0-9]\{32\}"`
 PUBLISH_CHAN='geoloc.events'
-SUBSCIRBE_CHAN='amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,kippo.alerts,wordpot.events,shockpot.events,p0f.events,suricata.events'
+SUBSCRIBE_CHAN='amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,kippo.alerts,wordpot.events,shockpot.events,p0f.events,suricata.events'
 
-python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "$PUBLISH_CHAN" "$SUBSCIRBE_CHAN"
+python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "$PUBLISH_CHAN" "$SUBSCRIBE_CHAN"
 
 unset IDENT
 unset SECRET
 unset PUBLISH_CHAN
-unset SUBSCIRBE_CHAN
+unset SUBSCRIBE_CHAN
 
 # update the hpfeeds channels used by collector
 
@@ -48,11 +48,11 @@ IDENT=collector
 SECRET=`python -c "import pymongo;print pymongo.MongoClient().hpfeeds.auth_key.find({'identifier':'$IDENT'},{'secret':'1','_id':0})[0]"|grep -o "[a-z0-9]\{32\}"`
 SUBSCRIBE_CHAN='geoloc.events'
 
-python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "$PUBLISH_CHAN" "$SUBSCIRBE_CHAN"
+python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "$PUBLISH_CHAN" "$SUBSCRIBE_CHAN"
 
 unset IDENT
 unset SECRET
-unset SUBSCIRBE_CHAN
+unset SUBSCRIBE_CHAN
 
 deactivate
 
