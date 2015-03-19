@@ -14,12 +14,17 @@ ${SCRIPTS}/install_hpfeeds.sh
 echo "========= Installing menmosyne ========="
 ${SCRIPTS}/install_mnemosyne.sh
 
-echo "========= Installing MHN Server ========="
+echo "========= Installing Honeymap ========="
 ${SCRIPTS}/install_honeymap.sh
+
+echo "========= Installing MHN Server ========="
+${SCRIPTS}/install_mhnserver.sh
+
+echo "========= MHN Install Finished ========="
 
 while true;
 do
-    echo -n "Would you like to integrate with Splunk? (y/n)"
+    echo -n "Would you like to integrate with Splunk? (y/n) "
     read SPLUNK
     if [ "$SPLUNK" == "y" -o "$SPLUNK" == "Y" ]
     then
@@ -35,7 +40,9 @@ do
     then
         echo "Skipping Splunk integration"
         echo "The splunk integration can be completed at a later time by running this:"
-        echo "   ./install_splunk_universalforwarder.sh <SPLUNK_HOST> <SPLUNK_PORT>"
+        echo "    cd /opt/mhn/scripts/"
+        echo "    sudo ./install_splunk_universalforwarder.sh <SPLUNK_HOST> <SPLUNK_PORT>"
+        echo "    sudo ./install_hpfeeds-logger-splunk.sh"
         break
     fi
 done
