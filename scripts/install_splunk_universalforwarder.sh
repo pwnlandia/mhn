@@ -10,7 +10,7 @@ SPLUNK_PORT="$2"
 SPLUNK_USER="$3"
 SPLUNK_PASS="$4"
 
-if [ -z "$SPLUNK_HOST" -o -z "$SPLUNK_HOST" -o -z "$SPLUNK_HOST" -o -z "$SPLUNK_HOST" ]
+if [ -z "$SPLUNK_HOST" -o -z "$SPLUNK_PORT" -o -z "$SPLUNK_USER" -o -z "$SPLUNK_PASS" ]
 then
 	echo "Usage: $0 <SPLUNK_HOST> <SPLUNK_PORT> <SPLUNK_USER> <SPLUNK_PASS>"
 	exit 1
@@ -20,7 +20,7 @@ cd /tmp/
 
 FILENAME="splunkforwarder-6.2.2-255606-linux-2.6-amd64.deb"
 rm -f "${FILENAME}"
-wget -O "${FILENAME}" 'http://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=Linux&version=6.2.2&product=universalforwarder&filename=${FILENAME}&wget=true'
+wget -O "${FILENAME}" "http://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=Linux&version=6.2.2&product=universalforwarder&filename=${FILENAME}&wget=true"
 sudo dpkg -i "${FILENAME}"
 
 export SPLUNK_HOME="/opt/splunk"
