@@ -31,14 +31,11 @@ Note: if you run into trouble during the install, please checkout the [troublesh
     $ sudo apt-get install git -y
     $ sudo git clone https://github.com/threatstream/mhn.git
     $ cd mhn/scripts/
-    $ sudo ./install_hpfeeds.sh
-    $ sudo ./install_mnemosyne.sh
-    $ sudo ./install_honeymap.sh
 
 Run the following script to complete the installation.  While this script runs, you will
 be prompted for some configuration options.  See below for how this looks.
 
-    $ sudo ./install_mhnserver.sh
+    $ sudo ./install.sh
 
 
 ### Configuration:
