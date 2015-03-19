@@ -46,7 +46,7 @@ cat > /opt/hpfeeds-logger/arcsight.json <<EOF
         "shockpot.events",
         "p0f.events"
     ],
-    "log_file": "/var/log/mhn-arcsight.log",
+    "log_file": "/var/log/mhn/mhn-arcsight.log",
     "formatter_name": "arcsight"
 }
 EOF
@@ -54,14 +54,16 @@ EOF
 . /opt/hpfeeds/env/bin/activate
 python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "" "$CHANNELS"
 
+mkdir -p /var/log/mhn
+
 apt-get install -y supervisor
 
 cat >> /etc/supervisor/conf.d/hpfeeds-logger-arcsight.conf <<EOF 
 [program:hpfeeds-logger-arcsight]
 command=/opt/hpfeeds-logger/env/bin/python logger.py arcsight.json
 directory=/opt/hpfeeds-logger
-stdout_logfile=/var/log/hpfeeds-logger-arcsight.log
-stderr_logfile=/var/log/hpfeeds-logger-arcsight.err
+stdout_logfile=/var/log/mhn/hpfeeds-logger-arcsight.log
+stderr_logfile=/var/log/mhn/hpfeeds-logger-arcsight.err
 autostart=true
 autorestart=true
 startsecs=1

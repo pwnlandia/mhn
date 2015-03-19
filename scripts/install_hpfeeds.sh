@@ -31,14 +31,16 @@ pip install pymongo
 pip install -e git+https://github.com/rep/evnet.git#egg=evnet-dev
 pip install .
 
+mkdir -p /var/log/mhn
+
 apt-get install -y supervisor
 
 cat >> /etc/supervisor/conf.d/hpfeeds-broker.conf <<EOF 
 [program:hpfeeds-broker]
 command=/opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/feedbroker.py
 directory=/opt/hpfeeds
-stdout_logfile=/var/log/hpfeeds-broker.log
-stderr_logfile=/var/log/hpfeeds-broker.err
+stdout_logfile=/var/log/mhn/hpfeeds-broker.log
+stderr_logfile=/var/log/mhn/hpfeeds-broker.err
 autostart=true
 autorestart=true
 startsecs=10

@@ -46,7 +46,7 @@ cat > /opt/hpfeeds-logger/splunk.json <<EOF
         "shockpot.events",
         "p0f.events"
     ],
-    "log_file": "/var/log/mhn-splunk.log",
+    "log_file": "/var/log/mhn/mhn-splunk.log",
     "formatter_name": "splunk"
 }
 EOF
@@ -54,14 +54,16 @@ EOF
 . /opt/hpfeeds/env/bin/activate
 python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "" "$CHANNELS"
 
+mkdir -p /var/log/mhn
+
 apt-get install -y supervisor
 
 cat >> /etc/supervisor/conf.d/hpfeeds-logger-splunk.conf <<EOF 
 [program:hpfeeds-logger-splunk]
 command=/opt/hpfeeds-logger/env/bin/python logger.py splunk.json
 directory=/opt/hpfeeds-logger
-stdout_logfile=/var/log/hpfeeds-logger-splunk.log
-stderr_logfile=/var/log/hpfeeds-logger-splunk.err
+stdout_logfile=/var/log/mhn/hpfeeds-logger-splunk.log
+stderr_logfile=/var/log/mhn/hpfeeds-logger-splunk.err
 autostart=true
 autorestart=true
 startsecs=1
