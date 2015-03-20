@@ -6,21 +6,28 @@ then
     exit 1
 fi
 
-SCRIPTS=$(dirname "$0")
+set -e
 
-echo "========= Installing hpfeeds ========="
-${SCRIPTS}/install_hpfeeds.sh
+MHN_HOME=$(dirname "$0")
+SCRIPTS="$MHN_HOME/scripts"
+cd "$SCRIPTS"
 
-echo "========= Installing menmosyne ========="
-${SCRIPTS}/install_mnemosyne.sh
+echo "[`date`] Starting Installation of all MHN packages"
 
-echo "========= Installing Honeymap ========="
-${SCRIPTS}/install_honeymap.sh
+echo "[`date`] ========= Installing hpfeeds ========="
+./install_hpfeeds.sh
 
-echo "========= Installing MHN Server ========="
-${SCRIPTS}/install_mhnserver.sh
+echo "[`date`] ========= Installing menmosyne ========="
+./install_mnemosyne.sh
 
-echo "========= MHN Install Finished ========="
+echo "[`date`] ========= Installing Honeymap ========="
+./install_honeymap.sh
+
+echo "[`date`] ========= Installing MHN Server ========="
+./install_mhnserver.sh
+
+echo "[`date`] ========= MHN Server Install Finished ========="
+echo ""
 
 while true;
 do
@@ -33,8 +40,8 @@ do
         echo -n "Splunk Forwarder Port: "
         read SPLUNK_PORT
         echo "The Splunk Universal Forwarder will send all MHN logs to $SPLUNK_HOST:$SPLUNK_PORT"
-        ${SCRIPTS}/install_splunk_universalforwarder.sh "$SPLUNK_HOST" "$SPLUNK_PORT"
-        ${SCRIPTS}/install_hpfeeds-logger-splunk.sh
+        ./install_splunk_universalforwarder.sh "$SPLUNK_HOST" "$SPLUNK_PORT"
+        ./install_hpfeeds-logger-splunk.sh
         break
     elif [ "$SPLUNK" == "n" -o "$SPLUNK" == "N" ]
     then
@@ -47,5 +54,6 @@ do
     fi
 done
 
+echo "[`date`] Completed Installation of all MHN packages"
     
 
