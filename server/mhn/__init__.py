@@ -147,7 +147,7 @@ def create_clean_db():
             'Ubuntu - Shockpot': path.abspath('../scripts/deploy_shockpot.sh'),
             'Ubuntu - p0f': path.abspath('../scripts/deploy_p0f.sh'),
             'Ubuntu - Suricata': path.abspath('../scripts/deploy_suricata.sh'),
-            #'Raspberry Pi - Dionaea': path.abspath('../scripts/deploy_raspberrypi.sh'),
+            'Raspberry Pi - Dionaea': path.abspath('../scripts/deploy_raspberrypi.sh'),
         }
         for honeypot, deploypath in deployscripts.iteritems():
 
