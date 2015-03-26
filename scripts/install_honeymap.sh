@@ -28,14 +28,16 @@ EOF
 cd ..
 make
 
+mkdir -p /var/log/mhn
+
 apt-get install -y supervisor
 
 cat > /etc/supervisor/conf.d/honeymap.conf <<EOF 
 [program:honeymap]
 command=/opt/honeymap/server/server
 directory=/opt/honeymap
-stdout_logfile=/var/log/honeymap.log
-stderr_logfile=/var/log/honeymap.err
+stdout_logfile=/var/log/mhn/honeymap.log
+stderr_logfile=/var/log/mhn/honeymap.err
 autostart=true
 autorestart=true
 startsecs=10
@@ -79,8 +81,8 @@ cat > /etc/supervisor/conf.d/geoloc.conf <<EOF
 [program:geoloc]
 command=/opt/hpfeeds/env/bin/python /opt/hpfeeds/examples/geoloc/geoloc.py /opt/hpfeeds/geoloc.json
 directory=/opt/hpfeeds/
-stdout_logfile=/var/log/geoloc.log
-stderr_logfile=/var/log/geoloc.err
+stdout_logfile=/var/log/mhn/geoloc.log
+stderr_logfile=/var/log/mhn/geoloc.err
 autostart=true
 autorestart=true
 startsecs=10

@@ -39,19 +39,21 @@ channels = $CHANNELS
 
 [file_log]
 enabled = True
-file = mnemosyne.log
+file = /var/log/mhn/mnemosyne.log
 
 [loggly_log]
 enabled = False
 token =
 
 [normalizer]
-ignore_rfc1918 = True
+ignore_rfc1918 = False
 EOF
 
 deactivate
 . /opt/hpfeeds/env/bin/activate
 python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "" "$CHANNELS"
+
+mkdir -p /var/log/mhn/
 
 apt-get install -y supervisor
 
@@ -59,8 +61,8 @@ cat >> /etc/supervisor/conf.d/mnemosyne.conf <<EOF
 [program:mnemosyne]
 command=/opt/mnemosyne/env/bin/python runner.py --config mnemosyne.cfg
 directory=/opt/mnemosyne
-stdout_logfile=/var/log/mnemosyne.log
-stderr_logfile=/var/log/mnemosyne.err
+stdout_logfile=/var/log/mhn/mnemosyne.out
+stderr_logfile=/var/log/mhn/mnemosyne.err
 autostart=true
 autorestart=true
 startsecs=10
