@@ -30,7 +30,7 @@ Note: if you run into trouble during the install, please checkout the [troublesh
     $ cd /opt/
     $ sudo apt-get install git -y
     $ sudo git clone https://github.com/threatstream/mhn.git
-    $ cd mhn/scripts/
+    $ cd mhn/
 
 Run the following script to complete the installation.  While this script runs, you will
 be prompted for some configuration options.  See below for how this looks.
