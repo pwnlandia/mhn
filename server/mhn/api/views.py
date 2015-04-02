@@ -224,7 +224,6 @@ def attacker_stats(ip):
     return jsonify(
         data=results,
         meta={
-            'size': len(results),
             'query': 'attacker_stats',
             'options': options
         }
