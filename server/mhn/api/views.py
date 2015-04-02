@@ -211,6 +211,24 @@ def top_attackers():
         }
     )
 
+@api.route('/attacker_stats/<ip>/', methods=['GET'])
+@token_auth
+def attacker_stats(ip):
+    options = request.args.to_dict()
+    hours_ago = int(options.get('hours_ago', '720')) # 30 days
+
+    for name in options.keys():
+        if name not in ('hours_ago', 'limit',):
+            del options[name]
+    results = Clio().session.attacker_stats(ip, hours_ago=hours_ago)
+    return jsonify(
+        data=results,
+        meta={
+            'query': 'attacker_stats',
+            'options': options
+        }
+    )
+
 def get_tags(rec):
     tags = [rec['honeypot'], rec['protocol'], 'port-{}'.format(rec['destination_port']),]
 
