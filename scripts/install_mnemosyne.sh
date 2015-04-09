@@ -8,7 +8,7 @@ apt-get install -y git python-pip python-dev
 pip install virtualenv
 
 SCRIPTS=`dirname $0`
-bash $SCRIPTS/install_mongo.sh
+bash $SCRIPTS/install_tokumx.sh
 
 cd /opt/
 git clone https://github.com/threatstream/mnemosyne.git

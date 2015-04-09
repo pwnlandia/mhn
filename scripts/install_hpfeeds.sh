@@ -7,7 +7,7 @@ apt-get update
 apt-get install -y libffi-dev build-essential python-pip python-dev git libssl-dev
 
 SCRIPTS=`dirname $0`
-bash $SCRIPTS/install_mongo.sh
+bash $SCRIPTS/install_tokumx.sh
 
 pip install virtualenv
 
