@@ -71,6 +71,11 @@ contact_email = ...
 [fetch_public_ip]
 enabled = True
 urls = ["http://www.telize.com/ip", "http://queryip.net/ip/", "http://ifconfig.me/ip"]
+
+[change_mac_addr]
+enabled = False
+iface = eth0
+addr = 00:de:ad:be:ef:00
 EOF
 
 # setup supervisor
