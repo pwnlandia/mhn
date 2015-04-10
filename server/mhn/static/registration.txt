@@ -12,7 +12,8 @@ deploy_key=$2
 honeypot=$3
 hostname=$(hostname)
 
-sudo apt-get install -y curl
+if [ -f /etc/lsb-release ]; then sudo apt-get install -y curl
+fi
 
 curl -s -X POST -H "Content-Type: application/json" -d "{
 	\"name\": \"${hostname}-${honeypot}\", 
