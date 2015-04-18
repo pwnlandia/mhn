@@ -25,7 +25,7 @@ fi
 
 IDENT=hpfeeds-logger-arcsight
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
-CHANNELS='amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,wordpot.events,shockpot.events,p0f.events'
+CHANNELS='amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,suricata.events,wordpot.events,shockpot.events,p0f.events'
 
 cat > /opt/hpfeeds-logger/arcsight.json <<EOF
 {
@@ -42,6 +42,7 @@ cat > /opt/hpfeeds-logger/arcsight.json <<EOF
         "kippo.sessions",
         "conpot.events",
         "snort.alerts",
+        "suricata.events",
         "wordpot.events",
         "shockpot.events",
         "p0f.events"
