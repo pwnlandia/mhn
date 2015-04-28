@@ -24,7 +24,6 @@ apt-get -y install git golang supervisor
 cd /opt
 git clone https://github.com/threatstream/elastichoney.git
 cd elastichoney
-git check hpfeeds-support
 
 export GOPATH=/opt/elastichoney
 go get || true
