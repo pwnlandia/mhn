@@ -4,7 +4,7 @@ set -e
 set -x
 
 apt-get update
-apt-get install -y git build-essential python-pip python-dev redis-server
+apt-get install -y git build-essential python-pip python-dev redis-server libgeoip-dev
 pip install virtualenv
 
 MHN_HOME=`dirname $0`/..
