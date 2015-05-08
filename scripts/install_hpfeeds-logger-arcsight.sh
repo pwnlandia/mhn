@@ -4,7 +4,7 @@ set -e
 set -x
 
 apt-get update
-apt-get install -y git python-pip python-dev
+apt-get install -y git python-pip python-dev libgeoip-dev
 pip install virtualenv
 
 SCRIPTS=`dirname $0`
@@ -12,13 +12,9 @@ SCRIPTS=`dirname $0`
 if [ ! -d "/opt/hpfeeds-logger" ]
 then
     cd /opt/
-    git clone https://github.com/threatstream/hpfeeds-logger.git
-    cd hpfeeds-logger
-    virtualenv env
-    . env/bin/activate
-    pip install -r requirements.txt
-    chmod 755 -R .
-    deactivate
+    virtualenv hpfeeds-logger
+    . hpfeeds-logger/bin/activate
+    pip install hpfeeds-logger==0.0.3a
 else
     echo "It looks like hpfeeds-logger is already installed. Moving on to configuration."
 fi
@@ -62,7 +58,7 @@ apt-get install -y supervisor
 
 cat >> /etc/supervisor/conf.d/hpfeeds-logger-arcsight.conf <<EOF 
 [program:hpfeeds-logger-arcsight]
-command=/opt/hpfeeds-logger/env/bin/python logger.py arcsight.json
+command=/opt/hpfeeds-logger/bin/hpfeeds-logger arcsight.json
 directory=/opt/hpfeeds-logger
 stdout_logfile=/var/log/mhn/hpfeeds-logger-arcsight.log
 stderr_logfile=/var/log/mhn/hpfeeds-logger-arcsight.err
