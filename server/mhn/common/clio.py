@@ -387,7 +387,13 @@ class HpFeed(ResourceMixin):
     channel_map = {'snort.alerts':['date', 'sensor', 'source_ip', 'destination_port', 'priority', 'classification', 'signature'],
                    'dionaea.capture':['url', 'daddr', 'saddr', 'dport', 'sport', 'sha512', 'md5'],
                    'glastopf.events':['time', 'pattern', 'filename', 'source', 'request_url']}
-
+    def json_payload(self, data):
+        if type(data) is dict:
+             o_data = data
+        else:
+             o_data = json.loads(data)
+        return o_data
+        
     def get_payloads(self, options, req_args):
         payloads = []
         columns = []
@@ -401,12 +407,7 @@ class HpFeed(ResourceMixin):
 
         feed_rows = self.get(options=options, **req_args)
         for row in feed_rows:
-            try:
-                payload = json.loads(row.payload)
-            except:
-                pass
-            payloads.append(payload)
-
+            payloads.append(self.json_payload(row.payload))
         return count,columns,payloads
 
 
@@ -444,7 +445,7 @@ class HpFeed(ResourceMixin):
             query['hours_ago'] = hours_ago
 
         res = self.get(options={}, **query)
-        val_list = [rec.get(field) for rec in [json.loads(r.payload) for r in res] if field in rec]
+        val_list = [rec.get(field) for rec in [self.json_payload(r.payload) for r in res] if field in rec]
         cnt = Counter()
         for val in val_list:
             cnt[val] += 1
