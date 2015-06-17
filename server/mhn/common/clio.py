@@ -318,6 +318,12 @@ class Session(ResourceMixin):
     def top_targeted_ports(self, top=5, hours_ago=None):
         return self._tops('destination_port', top, hours_ago)
 
+    def top_hp(self, top=5, hours_ago=None):
+        return self._tops('honeypot', top, hours_ago)
+    
+    def top_sensor(self, top=5, hours_ago=None):
+        return self._tops('identifier', top, hours_ago)
+    
     def attacker_stats(self, ip, hours_ago=None):
         match_query = { 'source_ip': ip }
 
@@ -397,7 +403,7 @@ class HpFeed(ResourceMixin):
     def get_payloads(self, options, req_args):
         payloads = []
         columns = []
-        if 'payload' in req_args:
+        if len(req_args.get('payload','')) > 1:
             req_args['payload'] = {'$regex':req_args['payload']}
 
         cnt_query = super(HpFeed, self)._clean_query(req_args)
@@ -405,10 +411,7 @@ class HpFeed(ResourceMixin):
 
         columns = self.channel_map.get(req_args['channel'])
 
-        feed_rows = self.get(options=options, **req_args)
-        for row in feed_rows:
-            payloads.append(self.json_payload(row.payload))
-        return count,columns,payloads
+        return count,columns,(self.json_payload(fr.payload) for fr in self.get(options=options, **req_args))
 
 
     def count_passwords(self,payloads):
