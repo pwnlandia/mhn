@@ -62,14 +62,21 @@ def dashboard():
     top_attackers = clio.session.top_attackers(top=5, hours_ago=24)
     # TOP 5 attacked ports
     top_ports = clio.session.top_targeted_ports(top=5, hours_ago=24)
+    #Top 5 honey pots with counts
+    top_hp = clio.session.top_hp(top=5, hours_ago=24)
+    #Top Honeypot sensors
+    top_sensor = clio.session.top_sensor(top=5, hours_ago=24)
     # TOP 5 sigs
     freq_sigs = clio.hpfeed.top_sigs(top=5, hours_ago=24)
-
+    
     return render_template('ui/dashboard.html',
                            attackcount=attackcount,
                            top_attackers=top_attackers,
                            top_ports=top_ports,
+                           top_hp=top_hp,
+                           top_sensor=top_sensor,
                            freq_sigs=freq_sigs,
+                           get_sensor_name=get_sensor_name,
                            get_flag_ip=get_flag_ip)
 
 

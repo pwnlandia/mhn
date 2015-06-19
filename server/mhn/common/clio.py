@@ -318,6 +318,12 @@ class Session(ResourceMixin):
     def top_targeted_ports(self, top=5, hours_ago=None):
         return self._tops('destination_port', top, hours_ago)
 
+    def top_hp(self, top=5, hours_ago=None):
+        return self._tops('honeypot', top, hours_ago)
+    
+    def top_sensor(self, top=5, hours_ago=None):
+        return self._tops('identifier', top, hours_ago)
+    
     def attacker_stats(self, ip, hours_ago=None):
         match_query = { 'source_ip': ip }
 
@@ -387,11 +393,17 @@ class HpFeed(ResourceMixin):
     channel_map = {'snort.alerts':['date', 'sensor', 'source_ip', 'destination_port', 'priority', 'classification', 'signature'],
                    'dionaea.capture':['url', 'daddr', 'saddr', 'dport', 'sport', 'sha512', 'md5'],
                    'glastopf.events':['time', 'pattern', 'filename', 'source', 'request_url']}
-
+    def json_payload(self, data):
+        if type(data) is dict:
+             o_data = data
+        else:
+             o_data = json.loads(data)
+        return o_data
+        
     def get_payloads(self, options, req_args):
         payloads = []
         columns = []
-        if 'payload' in req_args:
+        if len(req_args.get('payload','')) > 1:
             req_args['payload'] = {'$regex':req_args['payload']}
 
         cnt_query = super(HpFeed, self)._clean_query(req_args)
@@ -399,15 +411,7 @@ class HpFeed(ResourceMixin):
 
         columns = self.channel_map.get(req_args['channel'])
 
-        feed_rows = self.get(options=options, **req_args)
-        for row in feed_rows:
-            try:
-                payload = json.loads(row.payload)
-            except:
-                pass
-            payloads.append(payload)
-
-        return count,columns,payloads
+        return count,columns,(self.json_payload(fr.payload) for fr in self.get(options=options, **req_args))
 
 
     def count_passwords(self,payloads):
@@ -444,7 +448,7 @@ class HpFeed(ResourceMixin):
             query['hours_ago'] = hours_ago
 
         res = self.get(options={}, **query)
-        val_list = [rec.get(field) for rec in [json.loads(r.payload) for r in res] if field in rec]
+        val_list = [rec.get(field) for rec in [self.json_payload(r.payload) for r in res] if field in rec]
         cnt = Counter()
         for val in val_list:
             cnt[val] += 1
