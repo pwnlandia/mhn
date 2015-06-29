@@ -22,9 +22,17 @@ fi
 
 cd /tmp/
 
-FILENAME="splunkforwarder-6.2.2-255606-linux-2.6-amd64.deb"
+VERSION="6.2.3"
+if [ "$(uname -m)" == "x86_64" ] ;
+then
+	FILENAME="splunkforwarder-6.2.3-264376-linux-2.6-amd64.deb"
+	ARCH="x86_64"
+else
+	FILENAME="splunkforwarder-6.2.3-264376-linux-2.6-intel.deb"
+	ARCH="x86"
+fi
 rm -f "${FILENAME}"
-wget -O "${FILENAME}" "http://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=x86_64&platform=Linux&version=6.2.2&product=universalforwarder&filename=${FILENAME}&wget=true"
+wget -O "${FILENAME}" "http://www.splunk.com/bin/splunk/DownloadActivityServlet?architecture=${ARCH}&platform=Linux&version=${VERSION}&product=universalforwarder&filename=${FILENAME}&wget=true"
 dpkg -i "${FILENAME}"
 
 SPLUNK="/opt/splunkforwarder/bin/splunk"
