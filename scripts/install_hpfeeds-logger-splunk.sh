@@ -14,7 +14,7 @@ then
     cd /opt/
     virtualenv hpfeeds-logger
     . hpfeeds-logger/bin/activate
-    pip install hpfeeds-logger==0.0.3a
+    pip install hpfeeds-logger==0.0.5a
 else
     echo "It looks like hpfeeds-logger is already installed. Moving on to configuration."
 fi
