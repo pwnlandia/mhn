@@ -54,7 +54,7 @@ class Sensor(db.Model, APIModel):
     def to_dict(self):
         return dict(
             uuid=self.uuid, name=self.name, honeypot=self.honeypot,
-            created_date=self.created_date, ip=self.ip,
+            created_date=str(self.created_date), ip=self.ip,
             hostname=self.hostname, identifier=self.uuid,
             # Extending with info from Mnemosyne.
             secret=self.authkey.secret, publish=self.authkey.publish)

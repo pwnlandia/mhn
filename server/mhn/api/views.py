@@ -46,6 +46,13 @@ def create_sensor():
         else:
             return jsonify(sensor.to_dict())
 
+@api.route('/sensor/', methods=['GET'])
+@csrf.exempt
+@deploy_auth
+def get_sensors():
+    resp = make_response(json.dumps([s.to_dict() for s in Sensor.query.filter_by(**request.args.to_dict())]))
+    resp.headers['Content-Type'] = "application/json"
+    return resp
 
 @api.route('/sensor/<uuid>/', methods=['PUT'])
 @csrf.exempt
