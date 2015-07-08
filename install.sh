@@ -54,6 +54,25 @@ do
     fi
 done
 
-echo "[`date`] Completed Installation of all MHN packages"
-    
 
+
+
+while true;
+do
+    echo -n "Would you like to install ELK? (y/n) "
+    read ELK
+    if [ "$ELK" == "y" -o "$ELK" == "Y" ]
+    then
+        ./install_elk.sh
+        break
+    elif [ "$ELK" == "n" -o "$ELK" == "N" ]
+    then
+        echo "Skipping ELK installation"
+        echo "The ELK installationg can be completed at a later time by running this:"
+        echo "    cd /opt/mhn/scripts/"
+        echo "    sudo ./install_elk.sh"
+        break
+    fi
+done
+
+echo "[`date`] Completed Installation of all MHN packages"
