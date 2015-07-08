@@ -14,7 +14,7 @@ sed -i '/0.0.0.0/c\host\:\ localhost' /etc/elasticsearch/elasticsearch.yml
 sudo mkdir -p /opt/kibana
 sudo cp -R ~/kibana-4*/* /opt/kibana/
 sudo rm -rf ~/kibana-4*
-cat > /etc/supervisor/conf.d/logstash.conf <<EOF
+cat > /etc/supervisor/conf.d/kibana.conf <<EOF
 [program:kibana]
 command=/opt/kibana/bin/kibana
 directory=/opt/kibana/
@@ -29,8 +29,8 @@ sudo apt-get update
 sudo apt-get install logstash
 cd /opt/logstash
 git clone https://github.com/aabed/logstash-input-hpfeeds.git
-echo "gem "logstash-input-hpfeeds", :path => "/opt/logstash/logstash-input-hpfeeds"
-" >> Gemfile
+echo "gem \"logstash-input-hpfeeds\", :path => \"/opt/logstash/logstash-input-hpfeeds\"" >> Gemfile
+
 bin/plugin install --no-verify
 #patching hpfeeds library to work with jruby as the bool function is not implemented yet and it doesn't affect the flow
 sed -ie '/Socket::Option.bool/ s/^#*/#/' /opt/logstash/vendor/bundle/jruby/1.9/gems/hpfeeds-0.1.6/lib/hpfeeds/client.rb
