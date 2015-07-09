@@ -37,7 +37,7 @@ bin/plugin install --no-verify
 sed -ie '/Socket::Option.bool/ s/^#*/#/' /opt/logstash/vendor/bundle/jruby/1.9/gems/hpfeeds-0.1.6/lib/hpfeeds/client.rb
 
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
-/opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py elk $SECRET subscribe  amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,kippo.alerts,wordpot.events,shockpot.events,p0f.events,suricata.events,elastichoney.events
+/opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py elk $SECRET "" amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,kippo.alerts,wordpot.events,shockpot.events,p0f.events,suricata.events,elastichoney.events
 cat > /opt/logstash/mhn.conf <<EOF
 
 input {
