@@ -41,37 +41,37 @@ SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 cat > /opt/logstash/mhn.conf <<EOF
 
 input {
-hpfeeds {
-port => 10000
-ident => "elk"
-host => "localhost"
-secret => "$SECRET"
-channels => ["dionaea.connections",
-"dionaea.capture",
-"glastopf.events",
-"beeswarm.hive",
-"kippo.sessions",
-"conpot.events",
-"snort.alerts",
-"amun.events",
-"wordpot.events",
-"shockpot.events",
-"p0f.events",
-"suricata.events",
-"elastichoney.events"]
-}
-}
-filter {
-json {
-source => "message"
-}
+  hpfeeds {
+    port => 10000
+    ident => "elk"
+    host => "localhost"
+    secret => "$SECRET"
+    channels => ["dionaea.connections",
+    "dionaea.capture",
+    "glastopf.events",
+    "beeswarm.hive",
+    "kippo.sessions",
+    "conpot.events",
+    "snort.alerts",
+    "amun.events",
+    "wordpot.events",
+    "shockpot.events",
+    "p0f.events",
+    "suricata.events",
+    "elastichoney.events"]
+  }
 }
 
+filter {
+  json {
+    source => "message"
+  }
+}
 
 output {
-elasticsearch {
-host => localhost
-}
+  elasticsearch {
+    host => localhost
+  }
 }
 
 EOF
