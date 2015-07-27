@@ -47,12 +47,10 @@ def create_sensor():
             return jsonify(sensor.to_dict())
 
 @api.route('/sensor/', methods=['GET'])
-@token_auth
+@csrf.exempt
+@deploy_auth
 def get_sensors():
-    req = request.args.to_dict()
-    if 'api_key' in req:
-        del req['api_key']
-    resp = make_response(json.dumps([s.to_dict() for s in Sensor.query.filter_by(**req)]))
+    resp = make_response(json.dumps([s.to_dict() for s in Sensor.query.filter_by(**request.args.to_dict())]))
     resp.headers['Content-Type'] = "application/json"
     return resp
 
