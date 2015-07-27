@@ -24,7 +24,6 @@ pip install virtualenv
 cd /opt
 git clone https://github.com/threatstream/wordpot.git
 cd wordpot
-git checkout hpfeeds # TODO: remove this once this branch is merged
 
 virtualenv env
 . env/bin/activate
