@@ -86,7 +86,9 @@ filter {
 
 output {
   elasticsearch {
-    host => localhost
+    host => "localhost"
+    protocol => "http"
+    port => 9200
   }
 }
 
