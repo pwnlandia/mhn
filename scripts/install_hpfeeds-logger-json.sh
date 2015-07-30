@@ -19,11 +19,11 @@ else
     echo "It looks like hpfeeds-logger is already installed. Moving on to configuration."
 fi
 
-IDENT=hpfeeds-logger-splunk
+IDENT=hpfeeds-logger-json
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 CHANNELS='amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,suricata.events,wordpot.events,shockpot.events,p0f.events,elastichoney.events'
 
-cat > /opt/hpfeeds-logger/splunk.json <<EOF
+cat > /opt/hpfeeds-logger/json.json <<EOF
 {
     "host": "localhost",
     "port": 10000,
@@ -44,8 +44,8 @@ cat > /opt/hpfeeds-logger/splunk.json <<EOF
         "p0f.events",
         "elastichoney.events"
     ],
-    "log_file": "/var/log/mhn/mhn-splunk.log",
-    "formatter_name": "splunk"
+    "log_file": "/var/log/mhn/mhn-json.log",
+    "formatter_name": "json"
 }
 EOF
 
@@ -56,12 +56,12 @@ mkdir -p /var/log/mhn
 
 apt-get install -y supervisor
 
-cat >> /etc/supervisor/conf.d/hpfeeds-logger-splunk.conf <<EOF 
-[program:hpfeeds-logger-splunk]
-command=/opt/hpfeeds-logger/bin/hpfeeds-logger splunk.json
+cat >> /etc/supervisor/conf.d/hpfeeds-logger-json.conf <<EOF 
+[program:hpfeeds-logger-json]
+command=/opt/hpfeeds-logger/bin/hpfeeds-logger json.json
 directory=/opt/hpfeeds-logger
-stdout_logfile=/var/log/mhn/hpfeeds-logger-splunk.log
-stderr_logfile=/var/log/mhn/hpfeeds-logger-splunk.err
+stdout_logfile=/var/log/mhn/hpfeeds-logger-json.log
+stderr_logfile=/var/log/mhn/hpfeeds-logger-json.err
 autostart=true
 autorestart=true
 startsecs=1
