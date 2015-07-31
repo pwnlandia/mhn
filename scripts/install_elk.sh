@@ -92,7 +92,6 @@ output {
     host => "127.0.0.1"
     port => 9200
     protocol => "http"
-    flush_size => 100
     index => "mhn-%{+YYYYMMddHH00}"
     index_type => "event"
   }
