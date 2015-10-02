@@ -42,6 +42,9 @@ if [ -z "$(sysctl -w net.ipv4.conf.eth0.route_localnet=1 2>&1 >/dev/null)" ]
         echo "Adding iptables port forwarding rule...\n"
         iptables -F -t nat
         iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 22 -j DNAT --to-destination 127.0.0.1:64222
+        
+        echo "net.ipv4.conf.eth0.route_localnet=1" > /etc/sysctl.conf
+        DEBIAN_FRONTEND=noninteractive  apt-get install -q -y iptables-persistent
     else
         iptable_support=false
 fi
