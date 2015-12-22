@@ -149,6 +149,9 @@ def create_clean_db():
             'Ubuntu - Suricata': path.abspath('../scripts/deploy_suricata.sh'),
             'Ubuntu - ElasticHoney': path.abspath('../scripts/deploy_elastichoney.sh'),
             'Raspberry Pi - Dionaea': path.abspath('../scripts/deploy_raspberrypi.sh'),
+            'Ubuntu - Dionaea with HTTP': path.abspath('../scripts/deploy_dionaea_http.sh'),
+            'Ubuntu - Kippo as vulnerable Juniper Netscreen': path.abspath('../scripts/deploy_kippo_as_juniper.sh'),
+            'Ubuntu - Shockpot Sinkhole': path.abspath('../scripts/deploy_shockpot_sinkhole.sh'),
         }
         for honeypot, deploypath in deployscripts.iteritems():
 
