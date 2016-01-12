@@ -71,6 +71,10 @@ def generate_config():
                               help='Log file path')
     parser_unatt.add_argument('-d', '--debug', action='store_true',
                               help='Run in debug mode')
+    parser_unatt.add_argument('--mongo_server', type=str, default='localhost',
+                              help='MongoDB server address')
+    parser_unatt.add_argument('--mongo_port', type=int, default=27017,
+                              help='MongoDB server port')
 
     if (len(sys.argv) < 2):
         args = parser.parse_args(['generate'])
@@ -96,6 +100,8 @@ def generate_config():
         mail_password = args.mail_pass
         default_mail_sender = args.mail_sender
         log_file_path = args.log_file_path
+        mongo_server = args.mongo_server
+        mongo_port = args.mongo_port
     else:
         # Collect values from user
         debug = raw_input('Do you wish to run in Debug mode?: y/n ')
@@ -148,6 +154,9 @@ def generate_config():
 
         log_file_path = raw_input('Path for log file ["{}"]: '.format(default_log_path))
 
+        mongo_server = raw_input('MongoDB server address ["localhost"]: ')
+        mongo_port = raw_input('MongoDB server port [27017]: ')
+
     server_base_url = server_base_url if server_base_url.strip() else default_base_url
     honeymap_url = honeymap_url if honeymap_url.strip() else default_honeymap_url
     log_file_path = log_file_path if log_file_path else default_log_path
@@ -165,6 +174,8 @@ def generate_config():
     localconfig['MAIL_PASSWORD'] = mail_password if mail_password else ''
     localconfig['DEFAULT_MAIL_SENDER'] = default_mail_sender if default_mail_sender else ""
     localconfig['LOG_FILE_PATH'] = log_file_path
+    localconfig['MONGO_HOST'] = mongo_server if mongo_server else "localhost"
+    localconfig['MONGO_PORT'] = mongo_port if mongo_port else 27017
 
     with open('config.py.template', 'r') as templfile,\
          open('config.py', 'w') as confile:

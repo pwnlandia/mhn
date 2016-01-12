@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from flask import Blueprint, request, jsonify, make_response
 from bson.errors import InvalidId
 
-from mhn import db, csrf
+from mhn import db, csrf, mhn
 from mhn.api import errors
 from mhn.api.models import (
         Sensor, Rule, DeployScript as Script,
@@ -36,7 +36,7 @@ def create_sensor():
         sensor = Sensor(**request.json)
         sensor.uuid = str(uuid1())
         sensor.ip = request.remote_addr
-        Clio().authkey.new(**sensor.new_auth_dict()).post()
+        Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).authkey.new(**sensor.new_auth_dict()).post()
         try:
             db.session.add(sensor)
             db.session.commit()
@@ -82,7 +82,7 @@ def update_sensor(uuid):
 @login_required
 def delete_sensor(uuid):
     sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()
-    Clio().authkey.delete(identifier=uuid)
+    Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).authkey.delete(identifier=uuid)
     db.session.delete(sensor)
     db.session.commit()
     return jsonify({})
@@ -131,68 +131,68 @@ def _get_query_resource(resource, query):
 @api.route('/feed/<feed_id>/', methods=['GET'])
 @token_auth
 def get_feed(feed_id):
-    return _get_one_resource(Clio().hpfeed, feed_id)
+    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).hpfeed, feed_id)
 
 
 @api.route('/session/<session_id>/', methods=['GET'])
 @token_auth
 def get_session(session_id):
-    return _get_one_resource(Clio().session, session_id)
+    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).session, session_id)
 
 
 @api.route('/url/<url_id>/', methods=['GET'])
 @token_auth
 def get_url(url_id):
-    return _get_one_resource(Clio().url, url_id)
+    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).url, url_id)
 
 
 @api.route('/file/<file_id>/', methods=['GET'])
 @token_auth
 def get_file(file_id):
-    return _get_one_resource(Clio().file, file_id)
+    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).file, file_id)
 
 @api.route('/dork/<dork_id>/', methods=['GET'])
 @token_auth
 def get_dork(dork_id):
-    return _get_one_resource(Clio().dork, dork_id)
+    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).dork, dork_id)
 
 @api.route('/metadata/<metadata_id>/', methods=['GET'])
 @token_auth
 def get_metadatum(metadata_id):
-    return _get_one_resource(Clio().metadata, metadata_id)
+    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).metadata, metadata_id)
 
 
 @api.route('/feed/', methods=['GET'])
 @token_auth
 def get_feeds():
-    return _get_query_resource(Clio().hpfeed, request.args.to_dict())
+    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).hpfeed, request.args.to_dict())
 
 
 @api.route('/session/', methods=['GET'])
 @token_auth
 def get_sessions():
-    return _get_query_resource(Clio().session, request.args.to_dict())
+    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).session, request.args.to_dict())
 
 
 @api.route('/url/', methods=['GET'])
 @token_auth
 def get_urls():
-    return _get_query_resource(Clio().url, request.args.to_dict())
+    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).url, request.args.to_dict())
 
 @api.route('/file/', methods=['GET'])
 @token_auth
 def get_files():
-    return _get_query_resource(Clio().file, request.args.to_dict())
+    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).file, request.args.to_dict())
 
 @api.route('/dork/', methods=['GET'])
 @token_auth
 def get_dorks():
-    return _get_query_resource(Clio().dork, request.args.to_dict())
+    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).dork, request.args.to_dict())
 
 @api.route('/metadata/', methods=['GET'])
 @token_auth
 def get_metadata():
-    return _get_query_resource(Clio().metadata, request.args.to_dict())
+    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).metadata, request.args.to_dict())
 
 
 @api.route('/top_attackers/', methods=['GET'])
@@ -210,7 +210,7 @@ def top_attackers():
     for name in options.keys():
         if name not in ('hours_ago', 'limit',):
             del options[name]
-    results = Clio().session._tops(['source_ip', 'honeypot'], top=limit, hours_ago=hours_ago, **extra)
+    results = Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).session._tops(['source_ip', 'honeypot'], top=limit, hours_ago=hours_ago, **extra)
     return jsonify(
         data=results,
         meta={
@@ -229,7 +229,7 @@ def attacker_stats(ip):
     for name in options.keys():
         if name not in ('hours_ago', 'limit',):
             del options[name]
-    results = Clio().session.attacker_stats(ip, hours_ago=hours_ago)
+    results = Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).session.attacker_stats(ip, hours_ago=hours_ago)
     return jsonify(
         data=results,
         meta={
@@ -295,7 +295,7 @@ def get_intel_feed():
             del options[name]
 
     extra['ne__protocol'] = 'pcap'
-    results = Clio().session._tops(['source_ip', 'honeypot', 'protocol', 'destination_port'], top=limit, hours_ago=hours_ago, **extra)
+    results = Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).session._tops(['source_ip', 'honeypot', 'protocol', 'destination_port'], top=limit, hours_ago=hours_ago, **extra)
     results = [r for r in results if r['protocol'] != 'ftpdatalisten']
 
     cache = {}
@@ -303,7 +303,7 @@ def get_intel_feed():
         source_ip = r['source_ip']
         if source_ip not in cache:
             # TODO: may want to make one big query to mongo here...
-            cache[source_ip] = [m.to_dict() for m in Clio().metadata.get(ip=r['source_ip'], honeypot='p0f')]
+            cache[source_ip] = [m.to_dict() for m in Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).metadata.get(ip=r['source_ip'], honeypot='p0f')]
         r['meta'] = cache[source_ip]
 
     return {

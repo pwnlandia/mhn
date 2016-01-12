@@ -20,7 +20,7 @@ class MHNTestCase(TestCase):
 
     def __init__(self, *args, **kwargs):
         super(MHNTestCase, self).__init__(*args, **kwargs)
-        self.clio = clio.Clio()
+        self.clio = clio.Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'])
 
     def create_app(self):
         _basedir = os.path.abspath(os.path.dirname(__file__))
@@ -39,7 +39,7 @@ class MHNTestCase(TestCase):
         db.drop_all()
 
         # Removing test collections from mongo.
-        cli = pymongo.MongoClient()
+        cli = pymongo.MongoClient(host=mhn.config['MONGO_HOST'],port=mhn.config['MONGO_PORT'])
         for dbname in cli.database_names():
             if dbname.startswith('test_'):
                 cli.drop_database(dbname)

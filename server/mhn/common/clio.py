@@ -23,8 +23,8 @@ class Clio():
 
     """
 
-    def __init__(self):
-        self.client = pymongo.MongoClient()
+    def __init__(self, mongo_host, mongo_port):
+        self.client = pymongo.MongoClient(host=mongo_host, port=mongo_port)
 
     @property
     def session(self):

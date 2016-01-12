@@ -30,7 +30,7 @@ DEFAULT_CHANNELS = [
     "wordpot.events",
 ]
 
-def ensure_user_permissions(ident, secret, publish, subscribe):
+def ensure_user_permissions(ident, secret, publish, subscribe, mongo_host, mongo_port):
     rec = {
         "identifier": ident,
         "secret": secret,
@@ -38,7 +38,7 @@ def ensure_user_permissions(ident, secret, publish, subscribe):
         "subscribe":subscribe
     }
 
-    client = pymongo.MongoClient()
+    client = pymongo.MongoClient(host=mongo_host, port=mongo_port)
     res = client.hpfeeds.auth_key.update({"identifier": ident}, {"$set": rec}, upsert=True)
     client.fsync()
     client.close()
@@ -88,7 +88,7 @@ def main():
         ip = None
     mhn_uuid = cfg['MHN_UUID']
 
-    ensure_user_permissions(cfg['IDENT'], cfg['SECRET'], [], cfg['CHANNELS'])
+    ensure_user_permissions(cfg['IDENT'], cfg['SECRET'], [], cfg['CHANNELS'], cfg['MONGO_HOST'], cfg['MONGO_PORT'])
     subscriber = hpfeeds_connect(cfg['HOST'], cfg['PORT'], cfg['IDENT'], cfg['SECRET'])
     publisher = hpfeeds_connect(cfg['RHOST'], cfg['RPORT'], cfg['RIDENT'], cfg['RSECRET'])
     processor = processors.HpfeedsMessageProcessor(cfg['IP_GEO_DB'], cfg['IP_ASN_DB'])
