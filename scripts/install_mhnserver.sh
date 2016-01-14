@@ -2,19 +2,58 @@
 
 set -e
 set -x
+SCRIPTDIR=`dirname "$(readlink -f "$0")"`
+MHN_HOME=$SCRIPTDIR/..
 
-apt-get update
-apt-get install -y git build-essential python-pip python-dev redis-server libgeoip-dev
-pip install virtualenv
 
-MHN_HOME=`dirname $0`/..
+if [ -f /etc/debian_version ]; then
+    OS=Debian  # XXX or Ubuntu??
+    INSTALLER='apt-get'
+    REPOPACKAGES='git build-essential python-pip python-dev redis-server libgeoip-dev nginx'
+    PYTHON=`which python`
+    PIP=`which pip`
+    $PIP install virtualenv
+    VIRTUALENV=`which virtualenv`
+
+elif [ -f /etc/redhat-release ]; then
+    OS=RHEL
+    INSTALLER='yum'
+    #fixme check removed supervisor
+    REPOPACKAGES='epel-release git GeoIP-devel wget redis sqlite-devel sqlite2-devel nginx'
+
+    if  [ ! -f /usr/local/bin/python2.7 ]; then
+        $SCRIPTDIR/install_python2.7.sh
+    fi
+
+    #use python2.7
+    PYTHON=/usr/local/bin/python2.7
+    PIP=/usr/local/bin/pip2.7
+    $PIP install virtualenv
+    VIRTUALENV=/usr/local/bin/virtualenv
+
+    #install supervisor from pip2.7
+    $PIP install supervisor
+    
+else
+    echo "ERROR: Unknown OS\nExiting!"
+    exit -1
+fi
+
+$INSTALLER update
+$INSTALLER -y install $REPOPACKAGES
+
+
 cd $MHN_HOME
 MHN_HOME=`pwd`
 
-virtualenv env
+$VIRTUALENV  -p $PYTHON env
 . env/bin/activate
-pip install -r server/requirements.txt
 
+#fixme
+pip install -r server/requirements.txt
+echo "DONE installing python virtualenv"
+
+mkdir -p /var/log/mhn &> /dev/null
 cd $MHN_HOME/server/
 
 echo "==========================================================="
@@ -27,8 +66,13 @@ echo -e "\nInitializing database, please be patient. This can take several minut
 python initdatabase.py
 cd $MHN_HOME
 
-apt-get install -y nginx
 mkdir -p /opt/www
+mkdir -p /etc/nginx
+mkdir -p /etc/nginx/sites-available
+mkdir -p /etc/nginx/sites-enabled
+
+echo "FIXME - centos uses a different nginx config setup"
+return 0
 cat > /etc/nginx/sites-available/default <<EOF 
 server {
     listen       80;
@@ -50,9 +94,12 @@ server {
     }
 }
 EOF
+
 ln -fs /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-apt-get install -y supervisor
+$INSTALLER install -y supervisor
+mkdir /etc/supervisor &> /dev/null
+mkdir /etc/supervisor/conf.d &> /dev/null
 
 cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
 [program:mhn-uwsgi]
