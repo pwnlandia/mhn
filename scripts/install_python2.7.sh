@@ -29,6 +29,9 @@ elif [ -f /etc/redhat-release ]; then
         wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
         /usr/local/bin/python2.7 ./ez_setup.py install
         /usr/local/bin/easy_install-2.7 pip
+
+        #install virtualenv
+        /usr/local/bin/pip2.7 install virtualenv
     fi
 
 else

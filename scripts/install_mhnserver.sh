@@ -19,7 +19,8 @@ elif [ -f /etc/redhat-release ]; then
     OS=RHEL
     INSTALLER='yum'
     #fixme check removed supervisor
-    REPOPACKAGES='epel-release git GeoIP-devel wget redis sqlite-devel sqlite2-devel nginx'
+    #REPOPACKAGES='epel-release git GeoIP-devel wget redis sqlite-devel sqlite2-devel nginx'
+    REPOPACKAGES='epel-release git GeoIP-devel wget redis nginx'
 
     if  [ ! -f /usr/local/bin/python2.7 ]; then
         $SCRIPTDIR/install_python2.7.sh
@@ -71,8 +72,6 @@ mkdir -p /etc/nginx
 mkdir -p /etc/nginx/sites-available
 mkdir -p /etc/nginx/sites-enabled
 
-echo "FIXME - centos uses a different nginx config setup"
-return 0
 cat > /etc/nginx/sites-available/default <<EOF 
 server {
     listen       80;

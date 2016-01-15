@@ -26,6 +26,10 @@ EOF
     mkdir -p /data/db
     yum -y install mongodb-org-server mongodb-org-shell mongodb-org-tools
 
+    if [ ! -f /var/run/mongodb/mongod.pid ]; then
+        /etc/init.d/mongod start
+    fi
+
 else
     echo "ERROR: Unknown OS\nExiting!"
     exit -1

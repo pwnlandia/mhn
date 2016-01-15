@@ -3,8 +3,8 @@
 set -e
 set -x
 
-SCRIPTDIR=`dirname "$(readlink -f "$0")"`
-MHN_HOME=$SCRIPTDIR/..
+SCRIPTS=`dirname "$(readlink -f "$0")"`
+MHN_HOME=$SCRIPTS/..
 
 if [ -f /etc/debian_version ]; then
     OS=Debian  # XXX or Ubuntu??
@@ -25,7 +25,7 @@ elif [ -f /etc/redhat-release ]; then
     yum update
 
     if  [ ! -f /usr/local/bin/python2.7 ]; then
-        $SCRIPTDIR/install_python2.7.sh
+        $SCRIPTS/install_python2.7.sh
     fi
 
     #use python2.7
@@ -35,7 +35,7 @@ elif [ -f /etc/redhat-release ]; then
     VIRTUALENV=/usr/local/bin/virtualenv
 
     #install supervisor from pip2.7
-    $PIP install supervisor
+    $SCRIPTS/install_supervisord.sh
 
 else
     echo "ERROR: Unknown OS\nExiting!"
