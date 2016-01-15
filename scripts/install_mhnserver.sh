@@ -95,13 +95,36 @@ MHN_UUID=`python -c 'import uuid;print str(uuid.uuid4())'`
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 /opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py "collector" "$SECRET" "" "geoloc.events"
 
+while true;
+do
+    echo -n "Would you like to use remote mongodb for collector? (y/n) "
+    read MONGO
+    if [ "$MONGO" == "y" -o "$MONGO" == "Y" ]
+    then
+        echo -n "MongoDB Host: "
+        read MONGO_HOST
+        echo -n "MongoDB Port: "
+        read MONGO_PORT
+        echo "The collector will use mongodb server $MONGO_HOST:$MONGO_PORT"
+        break
+    elif [ "$MONGO" == "n" -o "$MONGO" == "N" ]
+    then
+        MONGO_HOST='localhost'
+        MONGO_PORT=27017
+        echo "Using default configuration:"
+        echo "    MongoDB Host: localhost"
+        echo "    MongoDB Port: 27017"
+        break
+    fi
+done
+
 cat > $MHN_HOME/server/collector.json <<EOF
 {
   "IDENT": "collector",
   "SECRET": "$SECRET",
   "MHN_UUID": "$MHN_UUID"
-  "MONGO_HOST": "localhost"
-  "MONGO_PORT": 27017
+  "MONGO_HOST": "$MONGO_HOST"
+  "MONGO_PORT": $MONGO_PORT
 }
 EOF
 

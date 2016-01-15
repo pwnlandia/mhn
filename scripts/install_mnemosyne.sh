@@ -22,12 +22,41 @@ IDENT=mnemosyne
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 CHANNELS='amun.events,conpot.events,thug.events,beeswarm.hive,dionaea.capture,dionaea.connections,thug.files,beeswarn.feeder,cuckoo.analysis,kippo.sessions,glastopf.events,glastopf.files,mwbinary.dionaea.sensorunique,snort.alerts,wordpot.events,p0f.events,suricata.events,shockpot.events,elastichoney.events'
 
+echo "==========================================================="
+echo "  Mnemosyne Configuration"
+echo "==========================================================="
+
+while true;
+do
+    echo -n "Would you like to use remote mongodb for mnemosyne? (y/n) "
+    read MONGO
+    if [ "$MONGO" == "y" -o "$MONGO" == "Y" ]
+    then
+        echo -n "MongoDB Host: "
+        read MONGO_HOST
+        echo -n "MongoDB Port: "
+        read MONGO_PORT
+        echo "The mnemosyne will use mongodb server $MONGO_HOST:$MONGO_PORT"
+        break
+    elif [ "$MONGO" == "n" -o "$MONGO" == "N" ]
+    then
+        MONGO_HOST='localhost'
+        MONGO_PORT=27017
+        echo "Using default configuration:"
+        echo "    MongoDB Host: localhost"
+        echo "    MongoDB Port: 27017"
+        break
+    fi
+done
+
 cat > /opt/mnemosyne/mnemosyne.cfg <<EOF
 [webapi]
 host = 0.0.0.0
 port = 8181
 
 [mongodb]
+host = $MONGO_HOST
+port = $MONGO_PORT
 database = mnemosyne
 
 [hpfriends]
