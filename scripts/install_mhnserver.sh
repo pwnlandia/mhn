@@ -69,10 +69,22 @@ cd $MHN_HOME
 
 mkdir -p /opt/www
 mkdir -p /etc/nginx
-mkdir -p /etc/nginx/sites-available
-mkdir -p /etc/nginx/sites-enabled
 
-cat > /etc/nginx/sites-available/default <<EOF 
+if [ $OS == "Debian" ]; then
+    mkdir -p /etc/nginx/sites-available
+    mkdir -p /etc/nginx/sites-enabled
+    NGINXCONFIG=/etc/nginx/sites-available/default
+    touch $NGINXCONFIG
+    ln -fs /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+    NGINXUG='www-data:www-data'
+
+elif [ $OS == "RHEL" ]; then
+    NGINXCONFIG=/etc/nginx/conf.d/default.conf
+    NGINXUG='nginx:nginx'
+
+fi
+
+cat > $NGINXCONFIG <<EOF
 server {
     listen       80;
     server_name  _;
@@ -93,8 +105,6 @@ server {
     }
 }
 EOF
-
-ln -fs /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
 
 cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
@@ -121,7 +131,7 @@ user=www-data
 EOF
 
 touch /var/log/mhn/mhn-celery-worker.log /var/log/mhn/mhn-celery-worker.err
-chown www-data /var/log/mhn/mhn-celery-worker.*
+chown $NGINXUG /var/log/mhn/mhn-celery-worker.*
 
 cat > /etc/supervisor/conf.d/mhn-celery-beat.conf <<EOF 
 [program:mhn-celery-beat]
@@ -158,7 +168,7 @@ startsecs=10
 EOF
 
 touch $MHN_HOME/server/mhn.log
-chown www-data:www-data -R $MHN_HOME/server/*
+chown $NGINXUG -R $MHN_HOME/server/*
 
 supervisorctl update
 /etc/init.d/nginx restart

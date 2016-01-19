@@ -38,7 +38,7 @@ elif [ -f /etc/redhat-release ]; then
     $SCRIPTS/install_supervisord.sh
 
 else
-    echo "ERROR: Unknown OS\nExiting!"
+    echo -e "ERROR: Unknown OS\nExiting!"
     exit -1
 fi
 

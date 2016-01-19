@@ -14,21 +14,24 @@ if [ -f /etc/debian_version ]; then
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL
 
-    yum update
-    yum -y install epel-release
-    yum -y groupinstall "Development tools"
+    #if libsqlite3.so is already installed move on
+    if [ ! -f /usr/local/lib/libsqlite3.so ]; then
+        yum update
+        yum -y install epel-release
+        yum -y groupinstall "Development tools"
 
-    wget https://sqlite.org/2016/sqlite-autoconf-3100100.tar.gz
-    tar -xvzf sqlite-autoconf-3100100.tar.gz
-    cd sqlite-autoconf-3100100
-    ./configure
-    make && make install
-    echo "sqlite install complete"
+        wget https://sqlite.org/2016/sqlite-autoconf-3100100.tar.gz
+        tar -xvzf sqlite-autoconf-3100100.tar.gz
+        cd sqlite-autoconf-3100100
+        ./configure
+        make && make install
+        echo "sqlite install complete"
 
-    ldconfig
+        ldconfig
+    fi
 
 else
-    echo "Unknown OS. Exiting"
+    echo -e "Unknown OS. Exiting"
     exit -1
 
 fi
