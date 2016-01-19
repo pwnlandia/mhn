@@ -77,11 +77,12 @@ if [ $OS == "Debian" ]; then
     touch $NGINXCONFIG
     ln -fs /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
     NGINXUG='www-data:www-data'
+    NGINXUSER='www-data'
 
 elif [ $OS == "RHEL" ]; then
     NGINXCONFIG=/etc/nginx/conf.d/default.conf
     NGINXUG='nginx:nginx'
-
+    NGINXUSER='nginx'
 fi
 
 cat > $NGINXCONFIG <<EOF
@@ -127,7 +128,7 @@ stderr_logfile=/var/log/mhn/mhn-celery-worker.err
 autostart=true
 autorestart=true
 startsecs=10
-user=$NGINXUG
+user=$NGINXUSER
 EOF
 
 touch /var/log/mhn/mhn-celery-worker.log /var/log/mhn/mhn-celery-worker.err
