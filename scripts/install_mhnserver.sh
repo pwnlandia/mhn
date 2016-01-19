@@ -122,8 +122,8 @@ cat > $MHN_HOME/server/collector.json <<EOF
 {
   "IDENT": "collector",
   "SECRET": "$SECRET",
-  "MHN_UUID": "$MHN_UUID"
-  "MONGO_HOST": "$MONGO_HOST"
+  "MHN_UUID": "$MHN_UUID",
+  "MONGO_HOST": "$MONGO_HOST",
   "MONGO_PORT": $MONGO_PORT
 }
 EOF
