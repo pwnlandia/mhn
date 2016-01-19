@@ -7,21 +7,6 @@ apt-get update
 apt-get install -y git python-pip python-dev
 pip install virtualenv
 
-SCRIPTS=`dirname $0`
-bash $SCRIPTS/install_mongo.sh
-
-cd /opt/
-git clone https://github.com/threatstream/mnemosyne.git
-cd mnemosyne
-virtualenv env
-. env/bin/activate
-pip install -r requirements.txt
-chmod 755 -R .
-
-IDENT=mnemosyne
-SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
-CHANNELS='amun.events,conpot.events,thug.events,beeswarm.hive,dionaea.capture,dionaea.connections,thug.files,beeswarn.feeder,cuckoo.analysis,kippo.sessions,glastopf.events,glastopf.files,mwbinary.dionaea.sensorunique,snort.alerts,wordpot.events,p0f.events,suricata.events,shockpot.events,elastichoney.events'
-
 echo "==========================================================="
 echo "  Mnemosyne Configuration"
 echo "==========================================================="
@@ -45,9 +30,23 @@ do
         echo "Using default configuration:"
         echo "    MongoDB Host: localhost"
         echo "    MongoDB Port: 27017"
+        SCRIPTS=`dirname $0`
+        bash $SCRIPTS/install_mongo.sh
         break
     fi
 done
+
+cd /opt/
+git clone https://github.com/threatstream/mnemosyne.git
+cd mnemosyne
+virtualenv env
+. env/bin/activate
+pip install -r requirements.txt
+chmod 755 -R .
+
+IDENT=mnemosyne
+SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
+CHANNELS='amun.events,conpot.events,thug.events,beeswarm.hive,dionaea.capture,dionaea.connections,thug.files,beeswarn.feeder,cuckoo.analysis,kippo.sessions,glastopf.events,glastopf.files,mwbinary.dionaea.sensorunique,snort.alerts,wordpot.events,p0f.events,suricata.events,shockpot.events,elastichoney.events'
 
 cat > /opt/mnemosyne/mnemosyne.cfg <<EOF
 [webapi]
