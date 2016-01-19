@@ -96,9 +96,6 @@ EOF
 
 ln -fs /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-$INSTALLER install -y supervisor
-mkdir /etc/supervisor &> /dev/null
-mkdir /etc/supervisor/conf.d &> /dev/null
 
 cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
 [program:mhn-uwsgi]

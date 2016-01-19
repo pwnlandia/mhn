@@ -9,7 +9,6 @@ if [ -f /etc/debian_version ]; then
     OS=Debian  # XXX or Ubuntu??
     apt-get update
     apt-get -y install supervisor
-    return 0
 
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL
