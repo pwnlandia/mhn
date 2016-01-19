@@ -127,7 +127,7 @@ stderr_logfile=/var/log/mhn/mhn-celery-worker.err
 autostart=true
 autorestart=true
 startsecs=10
-user=www-data
+user=$NGINXUG
 EOF
 
 touch /var/log/mhn/mhn-celery-worker.log /var/log/mhn/mhn-celery-worker.err
