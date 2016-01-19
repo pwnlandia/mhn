@@ -18,19 +18,33 @@ chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "dionaea"
 
-# Add ppa to apt sources (Needed for Dionaea).
-apt-get update
-apt-get install -y python-software-properties
-add-apt-repository -y ppa:honeynet/nightly
-apt-get update
 
-# Installing Dionaea.
-if [[ `lsb_release -cs` == "trusty" ]]
-	then
-		apt-get install -y dionaea-phibo supervisor patch
-	else
-		apt-get install -y dionaea supervisor patch
+if [ $OS == "Debian" ]; then
+    # Add ppa to apt sources (Needed for Dionaea).
+    apt-get update
+    apt-get install -y python-software-properties
+    add-apt-repository -y ppa:honeynet/nightly
+    apt-get update
+
+    # Installing Dionaea.
+    if [[ `lsb_release -cs` == "trusty" ]]
+        then
+            apt-get install -y dionaea-phibo supervisor patch
+        else
+            apt-get install -y dionaea supervisor patch
+    fi
+
+elif [ $OS == "RHEL" ]; then
+    echo "MEH"
+    yum -y update
+    yum -y groupinstall "Development tools"
+    yum -y install openssl-devel git
+    ./install_supervisor.sh
+
 fi
+
+
+
 
 cp /etc/dionaea/dionaea.conf.dist /etc/dionaea/dionaea.conf
 cat > /tmp/dionaea.hpfeeds.patch <<EOF

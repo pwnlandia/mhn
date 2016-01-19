@@ -18,8 +18,6 @@ if [ -f /etc/debian_version ]; then
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL
     INSTALLER='yum'
-    #fixme check removed supervisor
-    #REPOPACKAGES='epel-release git GeoIP-devel wget redis sqlite-devel sqlite2-devel nginx'
     REPOPACKAGES='epel-release git GeoIP-devel wget redis nginx'
 
     if  [ ! -f /usr/local/bin/python2.7 ]; then
