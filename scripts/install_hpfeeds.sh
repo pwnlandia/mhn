@@ -41,7 +41,7 @@ echo "==========================================================="
 
 while true;
 do
-    echo -n "Would you like to use remote mongodb for feedbroker? (y/n) "
+    echo -n "Would you like to use remote mongodb for hpfeeds? (y/n) "
     read MONGO
     if [ "$MONGO" == "y" -o "$MONGO" == "Y" ]
     then
@@ -49,18 +49,25 @@ do
         read MONGO_HOST
         echo -n "MongoDB Port: "
         read MONGO_PORT
-        echo "The feedbroker will use mongodb server $MONGO_HOST:$MONGO_PORT"
-        sed -i "s/MONGOIP = .*$/MONGOIP = '$MONGO_HOST'/g" /opt/hpfeeds/broker/feedbroker.py
-        sed -i "s/MONGOPORT = .*$/MONGOPORT = $MONGO_PORT/g" /opt/hpfeeds/broker/feedbroker.py
+        echo "The hpfeeds will use mongodb server $MONGO_HOST:$MONGO_PORT"
         break
     elif [ "$MONGO" == "n" -o "$MONGO" == "N" ]
     then
+        MONGO_HOST='localhost'
+        MONGO_PORT=27017
         echo "Using default configuration:"
         echo "    MongoDB Host: localhost"
         echo "    MongoDB Port: 27017"
         break
     fi
 done
+
+cat > /opt/hpfeeds/broker/conf.json <<EOF
+{
+  "MONGO_HOST": "$MONGO_HOST",
+  "MONGO_PORT": $MONGO_PORT
+}
+EOF
 
 
 cat >> /etc/supervisor/conf.d/hpfeeds-broker.conf <<EOF 
