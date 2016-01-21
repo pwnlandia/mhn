@@ -35,15 +35,47 @@ if [ $OS == "Debian" ]; then
     fi
 
 elif [ $OS == "RHEL" ]; then
-    echo "MEH"
     yum -y update
     yum -y groupinstall "Development tools"
-    yum -y install openssl-devel git
-    ./install_supervisor.sh
+    yum -y install libev-devel glib2-devel udns-devel libcurl-devel libpcap-devel libnl-devel openssl-devel git
+
+    ./install_sqlite.sh
+    ./install_python3.sh
+    ./install_supervisord.sh
+
+    git clone https://github.com/rep/dionaea.git
+    cd dionaea
+    autoreconf -vi
+    #./configure --with-python=/usr/local/bin/python3
+    make && make install
+
+    pip3 install Cython
+    #ldconfig /usr/local/lib/  #for pyev
+
+
+
+#    git clone git://git.infradead.org/users/tgr/libnl.git
+#    cd libnl
+#    autoreconf -vi
+#    export LDFLAGS=-Wl,-rpath,/opt/dionaea/lib
+#    ./configure --prefix=/opt/dionaea
+#    make && make install
+
+    wget https://launchpadlibrarian.net/136486272/liblcfg_0.2.1+git20121005+24.orig.tar.gz
+    cd liblcfg-0.2.1+git20121005+24/
+    autoreconf -vi
+    ./configure --prefix=/opt/dionaea
+    make && make install
+
+    wget https://launchpadlibrarian.net/139264707/libemu_0.2.0+git20130410+571.orig.tar.gz
+    cd libemu-0.2.0+git20130410+571
+    autoreconf -vi
+    ./configure --prefix=/opt/dionaea
+    make && make install
+
+
 
 fi
-
-
 
 
 cp /etc/dionaea/dionaea.conf.dist /etc/dionaea/dionaea.conf
