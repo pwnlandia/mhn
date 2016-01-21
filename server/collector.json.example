@@ -3,7 +3,7 @@
   "PORT": 10000,
   "GEOLOC_CHAN": "geoloc.events",
   "IDENT": "honeymap",
-  "SECRET": "36e4a5dcc8454e23bfbbe3efc5078383"
-  "MONGO_HOST": "localhost"
+  "SECRET": "36e4a5dcc8454e23bfbbe3efc5078383",
+  "MONGO_HOST": "localhost",
   "MONGO_PORT": 27017
 }
