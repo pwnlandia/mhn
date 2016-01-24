@@ -12,7 +12,7 @@ if [ -f /etc/debian_version ]; then
 
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL
-    yum update
+    yum update -y
     yum install -y  git mercurial make coffeescript geoip-devel
 
     INSTALLER='yum'
