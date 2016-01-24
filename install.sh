@@ -8,9 +8,20 @@ fi
 
 set -e
 
-MHN_HOME=$(dirname "$0")
+MHN_HOME=`dirname "$(readlink -f "$0")"`
 SCRIPTS="$MHN_HOME/scripts"
-cd "$SCRIPTS"
+cd $SCRIPTS
+
+if [ -f /etc/redhat-release ]; then
+    ./install_sqlite.sh
+
+    if [ ! -f /usr/local/bin/python2.7 ]; then
+        echo "[`date`] Installing Python2.7 as a pre-req"
+        ./install_python2.7.sh
+    fi
+
+    ./install_supervisord.sh
+fi
 
 echo "[`date`] Starting Installation of all MHN packages"
 
@@ -53,8 +64,6 @@ do
         break
     fi
 done
-
-
 
 
 while true;

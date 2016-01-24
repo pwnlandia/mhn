@@ -1,8 +1,39 @@
 #!/bin/bash
 
 set -x
+SCRIPTDIR=`dirname "$(readlink -f "$0")"`
+MHN_HOME=$SCRIPTDIR/..
 
-apt-get install -y git mercurial make coffeescript
+if [ -f /etc/debian_version ]; then
+    apt-get update
+    apt-get install -y git mercurial make coffeescript libgeoip-dev supervisor
+
+    INSTALLER='apt-get'
+
+elif [ -f /etc/redhat-release ]; then
+    OS=RHEL
+    yum update -y
+    yum install -y  git mercurial make coffee-script.noarch geoip-devel
+
+    INSTALLER='yum'
+    REPOPACKAGES=''
+
+    #use python2.7
+    PYTHON=/usr/local/bin/python2.7
+    PIP=/usr/local/bin/pip2.7
+    VIRTUALENV=/usr/local/bin/virtualenv
+
+    #install supervisor from pip2.7
+    $PIP install supervisor
+
+else
+    echo "ERROR: Unknown OS\nExiting!"
+    exit -1
+fi
+
+
+
+
 
 ####################################################################
 # Install a decent version of golang
@@ -50,8 +81,6 @@ make
 
 mkdir -p /var/log/mhn
 
-apt-get install -y supervisor
-
 cat > /etc/supervisor/conf.d/honeymap.conf <<EOF 
 [program:honeymap]
 command=/opt/honeymap/server/server
@@ -63,7 +92,6 @@ autorestart=true
 startsecs=10
 EOF
 
-apt-get install -y libgeoip-dev
 /opt/hpfeeds/env/bin/pip install GeoIP
 
 cd /opt/
