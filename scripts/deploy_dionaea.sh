@@ -19,7 +19,29 @@ chmod 755 registration.sh
 . ./registration.sh $server_url $deploy_key "dionaea"
 
 
-if [ $OS == "Debian" ]; then
+if [ -f /etc/redhat-release ]; then
+    yum -y update
+    yum -y install curl
+    curl -sSL https://get.docker.com/ | sh
+    service docker start
+    docker run hello-world
+
+    #make directories for dionaea
+    mkdir -p /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/bistreams
+
+    #docker run --name dionaea --cap-add=NET_BIND_SERVICE --rm=true -p 21:21 -p 42:42 -p 8080:80 -p 135:135 -p 443:443
+    # -p 445:445 -p 1433:1433 -p 3306:3306 -p 5061:5061 -p 5060:5060 -p 69:69/udp -p 5060:5060/udp
+    # -v /var/dionaea:/data/dionaea threatstream/dionaea-mhn
+
+    #docker run --cap-add=NET_BIND_SERVICE --rm=true -p 21:21 -p 42:42 -p 8080:80 -v /var/dionaea:/data/dionaea  threatstream/dionaea-mhn
+    #docker run -v /mnt/hgfs/vmshare/patched:/data/dionaea -i -t --name dionaea dtagdevsec/dionaea /bin/bash
+    #docker commit -m "rename" -a "ThreatStream Labs - MJW" dionaea threatstream/dionaea-mhn
+
+    docker pull threatstream/dionaea-mhn
+
+
+
+elif [ -f /etc/debian-release ]; then
     # Add ppa to apt sources (Needed for Dionaea).
     apt-get update
     apt-get install -y python-software-properties
@@ -34,51 +56,9 @@ if [ $OS == "Debian" ]; then
             apt-get install -y dionaea supervisor patch
     fi
 
-elif [ $OS == "RHEL" ]; then
-    yum -y update
-    yum -y groupinstall "Development tools"
-    yum -y install libev-devel glib2-devel udns-devel libcurl-devel libpcap-devel libnl-devel openssl-devel git
-
-    ./install_sqlite.sh
-    ./install_python3.sh
-    ./install_supervisord.sh
-
-    git clone https://github.com/rep/dionaea.git
-    cd dionaea
-    autoreconf -vi
-    #./configure --with-python=/usr/local/bin/python3
-    make && make install
-
-    pip3 install Cython
-    #ldconfig /usr/local/lib/  #for pyev
 
 
-
-#    git clone git://git.infradead.org/users/tgr/libnl.git
-#    cd libnl
-#    autoreconf -vi
-#    export LDFLAGS=-Wl,-rpath,/opt/dionaea/lib
-#    ./configure --prefix=/opt/dionaea
-#    make && make install
-
-    wget https://launchpadlibrarian.net/136486272/liblcfg_0.2.1+git20121005+24.orig.tar.gz
-    cd liblcfg-0.2.1+git20121005+24/
-    autoreconf -vi
-    ./configure --prefix=/opt/dionaea
-    make && make install
-
-    wget https://launchpadlibrarian.net/139264707/libemu_0.2.0+git20130410+571.orig.tar.gz
-    cd libemu-0.2.0+git20130410+571
-    autoreconf -vi
-    ./configure --prefix=/opt/dionaea
-    make && make install
-
-
-
-fi
-
-
-cp /etc/dionaea/dionaea.conf.dist /etc/dionaea/dionaea.conf
+    cp /etc/dionaea/dionaea.conf.dist /etc/dionaea/dionaea.conf
 cat > /tmp/dionaea.hpfeeds.patch <<EOF
 --- /etc/dionaea/dionaea.conf
 +++ /etc/dionaea/dionaea.conf.new
@@ -536,7 +516,8 @@ sed --in-place='.bak' 's/addrs = { eth0 = \["::"\] }/addrs = { eth0 = ["::", "0.
 mkdir -p /var/dionaea/bistreams 
 chown nobody:nogroup /var/dionaea/bistreams
 
-# Config for supervisor.
+fi
+
 cat > /etc/supervisor/conf.d/dionaea.conf <<EOF
 [program:dionaea]
 command=dionaea -c /etc/dionaea/dionaea.conf -w /var/dionaea -u nobody -g nogroup
@@ -548,5 +529,6 @@ autorestart=true
 redirect_stderr=true
 stopsignal=QUIT
 EOF
+
 
 supervisorctl update
