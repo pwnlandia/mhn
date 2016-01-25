@@ -24,33 +24,25 @@ if [ -f /etc/redhat-release ]; then
     yum -y install curl
     curl -sSL https://get.docker.com/ | sh
     service docker start
-
-    #uncomment to test docker install
-    #docker run hello-world
+    docker pull threatstream/dionaea-mhn
 
     #make directories for dionaea
     mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/bistreams
+    chown -R nobody:nogroup /var/dionaea
 
-    docker pull threatstream/dionaea-mhn
-    docker run --cap-add=NET_BIND_SERVICE --rm=true -p 21:21 -p 42:42 -p 8080:80 -p 135:135 -p 443:443 -p 445:445 -p 1433:1433 -p 3306:3306 -p 5061:5061 -p 5060:5060 -p 69:69/udp -p 5060:5060/udp -v /var/dionaea:/var/dionaea threatstream/dionaea-mhn:latest supervisord
+cat > /etc/supervisor/conf.d/dionaea.conf <<EOF
+[program:dionaea]
+command=docker run --cap-add=NET_BIND_SERVICE --rm=true -p 21:21 -p 42:42 -p 8080:80 -p 135:135 -p 443:443 -p 445:445 -p 1433:1433 -p 3306:3306 -p 5061:5061 -p 5060:5060 -p 69:69/udp -p 5060:5060/udp -v /var/dionaea:/var/dionaea threatstream/dionaea-mhn:latest supervisord
+directory=/var/dionaea
+stdout_logfile=/var/log/dionaea.out
+stderr_logfile=/var/log/dionaea.err
+autostart=true
+autorestart=true
+redirect_stderr=true
+stopsignal=QUIT
+EOF
 
-
-    echo -e "FIXME: Configure Supervisor to launch docker+dionaea"
-
-
-    #FIXME: Useful commands but clean before general deploy
-    #work with the existing dionaea
-    #docker pull dtagdevsec/dionaea
-    #docker run  --name dionaea-dtag -v /mnt/hgfs/vmshare/patched:/data/dionaea -i -t  dtagdevsec/dionaea /bin/bash
-    #docker run  -v /mnt/hgfs/vmshare/patched:/data/dionaea -i -t  dtagdevsec/dionaea /bin/bash
-    #docker commit -m "rename" -a "ThreatStream Labs - MJW" dtagdevsec/dionaea threatstream/dionaea-mhn
-
-    #docker run --name dionaea --cap-add=NET_BIND_SERVICE --rm=true -p 21:21 -p 42:42 -p 8080:80 -p 135:135 -p 443:443 -p 445:445 -p 1433:1433 -p 3306:3306 -p 5061:5061 -p 5060:5060 -p 69:69/udp -p 5060:5060/udp -v /var/dionaea:/var/dionaea threatstream/dionaea-mhn
-    #docker run --cap-add=NET_BIND_SERVICE --rm=true -p 21:21 -p 42:42 -p 8080:80 -v /var/dionaea:/data/dionaea  threatstream/dionaea-mhn
-    #docker run -v /mnt/hgfs/vmshare/patched:/data/dionaea -i -t --name dionaea dtagdevsec/dionaea /bin/bash
-    #docker run  threatstream/dionaea-mhn
-    #docker run -i -t  threatstream/dionaea-mhn /bin/bash
-
+    supervisorctl update
     exit 0
 
 
