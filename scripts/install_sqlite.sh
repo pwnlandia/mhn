@@ -16,8 +16,8 @@ elif [ -f /etc/redhat-release ]; then
 
     #if libsqlite3.so is already installed move on
     if [ ! -f /usr/local/lib/libsqlite3.so ]; then
-        yum update
-        yum -y install epel-release
+        yum -y update
+        yum -y install epel-release wget
         yum -y groupinstall "Development tools"
 
         wget https://sqlite.org/2016/sqlite-autoconf-3100100.tar.gz
