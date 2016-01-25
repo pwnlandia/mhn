@@ -28,7 +28,8 @@ if [ -f /etc/redhat-release ]; then
 
     #make directories for dionaea
     mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/bistreams
-    chown -R nobody:nogroup /var/dionaea
+    #fixme: find the right group in rhel
+    #chown -R nobody:nogroup /var/dionaea
 
 cat > /etc/supervisor/conf.d/dionaea.conf <<EOF
 [program:dionaea]

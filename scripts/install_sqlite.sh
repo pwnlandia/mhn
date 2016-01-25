@@ -13,6 +13,7 @@ if [ -f /etc/debian_version ]; then
 
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL
+    echo "meh"
 
     #if libsqlite3.so is already installed move on
     if [ ! -f /usr/local/lib/libsqlite3.so ]; then
