@@ -41,7 +41,7 @@ EOF
 
     yum -y install docker-engine
     service docker start
-    mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/
+    mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log  /var/dionaea/bitstreams
     mkdir -p /etc/dionaea/
     docker pull threatstream/dionaea-mhn
 
@@ -526,7 +526,7 @@ cd /
 patch -p0 < /tmp/dionaea.hpfeeds.patch
 
 # Editing configuration for Dionaea.
-mkdir -p /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log
+mkdir -p /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/bitstreams
 chown -R nobody:nogroup /var/dionaea
 
 
