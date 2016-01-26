@@ -20,16 +20,25 @@ chmod 755 registration.sh
 
 
 if [ -f /etc/redhat-release ]; then
+    yum -y install curl epel-release
     yum -y update
-    yum -y install curl
+    yum -y install python-setuptools python-pip
+    easy_install supervisor
+    mkdir -p /etc/supervisor
+    mkdir -p /etc/supervisor/conf.d
+    echo_supervisord_conf  > /etc/supervisord.conf
+
+cat >> /etc/supervisord.conf <<EOF
+[include]
+files = /etc/supervisor/conf.d/*.conf
+EOF
+
+    supervisord -c /etc/supervisord.conf
+
+    mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/
     curl -sSL https://get.docker.com/ | sh
     service docker start
     docker pull threatstream/dionaea-mhn
-
-    #make directories for dionaea
-    mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/bistreams
-    #fixme: find the right group in rhel
-    #chown -R nobody:nogroup /var/dionaea
 
 cat > /etc/supervisor/conf.d/dionaea.conf <<EOF
 [program:dionaea]
