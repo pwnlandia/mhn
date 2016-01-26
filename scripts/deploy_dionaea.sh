@@ -33,7 +33,7 @@ files = /etc/supervisor/conf.d/*.conf
 EOF
 
     #fixme uncomment
-    #supervisord -c /etc/supervisord.conf
+    supervisord -c /etc/supervisord.conf
 
     mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/ /etc/dionaea
     curl -sSL https://get.docker.com/ | sh
