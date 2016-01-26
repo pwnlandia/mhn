@@ -49,6 +49,10 @@ $VIRTUALENV  -p $PYTHON env
 . env/bin/activate
 
 pip install -r server/requirements.txt
+if [ -f /etc/redhat-release ]; then
+    pip install pysqlite==2.8.1
+fi
+
 echo "DONE installing python virtualenv"
 
 mkdir -p /var/log/mhn &> /dev/null
