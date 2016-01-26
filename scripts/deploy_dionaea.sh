@@ -19,12 +19,10 @@ chmod 755 registration.sh
 . ./registration.sh $server_url $deploy_key "dionaea"
 
 if [ -f /etc/redhat-release ]; then
-    yum -y install curl epel-release
     yum -y update
-    yum -y install python-setuptools python-pip
+    yum -y install wget curl epel-release python-setuptools python-pip
     easy_install supervisor
-    mkdir -p /etc/supervisor
-    mkdir -p /etc/supervisor/conf.d
+    mkdir -p /etc/supervisor /etc/supervisor/conf.d
     echo_supervisord_conf  > /etc/supervisord.conf
 
 cat >> /etc/supervisord.conf <<EOF
@@ -32,16 +30,22 @@ cat >> /etc/supervisord.conf <<EOF
 files = /etc/supervisor/conf.d/*.conf
 EOF
 
-    #fixme uncomment
     supervisord -c /etc/supervisord.conf
+cat > /etc/yum.repos.d/docker.repo <<EOF
+[dockerrepo]
+name=Docker Repository
+baseurl=http://yum.dockerproject.org/repo/main/centos/6/
+enabled=1
+gpgcheck=0
+EOF
 
-    mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/ /etc/dionaea
-    curl -sSL https://get.docker.com/ | sh
-
+    yum -y install docker-engine
     service docker start
+    mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/
+    mkdir -p /etc/dionaea/
     docker pull threatstream/dionaea-mhn
 
-    #grab the dionaea.conf template and put it in /etc/dionaea
+    echo "Getting dionea from $server_url"
     curl $server_url/static/dionaea.conf | sed -e "s/HPF_HOST/$HPF_HOST/" | sed -e "s/HPF_PORT/$HPF_PORT/" | sed -e "s/HPF_IDENT/$HPF_IDENT/" | sed -e "s/HPF_SECRET/$HPF_SECRET/" > /etc/dionaea/dionaea.conf
 
 cat > /etc/supervisor/conf.d/dionaea.conf <<EOF
