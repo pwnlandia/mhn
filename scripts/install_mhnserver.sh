@@ -48,7 +48,6 @@ MHN_HOME=`pwd`
 $VIRTUALENV  -p $PYTHON env
 . env/bin/activate
 
-#fixme
 pip install -r server/requirements.txt
 echo "DONE installing python virtualenv"
 

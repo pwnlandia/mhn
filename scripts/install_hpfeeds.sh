@@ -21,7 +21,7 @@ elif [ -f /etc/redhat-release ]; then
     INSTALLER='yum'
     REPOPACKAGES='epel-release libffi-devel libssl-devel shadowsocks-libev-devel'
 
-    yum install -y yum-utils
+    #yum install -y yum-utils
     yum-config-manager --add-repo=https://copr.fedoraproject.org/coprs/librehat/shadowsocks/repo/epel-6/librehat-shadowsocks-epel-6.repo
     yum update -y
 
@@ -43,8 +43,10 @@ else
     exit -1
 fi
 
-$INSTALLER update
+$INSTALLER -y update
 $INSTALLER -y install $REPOPACKAGES
+ldconfig /usr/local/lib/
+
 
 bash install_mongo.sh
 
@@ -55,8 +57,8 @@ wget https://github.com/threatstream/hpfeeds/releases/download/libev-4.15/libev-
 tar zxvf libev-4.15.tar.gz 
 cd libev-4.15
 ./configure && make && make install
-ldconfig
 ldconfig /usr/local/lib/
+
 
 mkdir -p /opt
 cd /opt
