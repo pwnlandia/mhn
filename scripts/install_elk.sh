@@ -94,10 +94,306 @@ output {
     protocol => "http"
     index => "mhn-%{+YYYYMMddHH00}"
     index_type => "event"
+    template_name => "mhn_event"
+    template => "/opt/logstash/mhn-template.json"
+    template_overwrite => true
+    manage_template => true
   }
 }
 
 EOF
+
+cat > /opt/logstash/mhn-template.json <<EOF
+{
+  "template": "mhn-*",
+  "settings": {
+    "number_of_shards": 5,
+    "number_of_replicas": 0,
+    "refresh_interval": "30s"
+  },
+  "mappings": {
+    "_default_": {
+      "_source": {
+        "enabled": true
+      },
+      "properties": {}
+    },
+    "event": {
+      "properties": {
+        "app": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "command": {
+          "type": "string",
+          "index": "analyzed"
+        },
+        "dest_area_code": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_city": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_country_code": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_country_code3": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_country_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_dma_code": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_ip": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_latitude": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_longitude": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_metro_code": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_org": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_port": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_postal_code": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_region": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_region_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dest_time_zone": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dionaea_action": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "direction": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "elastichoney_form": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "elastichoney_payload": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "eth_dst": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "eth_src": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "ids_type": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "ip_id": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "ip_len": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "ip_tos": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "ip_ttl": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "md5": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "p0f_app": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "p0f_link": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "p0f_os": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "p0f_uptime": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "protocol": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "request_url": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "sensor": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "severity": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "sha512": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "signature": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_area_code": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_city": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_country_code": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_country_code3": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_country_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_dma_code": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_ip": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_latitude": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_longitude": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_metro_code": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_org": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_port": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_postal_code": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_region": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_region_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_time_zone": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "ssh_password": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "ssh_username": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "ssh_version": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "tcp_flags": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "tcp_len": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "transport": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "type": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "udp_len": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "url": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "user_agent": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "vendor_product": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+EOF
+
 cat > /etc/supervisor/conf.d/logstash.conf <<EOF
 [program:logstash]
 command=/opt/logstash/bin/logstash -f mhn.conf
