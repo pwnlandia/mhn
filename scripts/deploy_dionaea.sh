@@ -41,8 +41,11 @@ EOF
 
     yum -y install docker-engine
     service docker start
-    mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log  /var/dionaea/bitstreams
+    mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log  /var/dionaea/bitstreams /var/dionaea/rtp /var/dionaea/bistreams
     mkdir -p /etc/dionaea/
+
+    #fixme
+    chmod -R a+wrx /var/dionaea
     docker pull threatstream/dionaea-mhn
 
     echo "Getting dionea from $server_url"
@@ -51,7 +54,7 @@ EOF
 
 cat > /etc/supervisor/conf.d/dionaea.conf <<EOF
 [program:dionaea]
-command=docker run --cap-add=NET_BIND_SERVICE --rm=true -p 21:21 -p 42:42 -p 8080:80 -p 135:135 -p 443:443 -p 445:445 -p 1433:1433 -p 3306:3306 -p 5061:5061 -p 5060:5060 -p 69:69/udp -p 5060:5060/udp -v /var/dionaea:/var/dionaea -v /etc/dionaea:/etc/dionaea threatstream/dionaea-mhn:latest supervisord
+command=docker run --cap-add=NET_BIND_SERVICE --rm=true -p 21:21 -p 42:42 -p 8080:80 -p 135:135 -p 443:443 -p 445:445 -p 1433:1433 -p 3306:3306 -p 5061:5061 -p 5060:5060 -p 69:69/udp -p 5060:5060/udp -v /var/dionaea:/data/dionaea -v /etc/dionaea:/etc/dionaea threatstream/dionaea-mhn:latest supervisord
 directory=/var/dionaea
 stdout_logfile=/var/log/dionaea.out
 stderr_logfile=/var/log/dionaea.err
