@@ -9,7 +9,7 @@ MHN_HOME=$SCRIPTDIR/..
 if [ -f /etc/debian_version ]; then
     OS=Debian  # XXX or Ubuntu??
     INSTALLER='apt-get'
-    REPOPACKAGES='git build-essential python-pip python-dev redis-server libgeoip-dev nginx'
+    REPOPACKAGES='git build-essential python-pip python-dev redis-server libgeoip-dev nginx libsqlite3-dev'
     PYTHON=`which python`
     PIP=`which pip`
     $PIP install virtualenv
