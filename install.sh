@@ -2,14 +2,14 @@
 
 if [ "$(whoami)" != "root" ]
 then
-    echo "You must be root to run this script"
+    echo -e "You must be root to run this script"
     exit 1
 fi
 
 set -e
 
 MHN_HOME=`dirname "$(readlink -f "$0")"`
-SCRIPTS="$MHN_HOME/scripts"
+SCRIPTS="$MHN_HOME/scripts/"
 cd $SCRIPTS
 
 if [ -f /etc/redhat-release ]; then

@@ -9,7 +9,7 @@ MHN_HOME=$SCRIPTDIR/..
 if [ -f /etc/debian_version ]; then
     OS=Debian  # XXX or Ubuntu??
     INSTALLER='apt-get'
-    REPOPACKAGES='git build-essential python-pip python-dev redis-server libgeoip-dev nginx'
+    REPOPACKAGES='git build-essential python-pip python-dev redis-server libgeoip-dev nginx libsqlite3-dev'
     PYTHON=`which python`
     PIP=`which pip`
     $PIP install virtualenv
@@ -34,7 +34,7 @@ elif [ -f /etc/redhat-release ]; then
     $PIP install supervisor
     
 else
-    echo "ERROR: Unknown OS\nExiting!"
+    echo -e "ERROR: Unknown OS\nExiting!"
     exit -1
 fi
 
@@ -48,8 +48,11 @@ MHN_HOME=`pwd`
 $VIRTUALENV  -p $PYTHON env
 . env/bin/activate
 
-#fixme
 pip install -r server/requirements.txt
+if [ -f /etc/redhat-release ]; then
+    pip install pysqlite==2.8.1
+fi
+
 echo "DONE installing python virtualenv"
 
 mkdir -p /var/log/mhn &> /dev/null

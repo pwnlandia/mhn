@@ -27,7 +27,7 @@ elif [ -f /etc/redhat-release ]; then
     $PIP install supervisor
 
 else
-    echo "ERROR: Unknown OS\nExiting!"
+    echo -e "ERROR: Unknown OS\nExiting!"
     exit -1
 fi
 
