@@ -18,14 +18,11 @@ chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "dionaea"
 
-
 if [ -f /etc/redhat-release ]; then
-    yum -y install curl epel-release
     yum -y update
-    yum -y install python-setuptools python-pip
+    yum -y install wget curl epel-release python-setuptools python-pip
     easy_install supervisor
-    mkdir -p /etc/supervisor
-    mkdir -p /etc/supervisor/conf.d
+    mkdir -p /etc/supervisor /etc/supervisor/conf.d
     echo_supervisord_conf  > /etc/supervisord.conf
 
 cat >> /etc/supervisord.conf <<EOF
@@ -34,15 +31,30 @@ files = /etc/supervisor/conf.d/*.conf
 EOF
 
     supervisord -c /etc/supervisord.conf
+cat > /etc/yum.repos.d/docker.repo <<EOF
+[dockerrepo]
+name=Docker Repository
+baseurl=http://yum.dockerproject.org/repo/main/centos/6/
+enabled=1
+gpgcheck=0
+EOF
 
-    mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/
-    curl -sSL https://get.docker.com/ | sh
+    yum -y install docker-engine
     service docker start
+    mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log  /var/dionaea/bitstreams /var/dionaea/rtp /var/dionaea/bistreams
+    mkdir -p /etc/dionaea/
+
+    #fixme
+    chmod -R a+wrx /var/dionaea
     docker pull threatstream/dionaea-mhn
+
+    echo "Getting dionea from $server_url"
+    curl $server_url/static/dionaea.conf | sed -e "s/HPF_HOST/$HPF_HOST/" | sed -e "s/HPF_PORT/$HPF_PORT/" | sed -e "s/HPF_IDENT/$HPF_IDENT/" | sed -e "s/HPF_SECRET/$HPF_SECRET/" > /etc/dionaea/dionaea.conf
+
 
 cat > /etc/supervisor/conf.d/dionaea.conf <<EOF
 [program:dionaea]
-command=docker run --cap-add=NET_BIND_SERVICE --rm=true -p 21:21 -p 42:42 -p 8080:80 -p 135:135 -p 443:443 -p 445:445 -p 1433:1433 -p 3306:3306 -p 5061:5061 -p 5060:5060 -p 69:69/udp -p 5060:5060/udp -v /var/dionaea:/var/dionaea threatstream/dionaea-mhn:latest supervisord
+command=docker run --cap-add=NET_BIND_SERVICE --rm=true -p 21:21 -p 42:42 -p 8080:80 -p 135:135 -p 443:443 -p 445:445 -p 1433:1433 -p 3306:3306 -p 5061:5061 -p 5060:5060 -p 69:69/udp -p 5060:5060/udp -v /var/dionaea:/data/dionaea -v /etc/dionaea:/etc/dionaea threatstream/dionaea-mhn:latest supervisord
 directory=/var/dionaea
 stdout_logfile=/var/log/dionaea.out
 stderr_logfile=/var/log/dionaea.err
@@ -54,7 +66,6 @@ EOF
 
     supervisorctl update
     exit 0
-
 
 elif [ -f /etc/debian-release ]; then
     # Add ppa to apt sources (Needed for Dionaea).
@@ -518,7 +529,7 @@ cd /
 patch -p0 < /tmp/dionaea.hpfeeds.patch
 
 # Editing configuration for Dionaea.
-mkdir -p /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log
+mkdir -p /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/bitstreams
 chown -R nobody:nogroup /var/dionaea
 
 
