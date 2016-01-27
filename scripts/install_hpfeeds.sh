@@ -7,9 +7,9 @@ SCRIPTS=`dirname "$(readlink -f "$0")"`
 MHN_HOME=$SCRIPTS/..
 
 if [ -f /etc/debian_version ]; then
-    OS=Debian  # XXX or Ubuntu??
-    INSTALLER='apt-get'
-    REPOPACKAGES='libffi-dev build-essential python-pip python-dev git libssl-dev supervisor'
+    apt-get -y update
+    # this needs to be installed before calling "which pip", otherwise that command fails
+    apt-get -y install libffi-dev build-essential python-pip python-dev git libssl-dev supervisor
 
     PYTHON=`which python`
     PIP=`which pip`
@@ -17,13 +17,10 @@ if [ -f /etc/debian_version ]; then
     VIRTUALENV=`which virtualenv`
 
 elif [ -f /etc/redhat-release ]; then
-    OS=RHEL
-    INSTALLER='yum'
-    REPOPACKAGES='epel-release libffi-devel libssl-devel shadowsocks-libev-devel'
-
-    #yum install -y yum-utils
+    yum install -y yum-utils
     yum-config-manager --add-repo=https://copr.fedoraproject.org/coprs/librehat/shadowsocks/repo/epel-6/librehat-shadowsocks-epel-6.repo
     yum update -y
+    yum -y install epel-release libffi-devel libssl-devel shadowsocks-libev-devel
 
     if  [ ! -f /usr/local/bin/python2.7 ]; then
         $SCRIPTS/install_python2.7.sh
@@ -43,8 +40,6 @@ else
     exit -1
 fi
 
-$INSTALLER -y update
-$INSTALLER -y install $REPOPACKAGES
 ldconfig /usr/local/lib/
 
 
