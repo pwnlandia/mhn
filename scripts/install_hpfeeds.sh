@@ -47,7 +47,6 @@ $INSTALLER -y update
 $INSTALLER -y install $REPOPACKAGES
 ldconfig /usr/local/lib/
 
-
 bash install_mongo.sh
 
 $PIP install virtualenv
@@ -91,4 +90,5 @@ autorestart=true
 startsecs=10
 EOF
 
+ldconfig /usr/local/lib/
 supervisorctl update
