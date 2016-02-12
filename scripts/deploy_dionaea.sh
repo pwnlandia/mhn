@@ -67,7 +67,7 @@ EOF
     supervisorctl update
     exit 0
 
-elif [ -f /etc/debian-release ]; then
+elif [ -f /etc/debian_version ]; then
     # Add ppa to apt sources (Needed for Dionaea).
     apt-get update
     apt-get install -y python-software-properties
