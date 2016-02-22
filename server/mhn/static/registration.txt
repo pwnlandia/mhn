@@ -12,7 +12,19 @@ deploy_key=$2
 honeypot=$3
 hostname=$(hostname)
 
-sudo apt-get install -y curl
+if [ -f /etc/debian_version ]; then
+    OS=Debian  # XXX or Ubuntu??
+    sudo apt-get install -y curl
+
+elif [ -f /etc/redhat-release ]; then
+    OS=RHEL
+    sudo yum -y install curl
+
+else
+    echo -e "ERROR: Unknown OS\nExiting!"
+    exit -1
+fi
+
 
 curl -s -X POST -H "Content-Type: application/json" -d "{
 	\"name\": \"${hostname}-${honeypot}\", 

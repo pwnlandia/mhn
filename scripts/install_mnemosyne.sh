@@ -3,9 +3,41 @@
 set -e
 set -x
 
-apt-get update
-apt-get install -y git python-pip python-dev
-pip install virtualenv
+SCRIPTS=`dirname "$(readlink -f "$0")"`
+MHN_HOME=$SCRIPTS/..
+
+if [ -f /etc/debian_version ]; then
+    OS=Debian  # XXX or Ubuntu??
+
+    apt-get update
+    apt-get install -y git python-pip python-dev supervisor
+    pip install virtualenv
+
+    INSTALLER='apt-get'
+    REPOPACKAGES=''
+
+    PYTHON=`which python`
+    PIP=`which pip`
+    $PIP install virtualenv
+    VIRTUALENV=`which virtualenv`
+
+elif [ -f /etc/redhat-release ]; then
+    OS=RHEL
+
+    if  [ ! -f /usr/local/bin/python2.7 ]; then
+        $SCRIPTDIR/install_python2.7.sh
+    fi
+
+    #use python2.7
+    PYTHON=/usr/local/bin/python2.7
+    PIP=/usr/local/bin/pip2.7
+    VIRTUALENV=/usr/local/bin/virtualenv
+
+else
+    echo -e "ERROR: Unknown OS\nExiting!"
+    exit -1
+fi
+
 
 echo "==========================================================="
 echo "  Mnemosyne Configuration"
@@ -30,16 +62,16 @@ do
         echo "Using default configuration:"
         echo "    MongoDB Host: localhost"
         echo "    MongoDB Port: 27017"
-        SCRIPTS=`dirname $0`
         bash $SCRIPTS/install_mongo.sh
         break
     fi
 done
 
+mkdir -p /opt
 cd /opt/
 git clone https://github.com/threatstream/mnemosyne.git
 cd mnemosyne
-virtualenv env
+$VIRTUALENV -p $PYTHON env
 . env/bin/activate
 pip install -r requirements.txt
 chmod 755 -R .
@@ -82,8 +114,6 @@ deactivate
 python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "" "$CHANNELS"
 
 mkdir -p /var/log/mhn/
-
-apt-get install -y supervisor
 
 cat >> /etc/supervisor/conf.d/mnemosyne.conf <<EOF 
 [program:mnemosyne]

@@ -23,12 +23,21 @@ It also allows systems administrators to:
 - Manage snort rules: enable, disable, download
 
 
-### INSTALLING SERVER (tested Ubuntu 12.0.4.3 x86_64)
+### INSTALLING SERVER (tested Ubuntu 12.0.4.3 x86_64 and Centos 6.7)
 
 Note: if you run into trouble during the install, please checkout the [troubleshooting guide](https://github.com/threatstream/MHN/wiki/MHN-Troubleshooting-Guide) on the wiki.  If you only want to experiment with MHN on some virtual machines, please check out the [Getting up and Running with Vagrant](https://github.com/threatstream/mhn/wiki/Getting-up-and-running-using-Vagrant) guide on the wiki.
+
+Install Git
+
+    # on Debian or Ubuntu
+    $ sudo apt-get install git -y
+    
+    # on Centos or RHEL
+    $ sudo yum install -y git
+
+Install MHN
     
     $ cd /opt/
-    $ sudo apt-get install git -y
     $ sudo git clone https://github.com/threatstream/mhn.git
     $ cd mhn/
 

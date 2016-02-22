@@ -19,3 +19,5 @@ hpfeeds-threatstream==1.0
 pygal==1.7.0
 hpfeeds-logger==0.0.5a
 GeoIP==1.3.2
+pysqlite>=2.8.0
+

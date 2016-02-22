@@ -1,5 +1,5 @@
 import hashlib
-from datetime import datetime
+import random
 
 from flask import Blueprint, request, jsonify
 from flask.ext.mail import Message
@@ -95,7 +95,7 @@ def reset_passwd_request():
     user = User.query.filter_by(email=email).first()
     if not user:
         return error_response(errors.AUTH_NOT_FOUND.format(email), 404)
-    hashstr = hashlib.sha1(str(datetime.utcnow()) + user.email).hexdigest()
+    hashstr = hashlib.sha1(str(random.getrandbits(128)) + user.email).hexdigest()
     # Deactivate all other password resets for this user.
     PasswdReset.query.filter_by(user=user).update({'active': False})
     reset = PasswdReset(hashstr=hashstr, active=True, user=user)
