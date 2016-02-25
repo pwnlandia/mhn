@@ -86,8 +86,8 @@ host = 0.0.0.0
 port = 8181
 
 [mongodb]
-host = $MONGO_HOST
-port = $MONGO_PORT
+mongod_host = $MONGO_HOST
+mongod_port = $MONGO_PORT
 database = mnemosyne
 
 [hpfriends]
