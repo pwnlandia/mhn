@@ -19,6 +19,7 @@ chmod 755 registration.sh
 . ./registration.sh $server_url $deploy_key "dionaea"
 
 if [ -f /etc/redhat-release ]; then
+    export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
     yum -y update
     yum -y install wget curl epel-release python-setuptools python-pip
     easy_install supervisor

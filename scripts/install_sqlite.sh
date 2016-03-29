@@ -13,6 +13,7 @@ if [ -f /etc/debian_version ]; then
 
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL
+    export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
     yum -y update
     yum -y install epel-release wget
     yum -y groupinstall "Development tools"

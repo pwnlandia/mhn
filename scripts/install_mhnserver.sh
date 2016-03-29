@@ -17,6 +17,7 @@ if [ -f /etc/debian_version ]; then
 
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL
+    export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
     INSTALLER='yum'
     REPOPACKAGES='epel-release git GeoIP-devel wget redis nginx'
 

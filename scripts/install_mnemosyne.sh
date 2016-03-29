@@ -23,7 +23,7 @@ if [ -f /etc/debian_version ]; then
 
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL
-
+    export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
     if  [ ! -f /usr/local/bin/python2.7 ]; then
         $SCRIPTDIR/install_python2.7.sh
     fi
