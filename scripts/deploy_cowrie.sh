@@ -61,7 +61,7 @@ chmod 770 /etc/authbind/byport/22
 cp start.sh start.sh.backup
 
 sed -i 's/AUTHBIND_ENABLED=no/AUTHBIND_ENABLED=yes/g' start.sh
-
+sed -i 's/authbind --deep twistd -l/authbind --deep twistd -n -l/g' start.sh
 chmod 775 start.sh
 
 # Config for supervisor
