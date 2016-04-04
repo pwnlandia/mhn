@@ -67,7 +67,7 @@ chmod 775 start.sh
 # Config for supervisor
 cat > /etc/supervisor/conf.d/cowrie.conf <<EOF
 [program:cowrie]
-command=su cowrie -c "bash /opt/cowrie/start.sh"
+command=su cowrie -c "sh /opt/cowrie/start.sh"
 directory=/opt/cowrie
 stdout_logfile=/opt/cowrie/log/cowrie.out
 stderr_logfile=/opt/cowrie/log/cowrie.err
