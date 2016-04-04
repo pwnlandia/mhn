@@ -58,7 +58,7 @@ ldconfig /usr/local/lib/
 mkdir -p /opt
 cd /opt
 rm -rf /opt/hpfeeds
-git clone https://github.com/threatstream/hpfeeds
+git clone https://github.com/Antelox/hpfeeds
 chmod 755 -R hpfeeds
 cd hpfeeds
 $VIRTUALENV -p $PYTHON env
