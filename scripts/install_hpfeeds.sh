@@ -17,6 +17,7 @@ if [ -f /etc/debian_version ]; then
     VIRTUALENV=`which virtualenv`
 
 elif [ -f /etc/redhat-release ]; then
+    export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
     yum install -y yum-utils
     yum-config-manager --add-repo=https://copr.fedoraproject.org/coprs/librehat/shadowsocks/repo/epel-6/librehat-shadowsocks-epel-6.repo
     yum update -y

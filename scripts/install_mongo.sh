@@ -11,6 +11,7 @@ if [ -f /etc/debian_version ]; then
 
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL
+    export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
 
 cat >> /etc/yum.repos.d/mongodb.repo <<EOF
 [mongodb-org]
