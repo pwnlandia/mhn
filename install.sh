@@ -85,4 +85,7 @@ do
     fi
 done
 
+chown www-data /var/log/mhn/mhn.log
+supervisorctl restart mhn-celery-worker
+
 echo "[`date`] Completed Installation of all MHN packages"
