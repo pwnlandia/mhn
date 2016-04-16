@@ -35,8 +35,6 @@ cp cowrie.cfg.dist cowrie.cfg
 
 sed -i 's/hostname = svr04/hostname = server/g' cowrie.cfg
 
-sed -i 's/#report_public_ip = true/report_public_ip = true/g' cowrie.cfg
-
 sed -i 's/#listen_port = 2222/listen_port = 22/g' cowrie.cfg
 
 sed -i 's/ssh_version_string = SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u2/ssh_version_string = SSH-2.0-OpenSSH_6.7p1 Ubuntu-5ubuntu1.3/g' cowrie.cfg
