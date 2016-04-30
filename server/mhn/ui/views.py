@@ -192,45 +192,50 @@ def reset_passwd():
     return render_template('ui/reset-request.html')
 
 
+def get_credentials_payloads(clio):
+    credentials_payloads = []
+    credentials_payloads += clio.hpfeed.get_payloads({'limit':10000},{"channel":"kippo.sessions"})[2]
+    credentials_payloads += clio.hpfeed.get_payloads({'limit':10000},{"channel":"cowrie.sessions"})[2]
+    return credentials_payloads
 
-@app.route('/image/top_cowrie_passwords.svg')
+@app.route('/image/top_passwords.svg')
 @login_required
-def graph_cowrie_passwords():
+def graph_passwords():
     clio=Clio()
     
     bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Cowrie Top Passwords"
+    bar_chart.title = "Kippo/Cowrie Top Passwords"
     clio=Clio()
-    top_passwords =clio.hpfeed.count_passwords(clio.hpfeed.get_payloads({'limit':10000},{"channel":"cowrie.sessions"})[2])
+    top_passwords = clio.hpfeed.count_passwords(get_credentials_payloads(clio))
     for password in top_passwords:
         bar_chart.add(password[0],[{'label':str(password[0]),'xlink':'','value':password[1]}])
 
     return bar_chart.render_response()
 
-@app.route('/image/top_cowrie_users.svg')
+@app.route('/image/top_users.svg')
 @login_required
-def graph_cowrie_users():
+def graph_users():
     clio=Clio()
     
     bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Cowrie Top Users"
+    bar_chart.title = "Kippo/Cowrie Top Users"
     clio=Clio()
-    top_users =clio.hpfeed.count_users(clio.hpfeed.get_payloads({'limit':10000},{"channel":"cowrie.sessions"})[2])
+    top_users =clio.hpfeed.count_users(get_credentials_payloads(clio))
     for user in top_users:
         bar_chart.add(user[0],[{'label':str(user[0]),'xlink':'','value':user[1]}])
 
     return bar_chart.render_response()
 
 
-@app.route('/image/top_cowrie_combos.svg')
+@app.route('/image/top_combos.svg')
 @login_required
-def graph_cowrie_combos():
+def graph_combos():
     clio=Clio()
     
     bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Cowrie Top User/Passwords"
+    bar_chart.title = "Kippo/Cowrie Top User/Passwords"
     clio=Clio()
-    top_combos =clio.hpfeed.count_combos(clio.hpfeed.get_payloads({'limit':10000},{"channel":"cowrie.sessions"})[2])
+    top_combos =clio.hpfeed.count_combos(get_credentials_payloads(clio))
     for combo in top_combos:
         bar_chart.add(combo[0],[{'label':str(combo[0]),'xlink':'','value':combo[1]}])
 
@@ -239,71 +244,9 @@ def graph_cowrie_combos():
 
 
 
-@app.route('/image/top_cowrie_sessions.svg')
+@app.route('/image/top_sessions.svg')
 @login_required
-def graph_cowrie_top_attackers():
-    clio=Clio()
-    
-    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Cowrie Top Attackers"
-    clio=Clio()
-    top_attackers =clio.session._tops('source_ip',10,honeypot='cowrie')
-    print top_attackers    
-    for attacker in top_attackers:
-        bar_chart.add(str(attacker['source_ip']),int(attacker['count']))
-
-    return bar_chart.render_response()
-
-
-@app.route('/image/top_kippo_passwords.svg')
-@login_required
-def graph_kippo_passwords():
-    clio=Clio()
-    
-    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Kippo Top Passwords"
-    clio=Clio()
-    top_passwords =clio.hpfeed.count_passwords(clio.hpfeed.get_payloads({'limit':10000},{"channel":"kippo.sessions"})[2])
-    for password in top_passwords:
-        bar_chart.add(password[0],[{'label':str(password[0]),'xlink':'','value':password[1]}])
-
-    return bar_chart.render_response()
-
-@app.route('/image/top_kippo_users.svg')
-@login_required
-def graph_kippo_users():
-    clio=Clio()
-    
-    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Kippo Top Users"
-    clio=Clio()
-    top_users =clio.hpfeed.count_users(clio.hpfeed.get_payloads({'limit':10000},{"channel":"kippo.sessions"})[2])
-    for user in top_users:
-        bar_chart.add(user[0],[{'label':str(user[0]),'xlink':'','value':user[1]}])
-
-    return bar_chart.render_response()
-
-
-@app.route('/image/top_kippo_combos.svg')
-@login_required
-def graph_kippo_combos():
-    clio=Clio()
-    
-    bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Kippo Top User/Passwords"
-    clio=Clio()
-    top_combos =clio.hpfeed.count_combos(clio.hpfeed.get_payloads({'limit':10000},{"channel":"kippo.sessions"})[2])
-    for combo in top_combos:
-        bar_chart.add(combo[0],[{'label':str(combo[0]),'xlink':'','value':combo[1]}])
-
-    return bar_chart.render_response()
-
-
-
-
-@app.route('/image/top_kippo_sessions.svg')
-@login_required
-def graph_kippo_top_attackers():
+def graph_top_attackers():
     clio=Clio()
     
     bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
@@ -315,6 +258,7 @@ def graph_kippo_top_attackers():
         bar_chart.add(str(attacker['source_ip']),int(attacker['count']))
 
     return bar_chart.render_response()
+
 
 
 @ui.route('/chart')
