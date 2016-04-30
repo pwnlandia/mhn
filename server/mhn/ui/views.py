@@ -242,7 +242,16 @@ def graph_combos():
     return bar_chart.render_response()
 
 
+def top_kippo_cowrie_attackers(clio):
+    top_attackers = []
+    top_attackers += clio.session._tops('source_ip', 10, honeypot='kippo')
+    top_attackers += clio.session._tops('source_ip', 10, honeypot='cowrie')
 
+    import collections
+    grouped = collections.Counter()
+    for attacker in top_attackers:
+        grouped[attacker['source_ip']] += int(attacker['count'])
+    return [{'source_ip': ip, 'count': count} for ip, count in sorted(grouped.items(), key=lambda x: x[1], reverse=True)]
 
 @app.route('/image/top_sessions.svg')
 @login_required
@@ -252,10 +261,10 @@ def graph_top_attackers():
     bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
     bar_chart.title = "Kippo Top Attackers"
     clio=Clio()
-    top_attackers =clio.session._tops('source_ip',10,honeypot='kippo')
+    top_attackers = top_kippo_cowrie_attackers(clio)
     print top_attackers    
     for attacker in top_attackers:
-        bar_chart.add(str(attacker['source_ip']),int(attacker['count']))
+        bar_chart.add(str(attacker['source_ip']), attacker['count'])
 
     return bar_chart.render_response()
 
