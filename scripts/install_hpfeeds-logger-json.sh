@@ -21,7 +21,7 @@ fi
 
 IDENT=hpfeeds-logger-json
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
-CHANNELS='amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,suricata.events,wordpot.events,shockpot.events,p0f.events,elastichoney.events'
+CHANNELS='amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,cowrie.sessions,conpot.events,snort.alerts,suricata.events,wordpot.events,shockpot.events,p0f.events,elastichoney.events'
 
 cat > /opt/hpfeeds-logger/json.json <<EOF
 {
@@ -36,6 +36,7 @@ cat > /opt/hpfeeds-logger/json.json <<EOF
         "glastopf.events",
         "beeswarm.hive",
         "kippo.sessions",
+        "cowrie.sessions",
         "conpot.events",
         "snort.alerts",
         "suricata.events",
