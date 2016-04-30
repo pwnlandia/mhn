@@ -259,7 +259,7 @@ def graph_top_attackers():
     clio=Clio()
     
     bar_chart = pygal.Bar(style=LightColorizedStyle,show_x_labels=True, config=PYGAL_CONFIG)
-    bar_chart.title = "Kippo Top Attackers"
+    bar_chart.title = "Kippo/Cowrie Top Attackers"
     clio=Clio()
     top_attackers = top_kippo_cowrie_attackers(clio)
     print top_attackers    
