@@ -21,6 +21,10 @@ chmod 755 registration.sh
 apt-get update
 apt-get -y install python-twisted python-crypto python-pyasn1 python-gmpy2 python-zope.interface python-dev openssl python-openssl git python-pip supervisor authbind
 
+# Change real SSH Port to 2222
+sed -i 's/Port 22$/Port 2222/g' /etc/ssh/sshd_config
+service ssh restart
+
 # Create non-root cowrie user
 useradd -d /home/cowrie -s /bin/bash -m cowrie -g users
 
@@ -35,7 +39,7 @@ cp cowrie.cfg.dist cowrie.cfg
 
 sed -i 's/hostname = svr04/hostname = server/g' cowrie.cfg
 
-sed -i 's/#listen_port = 2222/listen_port = 22/g' cowrie.cfg
+sed -i 's/#listen_port = 2222/listenPort = 22/g' cowrie.cfg
 
 sed -i 's/ssh_version_string = SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u2/ssh_version_string = SSH-2.0-OpenSSH_6.7p1 Ubuntu-5ubuntu1.3/g' cowrie.cfg
 
