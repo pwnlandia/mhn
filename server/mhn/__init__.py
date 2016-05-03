@@ -154,7 +154,8 @@ def create_clean_db():
             'Ubuntu - Kippo as vulnerable Juniper Netscreen': path.abspath('../scripts/deploy_kippo_as_juniper.sh'),
             'Ubuntu - Shockpot Sinkhole': path.abspath('../scripts/deploy_shockpot_sinkhole.sh'),
             'Redhat/Centos - Kippo': path.abspath('../scripts/deploy_kippo-centos.sh'),
-        }
+	    'Ubuntu - Beeswax':  path.abspath('../scripts/deploy_beeswax.sh'),	        
+	}
         for honeypot, deploypath in deployscripts.iteritems():
 
             with open(deploypath, 'r') as deployfile:
