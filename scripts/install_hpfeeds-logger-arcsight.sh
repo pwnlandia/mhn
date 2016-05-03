@@ -14,14 +14,14 @@ then
     cd /opt/
     virtualenv hpfeeds-logger
     . hpfeeds-logger/bin/activate
-    pip install hpfeeds-logger==0.0.7.1
+    pip install hpfeeds-logger==0.0.7.2
 else
     echo "It looks like hpfeeds-logger is already installed. Moving on to configuration."
 fi
 
 IDENT=hpfeeds-logger-arcsight
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
-CHANNELS='amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,conpot.events,snort.alerts,suricata.events,wordpot.events,shockpot.events,p0f.events,elastichoney.events'
+CHANNELS='amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,cowrie.sessions,conpot.events,snort.alerts,suricata.events,wordpot.events,shockpot.events,p0f.events,elastichoney.events'
 
 cat > /opt/hpfeeds-logger/arcsight.json <<EOF
 {
@@ -36,6 +36,7 @@ cat > /opt/hpfeeds-logger/arcsight.json <<EOF
         "glastopf.events",
         "beeswarm.hive",
         "kippo.sessions",
+        "cowrie.sessions",
         "conpot.events",
         "snort.alerts",
         "suricata.events",

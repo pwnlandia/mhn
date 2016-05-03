@@ -387,6 +387,52 @@ cat > /opt/logstash/mhn-template.json <<EOF
         "vendor_product": {
           "type": "string",
           "index": "not_analyzed"
+        },
+        "src_ip_geo.city_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_ip_geo.region_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_ip_geo.timezone": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_ip_geo.country_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_ip_geo"  : {
+          "type" : "object",
+          "dynamic": true,
+          "properties" : {
+            "location" : { "type" : "geo_point" }
+          }
+        },
+        "dst_ip_geo.city_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dst_ip_geo.region_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dst_ip_geo.timezone": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dst_ip_geo.country_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "dst_ip_geo"  : {
+          "type" : "object",
+          "dynamic": true,
+          "properties" : {
+            "location" : { "type" : "geo_point" }
+          }
         }
       }
     }

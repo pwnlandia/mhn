@@ -13,6 +13,7 @@ SCRIPTS="$MHN_HOME/scripts/"
 cd $SCRIPTS
 
 if [ -f /etc/redhat-release ]; then
+    export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
     ./install_sqlite.sh
 
     if [ ! -f /usr/local/bin/python2.7 ]; then
@@ -83,5 +84,8 @@ do
         break
     fi
 done
+
+chown www-data /var/log/mhn/mhn.log
+supervisorctl restart mhn-celery-worker
 
 echo "[`date`] Completed Installation of all MHN packages"
