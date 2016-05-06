@@ -68,6 +68,7 @@ HONEYPOT_CHANNELS = {
     'conpot': ['conpot.events'],
     'snort': ['snort.alerts'],
     'kippo': ['kippo.sessions'],
+    'cowrie': ['cowrie.sessions'],
     'thug': ['thug.files', 'thug.events'],
     'glastopf': ['glastopf.files', 'glastopf.events'],
     'amun': ['amun.events'],
