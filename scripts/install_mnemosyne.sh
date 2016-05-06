@@ -67,6 +67,31 @@ do
     fi
 done
 
+while true;
+do
+    echo -n "Would you like to use authentication for mongodb? (y/n) "
+    read MONGO_AUTH
+    if [ "$MONGO_AUTH" == "y" -o "$MONGO_AUTH" == "Y" ]
+    then
+        MONGO_AUTH='true'
+        echo -n "MongoDB user: "
+        read MONGO_USER
+        echo -n "MongoDB password: "
+        read MONGO_PASSWORD
+        echo -n "MongoDB authentication mechanism < SCRAM-SHA-1 | MONGODB-CR >:"
+        read MONGO_AUTH_MECHANISM
+        echo "The mongo will use credentials $MONGO_HOST:$MONGO_PORT and authentication mechanism $MONGO_AUTH_MECHANISM"
+        break
+    elif [ "$MONGO_AUTH" == "n" -o "$MONGO_AUTH" == "N" ]
+    then
+        MONGO_AUTH='false'
+        MONGO_USER='null'
+        MONGO_PASSWORD='null'
+        MONGO_AUTH_MECHANISM='null'
+        break
+    fi
+done
+
 mkdir -p /opt
 cd /opt/
 git clone https://github.com/threatstream/mnemosyne.git
@@ -89,6 +114,10 @@ port = 8181
 mongod_host = $MONGO_HOST
 mongod_port = $MONGO_PORT
 database = mnemosyne
+mongo_auth = $MONGO_AUTH
+mongo_user = $MONGO_USER
+mongo_password = $MONGO_PASSWORD
+mongo_auth_mechanism = $MONGO_AUTH_MECHANISM
 
 [hpfriends]
 host = localhost

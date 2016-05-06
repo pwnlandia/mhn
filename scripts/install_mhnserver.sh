@@ -174,13 +174,42 @@ do
     fi
 done
 
+while true;
+do
+    echo -n "Would you like to use authentication for mongodb? (y/n) "
+    read MONGO_AUTH
+    if [ "$MONGO_AUTH" == "y" -o "$MONGO_AUTH" == "Y" ]
+    then
+        MONGO_AUTH='true'
+        echo -n "MongoDB user: "
+        read MONGO_USER
+        echo -n "MongoDB password: "
+        read MONGO_PASSWORD
+        echo -n "MongoDB authentication mechanism < SCRAM-SHA-1 | MONGODB-CR >:"
+        read MONGO_AUTH_MECHANISM
+        echo "The mongo will use credentials $MONGO_HOST:$MONGO_PORT and authentication mechanism $MONGO_AUTH_MECHANISM"
+        break
+    elif [ "$MONGO_AUTH" == "n" -o "$MONGO_AUTH" == "N" ]
+    then
+        MONGO_AUTH='false'
+        MONGO_USER='null'
+        MONGO_PASSWORD='null'
+        MONGO_AUTH_MECHANISM='null'
+        break
+    fi
+done
+
 cat > $MHN_HOME/server/collector.json <<EOF
 {
   "IDENT": "collector",
   "SECRET": "$SECRET",
   "MHN_UUID": "$MHN_UUID",
   "MONGO_HOST": "$MONGO_HOST",
-  "MONGO_PORT": $MONGO_PORT
+  "MONGO_PORT": $MONGO_PORT,
+  "MONGO_AUTH": $MONGO_AUTH,
+  "MONGO_USER": "$MONGO_USER",
+  "MONGO_PASSWORD": "$MONGO_PASSWORD",
+  "MONGO_AUTH_MECHANISM": "$MONGO_AUTH_MECHANISM"
 }
 EOF
 

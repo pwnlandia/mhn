@@ -68,11 +68,11 @@ class Sensor(db.Model, APIModel):
 
     @property
     def attacks_count(self):
-        return Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).counts.get_count(identifier=self.uuid)
+        return Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).counts.get_count(identifier=self.uuid)
 
     @property
     def authkey(self):
-        return Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).authkey.get(identifier=self.uuid)
+        return Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).authkey.get(identifier=self.uuid)
 
     @staticmethod
     def get_channels(honeypot):

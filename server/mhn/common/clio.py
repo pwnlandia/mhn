@@ -23,44 +23,48 @@ class Clio():
 
     """
 
-    def __init__(self, mongo_host, mongo_port):
+    def __init__(self, mongo_host, mongo_port, mongo_auth, mongo_user, mongo_password, mongo_auth_mechanism):
         self.client = pymongo.MongoClient(host=mongo_host, port=mongo_port)
+        self.mongo_auth = mongo_auth
+        self.mongo_user = mongo_user
+        self.mongo_password = mongo_password
+        self.mongo_auth_mechanism = mongo_auth_mechanism
 
     @property
     def session(self):
-        return Session(self.client)
+        return Session(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
 
     @property
     def counts(self):
-        return Counts(self.client)
+        return Counts(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
 
     @property
     def session_protocol(self):
-        return SessionProtocol(self.client)
+        return SessionProtocol(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
 
     @property
     def hpfeed(self):
-        return HpFeed(self.client)
+        return HpFeed(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
 
     @property
     def authkey(self):
-        return AuthKey(self.client)
+        return AuthKey(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
 
     @property
     def url(self):
-        return Url(self.client)
+        return Url(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
 
     @property
     def file(self):
-        return File(self.client)
+        return File(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
 
     @property
     def dork(self):
-        return Dork(self.client)
+        return Dork(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
 
     @property
     def metadata(self):
-        return Metadata(self.client)
+        return Metadata(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
 
 
 class ResourceMixin(object):
@@ -68,8 +72,12 @@ class ResourceMixin(object):
     db_name = 'mnemosyne'
     expected_filters = ('_id',)
 
-    def __init__(self, client=None, **kwargs):
+    def __init__(self, client=None, mongo_auth, mongo_user, mongo_password, mongo_auth_mechanism, **kwargs):
         self.client = client
+        self.mongo_auth = mongo_auth
+        self.mongo_user = mongo_user
+        self.mongo_password = mongo_password
+        self.mongo_auth_mechanism = mongo_auth_mechanism
         for attr in self.__class__.expected_filters:
             setattr(self, attr, kwargs.get(attr))
 
@@ -183,6 +191,8 @@ class ResourceMixin(object):
     def collection(self):
         """Shortcut for getting the appropriate collection object"""
         cls = self.__class__
+        if self.mongo_auth:
+            self.client[cls.db_name].authenticate(self.mongo_user, self.mongo_password, mechanism=self.mongo_auth_mechanism)
         return self.client[cls.db_name][cls.collection_name]
 
     @classmethod

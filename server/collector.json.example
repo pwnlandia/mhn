@@ -5,5 +5,9 @@
   "IDENT": "honeymap",
   "SECRET": "36e4a5dcc8454e23bfbbe3efc5078383",
   "MONGO_HOST": "localhost",
-  "MONGO_PORT": 27017
+  "MONGO_PORT": 27017,
+  "MONGO_AUTH": False,
+  "MONGO_USER": None,
+  "MONGO_PASSWORD": None,
+  "MONGO_AUTH_MECHANISM": None
 }

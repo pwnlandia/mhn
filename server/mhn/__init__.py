@@ -96,7 +96,7 @@ def get_feed():
         abort(404)
     feed = AtomFeed('MHN HpFeeds Report', feed_url=request.url,
                     url=request.url_root)
-    sessions = Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT']).session.get(options={'limit': 1000})
+    sessions = Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).session.get(options={'limit': 1000})
     for s in sessions:
         feedtext = u'Sensor "{identifier}" '
         feedtext += '{source_ip}:{source_port} on sensorip:{destination_port}.'
