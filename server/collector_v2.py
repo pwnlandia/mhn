@@ -42,7 +42,7 @@ def ensure_user_permissions(ident, secret, publish, subscribe, mongo_host, mongo
     if mongo_auth:
         auth_res = client.hpfeeds.authenticate(mongo_user, mongo_password, mechanism=mongo_auth_mechanism)
     res = client.hpfeeds.auth_key.update({"identifier": ident}, {"$set": rec}, upsert=True)
-    client.fsync()
+#    client.fsync()
     client.close()
 
 def hpfeeds_connect(host, port, ident, secret):

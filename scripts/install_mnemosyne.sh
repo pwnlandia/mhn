@@ -114,10 +114,10 @@ port = 8181
 mongod_host = $MONGO_HOST
 mongod_port = $MONGO_PORT
 database = mnemosyne
-mongo_auth = $MONGO_AUTH
-mongo_user = $MONGO_USER
-mongo_password = $MONGO_PASSWORD
-mongo_auth_mechanism = $MONGO_AUTH_MECHANISM
+mongod_auth = $MONGO_AUTH
+mongod_user = $MONGO_USER
+mongod_password = $MONGO_PASSWORD
+mongod_auth_mechanism = $MONGO_AUTH_MECHANISM
 
 [hpfriends]
 host = localhost

@@ -514,7 +514,7 @@ class AuthKey(ResourceMixin):
         objectid = self.collection.insert(dict(
                 identifier=self.identifier, secret=self.secret,
                 publish=self.publish, subscribe=self.subscribe))
-        self.client.fsync()
+#        self.client.fsync()
         return objectid
 
     def put(self, **kwargs):
