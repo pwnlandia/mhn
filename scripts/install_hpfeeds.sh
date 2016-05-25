@@ -43,7 +43,7 @@ fi
 
 ldconfig /usr/local/lib/
 
-bash install_mongo.sh
+#bash install_mongo.sh
 
 $PIP install virtualenv
 
