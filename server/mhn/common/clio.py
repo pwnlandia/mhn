@@ -32,39 +32,39 @@ class Clio():
 
     @property
     def session(self):
-        return Session(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
+        return Session(self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism, self.client)
 
     @property
     def counts(self):
-        return Counts(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
+        return Counts(self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism, self.client)
 
     @property
     def session_protocol(self):
-        return SessionProtocol(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
+        return SessionProtocol(self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism, self.client)
 
     @property
     def hpfeed(self):
-        return HpFeed(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
+        return HpFeed(self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism, self.client)
 
     @property
     def authkey(self):
-        return AuthKey(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
+        return AuthKey(self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism, self.client)
 
     @property
     def url(self):
-        return Url(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
+        return Url(self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism, self.client)
 
     @property
     def file(self):
-        return File(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
+        return File(self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism, self.client)
 
     @property
     def dork(self):
-        return Dork(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
+        return Dork(self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism, self.client)
 
     @property
     def metadata(self):
-        return Metadata(self.client, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism)
+        return Metadata(self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism, self.client)
 
 
 class ResourceMixin(object):
@@ -72,7 +72,7 @@ class ResourceMixin(object):
     db_name = 'mnemosyne'
     expected_filters = ('_id',)
 
-    def __init__(self, client=None, mongo_auth, mongo_user, mongo_password, mongo_auth_mechanism, **kwargs):
+    def __init__(self, mongo_auth, mongo_user, mongo_password, mongo_auth_mechanism, client=None, **kwargs):
         self.client = client
         self.mongo_auth = mongo_auth
         self.mongo_user = mongo_user
