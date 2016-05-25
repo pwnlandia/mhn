@@ -127,6 +127,13 @@ do
     fi
 done
 
+if [ "$MONGO_AUTH" == "true" ]
+then
+    MONGO_USER="\"$MONGO_USER\""
+    MONGO_PASSWORD="\"$MONGO_PASSWORD\""
+    MONGO_AUTH_MECHANISM="\"$MONGO_AUTH_MECHANISM\""
+fi
+
 cat > /opt/hpfeeds/broker/conf.json <<EOF
 {
   "MONGO_HOST": "$MONGO_HOST",
