@@ -16,7 +16,6 @@ from mhn.api.models import (
         DeployScript, RuleSource)
 from mhn.api.decorators import deploy_auth, sensor_auth, token_auth
 from mhn.common.utils import error_response
-from mhn.common.clio import Clio
 from mhn.auth import current_user, login_required
 
 
@@ -28,6 +27,7 @@ api = Blueprint('api', __name__, url_prefix='/api')
 @csrf.exempt
 @deploy_auth
 def create_sensor():
+    from mhn import new_clio_connection
     missing = Sensor.check_required(request.json)
     if missing:
         return error_response(
@@ -36,7 +36,7 @@ def create_sensor():
         sensor = Sensor(**request.json)
         sensor.uuid = str(uuid1())
         sensor.ip = request.remote_addr
-        Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).authkey.new(**sensor.new_auth_dict()).post()
+        new_clio_connection().authkey.new(**sensor.new_auth_dict()).post()
         try:
             db.session.add(sensor)
             db.session.commit()
@@ -81,8 +81,9 @@ def update_sensor(uuid):
 @api.route('/sensor/<uuid>/', methods=['DELETE'])
 @login_required
 def delete_sensor(uuid):
+    from mhn import new_clio_connection
     sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()
-    Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).authkey.delete(identifier=uuid)
+    new_clio_connection().authkey.delete(identifier=uuid)
     db.session.delete(sensor)
     db.session.commit()
     return jsonify({})
@@ -131,73 +132,86 @@ def _get_query_resource(resource, query):
 @api.route('/feed/<feed_id>/', methods=['GET'])
 @token_auth
 def get_feed(feed_id):
-    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).hpfeed, feed_id)
+    from mhn import new_clio_connection
+    return _get_one_resource(new_clio_connection().hpfeed, feed_id)
 
 
 @api.route('/session/<session_id>/', methods=['GET'])
 @token_auth
 def get_session(session_id):
-    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).session, session_id)
+    from mhn import new_clio_connection
+    return _get_one_resource(new_clio_connection().session, session_id)
 
 
 @api.route('/url/<url_id>/', methods=['GET'])
 @token_auth
 def get_url(url_id):
-    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).url, url_id)
+    from mhn import new_clio_connection
+    return _get_one_resource(new_clio_connection().url, url_id)
 
 
 @api.route('/file/<file_id>/', methods=['GET'])
 @token_auth
 def get_file(file_id):
-    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).file, file_id)
+    from mhn import new_clio_connection
+    return _get_one_resource(new_clio_connection().file, file_id)
 
 @api.route('/dork/<dork_id>/', methods=['GET'])
 @token_auth
 def get_dork(dork_id):
-    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).dork, dork_id)
+    from mhn import new_clio_connection
+    return _get_one_resource(new_clio_connection().dork, dork_id)
 
 @api.route('/metadata/<metadata_id>/', methods=['GET'])
 @token_auth
 def get_metadatum(metadata_id):
-    return _get_one_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).metadata, metadata_id)
+    from mhn import new_clio_connection
+    return _get_one_resource(new_clio_connection().metadata, metadata_id)
 
 
 @api.route('/feed/', methods=['GET'])
 @token_auth
 def get_feeds():
-    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).hpfeed, request.args.to_dict())
+    from mhn import new_clio_connection
+    return _get_query_resource(new_clio_connection().hpfeed, request.args.to_dict())
 
 
 @api.route('/session/', methods=['GET'])
 @token_auth
 def get_sessions():
-    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).session, request.args.to_dict())
+    from mhn import new_clio_connection
+    return _get_query_resource(new_clio_connection().session, request.args.to_dict())
 
 
 @api.route('/url/', methods=['GET'])
 @token_auth
 def get_urls():
-    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).url, request.args.to_dict())
+    from mhn import new_clio_connection
+    return _get_query_resource(new_clio_connection().url, request.args.to_dict())
 
 @api.route('/file/', methods=['GET'])
 @token_auth
 def get_files():
-    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).file, request.args.to_dict())
+    from mhn import new_clio_connection
+    return _get_query_resource(new_clio_connection().file, request.args.to_dict())
 
 @api.route('/dork/', methods=['GET'])
 @token_auth
 def get_dorks():
-    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).dork, request.args.to_dict())
+    from mhn import new_clio_connection
+    return _get_query_resource(new_clio_connection().dork, request.args.to_dict())
 
 @api.route('/metadata/', methods=['GET'])
 @token_auth
 def get_metadata():
-    return _get_query_resource(Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).metadata, request.args.to_dict())
+    from mhn import new_clio_connection
+    return _get_query_resource(new_clio_connection().metadata, request.args.to_dict())
 
 
 @api.route('/top_attackers/', methods=['GET'])
 @token_auth
 def top_attackers():
+    from mhn import new_clio_connection
     options = request.args.to_dict()
     limit = int(options.get('limit', '1000'))
     hours_ago = int(options.get('hours_ago', '4'))
@@ -210,7 +224,7 @@ def top_attackers():
     for name in options.keys():
         if name not in ('hours_ago', 'limit',):
             del options[name]
-    results = Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).session._tops(['source_ip', 'honeypot'], top=limit, hours_ago=hours_ago, **extra)
+    results = new_clio_connection().session._tops(['source_ip', 'honeypot'], top=limit, hours_ago=hours_ago, **extra)
     return jsonify(
         data=results,
         meta={
@@ -223,13 +237,14 @@ def top_attackers():
 @api.route('/attacker_stats/<ip>/', methods=['GET'])
 @token_auth
 def attacker_stats(ip):
+    from mhn import new_clio_connection
     options = request.args.to_dict()
     hours_ago = int(options.get('hours_ago', '720')) # 30 days
 
     for name in options.keys():
         if name not in ('hours_ago', 'limit',):
             del options[name]
-    results = Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).session.attacker_stats(ip, hours_ago=hours_ago)
+    results = new_clio_connection().session.attacker_stats(ip, hours_ago=hours_ago)
     return jsonify(
         data=results,
         meta={
@@ -281,6 +296,7 @@ def intel_feed():
     return jsonify(**results)
 
 def get_intel_feed():
+    from mhn import new_clio_connection
     options = request.args.to_dict()
     limit = int(options.get('limit', '1000'))
     hours_ago = int(options.get('hours_ago', '4'))
@@ -295,7 +311,7 @@ def get_intel_feed():
             del options[name]
 
     extra['ne__protocol'] = 'pcap'
-    results = Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).session._tops(['source_ip', 'honeypot', 'protocol', 'destination_port'], top=limit, hours_ago=hours_ago, **extra)
+    results = new_clio_connection().session._tops(['source_ip', 'honeypot', 'protocol', 'destination_port'], top=limit, hours_ago=hours_ago, **extra)
     results = [r for r in results if r['protocol'] != 'ftpdatalisten']
 
     cache = {}
@@ -303,7 +319,7 @@ def get_intel_feed():
         source_ip = r['source_ip']
         if source_ip not in cache:
             # TODO: may want to make one big query to mongo here...
-            cache[source_ip] = [m.to_dict() for m in Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).metadata.get(ip=r['source_ip'], honeypot='p0f')]
+            cache[source_ip] = [m.to_dict() for m in new_clio_connection().metadata.get(ip=r['source_ip'], honeypot='p0f')]
         r['meta'] = cache[source_ip]
 
     return {

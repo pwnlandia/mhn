@@ -7,7 +7,6 @@ from sqlalchemy import UniqueConstraint, func
 from mhn import db, mhn
 from mhn.api import APIModel
 from mhn.auth.models import User
-from mhn.common.clio import Clio
 
 
 class Sensor(db.Model, APIModel):
@@ -68,11 +67,13 @@ class Sensor(db.Model, APIModel):
 
     @property
     def attacks_count(self):
-        return Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).counts.get_count(identifier=self.uuid)
+        from mhn import new_clio_connection
+        return new_clio_connection().counts.get_count(identifier=self.uuid)
 
     @property
     def authkey(self):
-        return Clio(mhn.config['MONGO_HOST'],mhn.config['MONGO_PORT'],mhn.config['MONGO_AUTH'],mhn.config['MONGO_USER'],mhn.config['MONGO_PASSWORD'],mhn.config['MONGO_AUTH_MECHANISM']).authkey.get(identifier=self.uuid)
+        from mhn import new_clio_connection
+        return new_clio_connection().authkey.get(identifier=self.uuid)
 
     @staticmethod
     def get_channels(honeypot):

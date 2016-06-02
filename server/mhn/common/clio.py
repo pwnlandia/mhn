@@ -134,7 +134,7 @@ class ResourceMixin(object):
         return skip, limit, order_by
 
     def new(self, **kwargs):
-        return self.__class__.from_dict(kwargs, self.client)
+        return self.__class__.from_dict(kwargs, self.mongo_auth, self.mongo_user, self.mongo_password, self.mongo_auth_mechanism, self.client)
 
     def to_dict(self):
         todict = {}
@@ -196,7 +196,7 @@ class ResourceMixin(object):
         return self.client[cls.db_name][cls.collection_name]
 
     @classmethod
-    def from_dict(cls, dict_, client=None):
+    def from_dict(cls, dict_, mongo_auth=None, mongo_user=None, mongo_password=None, mongo_auth_mechanism=None, client=None):
         """
         Returns an object from a dictionary, most likely
         to come from pymongo results.
@@ -204,7 +204,7 @@ class ResourceMixin(object):
         if dict_ is None:
             # Invalid dict incoming.
             return None
-        doc = cls(client)
+        doc = cls(mongo_auth, mongo_user, mongo_password, mongo_auth_mechanism, client)
         attrs = dict_.keys()
         for at in attrs:
             # Set every key in dict_ as attribute in the object.
