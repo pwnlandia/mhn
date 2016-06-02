@@ -23,27 +23,17 @@ chmod 0755 registration.sh
 apt-get update
 
 # Install Prerequisites
-apt-get install -y python2.7 python-openssl python-gevent libevent-dev python2.7-dev build-essential make python-chardet python-requests python-sqlalchemy python-lxml python-beautifulsoup mongodb python-dev python-setuptools git php5 php5-dev liblapack-dev gfortran libmysqlclient-dev libxml2-dev libxslt-dev supervisor
-
-easy_install pip
-
-#pip uninstall --yes setuptools
-
-wget https://pypi.python.org/packages/source/d/distribute/distribute-0.6.35.tar.gz
-tar -xzvf distribute-0.6.35.tar.gz
-cd distribute-0.6.35
-python setup.py install
+apt-get install -y python2.7 python-openssl python-gevent libevent-dev python2.7-dev build-essential make python-chardet python-requests python-sqlalchemy python-lxml python-beautifulsoup mongodb python-pip python-dev python-setuptools g++ git php5 php5-dev liblapack-dev gfortran libmysqlclient-dev libxml2-dev libxslt-dev supervisor
 
 pip install -e git+https://github.com/threatstream/hpfeeds.git#egg=hpfeeds-dev
 
 # Install and configure the PHP sandbox
 cd /opt
-git clone git://github.com/glastopf/BFR.git
+git clone git://github.com/mushorg/BFR.git
 cd BFR
 phpize
 ./configure --enable-bfr
 make && make install
-
 
 # Updated php.ini to add bfr.so
 BFR_BUILD_OUTPUT=`find /usr/lib/php5/ -type f -name "bfr.so" | awk -F"/" '{print $5}'`
@@ -57,8 +47,12 @@ update-rc.d -f  apache2 remove
 pip install --upgrade greenlet
 
 # Install glastopf
-pip install glastopf
-mkdir -p $GLASTOPF_HOME
+pip install --upgrade pgen
+pip install --upgrade cython
+pip uninstall --yes setuptools
+git clone https://github.com/mushorg/glastopf.git $GLASTOPF_HOME
+cd $GLASTOPF_HOME
+python setup.py install
 
 # Add the modified glastopf.cfg
 cat > $GLASTOPF_HOME/glastopf.cfg <<EOF
@@ -68,6 +62,11 @@ port = 80
 uid = nobody
 gid = nogroup
 proxy_enabled = False
+
+[ssl]
+enabled = False
+certfile = 
+keyfile =
 
 #Generic logging for general monitoring
 [logging]
@@ -141,9 +140,27 @@ include_contact_info = False
 contact_name = ...
 contact_email = ...
 
+[logstash]
+enabled = False
+host = localhost
+port = 5659
+handler = AMQP/TCP/UDP 
+
 [misc]
 # set webserver banner
 banner = Apache/2.0.48
+
+[surface]
+#https://www.google.com/webmasters/
+google_meta =
+#http://www.bing.com/toolbox/webmaster
+bing_meta =
+
+[sensor]
+sensorid = None
+
+[profiler]
+enabled = False
 EOF
 
 # Set up supervisor

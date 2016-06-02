@@ -26,7 +26,7 @@ elif [ -f /etc/redhat-release ]; then
         make && make install
 
         #install pip
-        wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
+        wget https://bootstrap.pypa.io/ez_setup.py
         /usr/local/bin/python2.7 ./ez_setup.py install
         /usr/local/bin/easy_install-2.7 pip
 
