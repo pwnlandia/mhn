@@ -56,9 +56,9 @@ stopsignal=QUIT
 EOF
 
 # Quick check to see if on Ubuntu using systemd or init
-if [ -n `which service` ]; then
+if [ -n "`which service`" ]; then
     service supervisor start
-elif [ -n `which systemctl` ]; then
+elif [ -n "`which systemctl`" ]; then
     systemctl start supervisor
 fi
 
