@@ -44,7 +44,7 @@ make_configs() {
         wget $SERVER_URL/static/registration.txt -O registration.sh
         chmod 755 registration.sh
         # Note: this will export the HPF_* variables
-        . ./registration.sh $SERVER_URL $DEPLOY_KEY "beeswax"
+        ./registration.sh $SERVER_URL $DEPLOY_KEY "beeswax"
 
 	cat  > $INSTALL_PATH/$HONEYPOT_NAME/honeypot_config.json <<EOF
 {
