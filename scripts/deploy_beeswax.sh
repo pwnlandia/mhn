@@ -8,7 +8,7 @@ DEPLOY_KEY=$2
 
 export GOPATH=/opt/beeswax_gopath
 INSTALL_PATH=$GOPATH/src/github.com/iankronquist/
-HONEYPOT_NAME=senior-project-experiment
+HONEYPOT_NAME=beeswax
 
 
 install_dependencies() {
@@ -18,7 +18,7 @@ install_dependencies() {
 }
 
 install_project() {
-	if [[ ! -e $INSTALL_PATH ]]; then
+	if [ ! -e $INSTALL_PATH ] ; then
 		mkdir -p $INSTALL_PATH
 		git clone http://github.com/iankronquist/senior-project-experiment.git $INSTALL_PATH/$HONEYPOT_NAME
 	fi
@@ -44,22 +44,32 @@ make_configs() {
         wget $SERVER_URL/static/registration.txt -O registration.sh
         chmod 755 registration.sh
         # Note: this will export the HPF_* variables
-        . ./registration.sh $SERVER_URL $DEPLOY_KEY "beeswax"
+        ./registration.sh $SERVER_URL $DEPLOY_KEY "beeswax"
 
 	cat  > $INSTALL_PATH/$HONEYPOT_NAME/honeypot_config.json <<EOF
 {
   "monitor process name": "c_fs_monitor/znotify",
   "docker compose name": "docker-compose",
   "container names": ["mysql", "wordpress"],
-	"mhn host": $HPF_HOST,
+	"mhn host": "$HPF_HOST",
 	"mhn port": $HPF_PORT,
-	"mhn identifier": $HPF_IDENT,
-	"mhn authorization": $HPF_SECRET
+	"mhn identifier": "$HPF_IDENT",
+	"mhn authorization": "$HPF_SECRET"
 }
 EOF
-	cp $INSTALL_PATH/$HONEYPOT_NAME/beeswax_supervisor.conf /etc/supervisor/conf.d/beeswax.conf        	
- 
-        echo "DOCKER_OPTS=\"--storage-driver=devicemapper\"" >> /etc/default/docker
+	cp $INSTALL_PATH/$HONEYPOT_NAME/mhn/beeswax_supervisor.conf /etc/supervisor/conf.d/beeswax.conf        	
+ 	
+ 	grep -Fxq "DOCKER_OPTS=\"--storage-driver=devicemapper\"" /etc/default/docker
+	if [ $? -ne 0 ]
+	then
+		#Line Does not exist
+		echo "Adding Fix in /etc/default/docker"
+        	echo "DOCKER_OPTS=\"--storage-driver=devicemapper\"" >> /etc/default/docker
+	else
+	 	#Line Exists
+        	echo "Docker Fix already Exists"
+	fi
+        
 
 }
 
