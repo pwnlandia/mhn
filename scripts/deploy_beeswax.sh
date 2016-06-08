@@ -18,7 +18,7 @@ install_dependencies() {
 }
 
 install_project() {
-	if [[ ! -e $INSTALL_PATH ]]; then
+	if [ ! -e $INSTALL_PATH ] ; then
 		mkdir -p $INSTALL_PATH
 		git clone http://github.com/iankronquist/senior-project-experiment.git $INSTALL_PATH/$HONEYPOT_NAME
 	fi
