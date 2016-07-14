@@ -15,6 +15,18 @@ cd $SCRIPTS
 
 if [ -f /etc/redhat-release ]; then
     export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
+    #yum updates + health
+    yum clean all -y
+    yum update -y
+
+    echo -e "Yum Dev Group Packages:\n"
+    yum grouplist | grep -i development
+    echo -e "Attempting to install Dev Tools"
+    yum groups mark install "Development Tools"
+    yum groups mark convert "Development Tools"
+    yum group install "Development Tools" -y
+    echo -e "Development Tools successfully installed\n"
+
     WWW_OWNER="nginx"
     ./install_sqlite.sh
 
