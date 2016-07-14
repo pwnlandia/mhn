@@ -19,12 +19,15 @@ if [ -f /etc/redhat-release ]; then
     yum clean all -y
     yum update -y
 
+    #Dump yum info for troubleshooting
+    echo -e "Yum Repo List:\n"
+    yum repolist
     echo -e "Yum Dev Group Packages:\n"
     yum grouplist | grep -i development
     echo -e "Attempting to install Dev Tools"
-    yum groups mark install "Development Tools"
-    yum groups mark convert "Development Tools"
-    yum group install "Development Tools" -y
+    yum groupinfo mark install "Development Tools"
+    yum groupinfo mark convert "Development Tools"
+    yum groupinstall "Development Tools" -y
     echo -e "Development Tools successfully installed\n"
 
     WWW_OWNER="nginx"
