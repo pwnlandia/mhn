@@ -4,8 +4,20 @@ set -e
 set -x
 
 if [ -f /etc/debian_version ]; then
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-    echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | tee /etc/apt/sources.list.d/mongodb.list
+    vers=$(grep -P '\d\.\d' /etc/debian_version | cut -c1 )
+    if [ ${vers} ]; then
+        apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+    else
+        apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+    fi
+
+    if [ x${vers} == x'8' ]; then
+        echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.2 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+    elif [ x${vers} == x'7' ]; then
+        echo "deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+    else
+        echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | tee /etc/apt/sources.list.d/mongodb.list
+    fi
     apt-get update
     apt-get install -y mongodb-org
 
