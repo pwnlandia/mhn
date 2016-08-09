@@ -58,18 +58,10 @@ touch /etc/authbind/byport/22
 chown cowrie /etc/authbind/byport/22
 chmod 770 /etc/authbind/byport/22
 
-
-# Setup start.sh cowrie file to enable authbind
-cp start.sh start.sh.backup
-
-sed -i 's/AUTHBIND_ENABLED=no/AUTHBIND_ENABLED=yes/g' start.sh
-sed -i 's/authbind --deep twistd -l/authbind --deep twistd -n -l/g' start.sh
-chmod 775 start.sh
-
 # Config for supervisor
 cat > /etc/supervisor/conf.d/cowrie.conf <<EOF
 [program:cowrie]
-command=su cowrie -c "sh /opt/cowrie/start.sh"
+command=authbind --deep twistd -l log/cowrie.log --umask 0077 --pidfile cowrie.pid --nodaemon cowrie
 directory=/opt/cowrie
 stdout_logfile=/opt/cowrie/log/cowrie.out
 stderr_logfile=/opt/cowrie/log/cowrie.err
@@ -77,6 +69,7 @@ autostart=true
 autorestart=true
 stopasgroup=true
 killasgroup=true
+user=cowrie
 EOF
 
 supervisorctl update
