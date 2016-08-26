@@ -43,6 +43,7 @@ bash $SCRIPTS/install_mongo.sh
 
 mkdir -p /opt
 cd /opt/
+rm -rf /opt/mnemosyne
 git clone https://github.com/threatstream/mnemosyne.git
 cd mnemosyne
 $VIRTUALENV -p $PYTHON env
