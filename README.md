@@ -65,12 +65,6 @@ be prompted for some configuration options.  See below for how this looks.
     Mail server password [""]: 
     Mail default sender [""]: 
     Path for log file ["mhn.log"]: 
-    MongoDB server address ["localhost"]: 
-    MongoDB server port [27017]: 
-    Do you wish to authenticate to MongoDB?: y/n n
-    MongoDB user [""]:
-    MongoDB password [""]:
-    MongoDB authentication mechanism [""]:
 
 
 ### Running

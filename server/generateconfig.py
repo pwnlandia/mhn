@@ -71,18 +71,6 @@ def generate_config():
                               help='Log file path')
     parser_unatt.add_argument('-d', '--debug', action='store_true',
                               help='Run in debug mode')
-    parser_unatt.add_argument('--mongo_host', type=str, default='localhost',
-                              help='MongoDB server address')
-    parser_unatt.add_argument('--mongo_port', type=int, default=27017,
-                              help='MongoDB server port')
-    parser_unatt.add_argument('--mongo_auth', action='store_true',
-                              help='MongoDB authentication')
-    parser_unatt.add_argument('--mongo_user', type=str, default='',
-                              help='MongoDB username')
-    parser_unatt.add_argument('--mongo_password', type=str, default='',
-                              help='MongoDB password')
-    parser_unatt.add_argument('--mongo_auth_mechanism', type=str, default='',
-                              help='MongoDB auth mechanism')
 
     if (len(sys.argv) < 2):
         args = parser.parse_args(['generate'])
@@ -108,12 +96,6 @@ def generate_config():
         mail_password = args.mail_pass
         default_mail_sender = args.mail_sender
         log_file_path = args.log_file_path
-        mongo_host = args.mongo_host
-        mongo_port = args.mongo_port
-        mongo_auth = args.mongo_auth
-        mongo_user = args.mongo_user
-        mongo_password = args.mongo_password
-        mongo_auth_mechanism = args.mongo_auth_mechanism
     else:
         # Collect values from user
         debug = raw_input('Do you wish to run in Debug mode?: y/n ')
@@ -166,16 +148,6 @@ def generate_config():
 
         log_file_path = raw_input('Path for log file ["{}"]: '.format(default_log_path))
 
-        mongo_host = raw_input('MongoDB server address ["localhost"]: ')
-        mongo_port = raw_input('MongoDB server port [27017]: ')
-        mongo_auth = raw_input('Do you wish to authenticate to MongoDB?: y/n ')
-        while mongo_auth not in ['y', 'n']:
-            mongo_auth = raw_input('Please y or n ')
-        mongo_auth = True if mongo_auth == 'y' else False
-        mongo_user = raw_input('MongoDB user [""]: ')
-        mongo_password = raw_input('MongoDB password [""]: ')
-        mongo_auth_mechanism = raw_input('MongoDB authentication mechanism [""]: ')
-
     server_base_url = server_base_url if server_base_url.strip() else default_base_url
     honeymap_url = honeymap_url if honeymap_url.strip() else default_honeymap_url
     log_file_path = log_file_path if log_file_path else default_log_path
@@ -193,12 +165,6 @@ def generate_config():
     localconfig['MAIL_PASSWORD'] = mail_password if mail_password else ''
     localconfig['DEFAULT_MAIL_SENDER'] = default_mail_sender if default_mail_sender else ""
     localconfig['LOG_FILE_PATH'] = log_file_path
-    localconfig['MONGO_HOST'] = mongo_host if mongo_host else "localhost"
-    localconfig['MONGO_PORT'] = mongo_port if mongo_port else 27017
-    localconfig['MONGO_AUTH'] = mongo_auth
-    localconfig['MONGO_USER'] = mongo_user if mongo_user else ''
-    localconfig['MONGO_PASSWORD'] = mongo_password if mongo_password else ''
-    localconfig['MONGO_AUTH_MECHANISM'] = mongo_auth_mechanism if mongo_auth_mechanism else ''
 
     with open('config.py.template', 'r') as templfile,\
          open('config.py', 'w') as confile:

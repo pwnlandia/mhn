@@ -41,6 +41,13 @@ if [ -f /etc/redhat-release ]; then
     ./install_supervisord.sh
 fi
 
+echo "[`date`] Geting configuration"
+
+echo "[`date`] ========= MongoDB configuration ========="
+# run get config in context of current shell and export REMOTE_MONGO variable to be used in install_mnemosyne script
+. ./get_config.sh
+export REMOTE_MONGO
+
 echo "[`date`] Starting Installation of all MHN packages"
 
 echo "[`date`] ========= Installing hpfeeds ========="

@@ -39,58 +39,9 @@ else
 fi
 
 
-echo "==========================================================="
-echo "  Mnemosyne Configuration"
-echo "==========================================================="
-
-while true;
-do
-    echo -n "Would you like to use remote mongodb for mnemosyne? (y/n) "
-    read MONGO
-    if [ "$MONGO" == "y" -o "$MONGO" == "Y" ]
-    then
-        echo -n "MongoDB Host: "
-        read MONGO_HOST
-        echo -n "MongoDB Port: "
-        read MONGO_PORT
-        echo "The mnemosyne will use mongodb server $MONGO_HOST:$MONGO_PORT"
-        break
-    elif [ "$MONGO" == "n" -o "$MONGO" == "N" ]
-    then
-        MONGO_HOST='localhost'
-        MONGO_PORT=27017
-        echo "Using default configuration:"
-        echo "    MongoDB Host: localhost"
-        echo "    MongoDB Port: 27017"
-        bash $SCRIPTS/install_mongo.sh
-        break
-    fi
-done
-
-while true;
-do
-    echo -n "Would you like to use authentication for mongodb? (y/n) "
-    read MONGO_AUTH
-    if [ "$MONGO_AUTH" == "y" -o "$MONGO_AUTH" == "Y" ]
-    then
-        MONGO_AUTH='true'
-        echo -n "MongoDB user: "
-        read MONGO_USER
-        echo -n "MongoDB password: "
-        read MONGO_PASSWORD
-        echo -n "MongoDB authentication mechanism < SCRAM-SHA-1 | MONGODB-CR >:"
-        read MONGO_AUTH_MECHANISM
-        echo "The mongo will use credentials $MONGO_HOST:$MONGO_PORT and authentication mechanism $MONGO_AUTH_MECHANISM"
-        break
-    elif [ "$MONGO_AUTH" == "n" -o "$MONGO_AUTH" == "N" ]
-    then
-        MONGO_AUTH='false'
-        MONGO_USER='null'
-        MONGO_PASSWORD='null'
-        MONGO_AUTH_MECHANISM='null'
-        break
-    fi
-done
+if ! [ $REMOTE_MONGO == "true" ]; then 
+    bash $SCRIPTS/install_mongo.sh
+fi
 
 mkdir -p /opt
 cd /opt/
@@ -111,13 +62,7 @@ host = 0.0.0.0
 port = 8181
 
 [mongodb]
-mongod_host = $MONGO_HOST
-mongod_port = $MONGO_PORT
 database = mnemosyne
-mongod_auth = $MONGO_AUTH
-mongod_user = $MONGO_USER
-mongod_password = $MONGO_PASSWORD
-mongod_auth_mechanism = $MONGO_AUTH_MECHANISM
 
 [hpfriends]
 host = localhost

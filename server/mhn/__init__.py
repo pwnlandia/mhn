@@ -74,12 +74,12 @@ if mhn.config['DEBUG']:
 def new_clio_connection():
     from mhn.common.clio import Clio
     return Clio(
-        mhn.config['MONGO_HOST'],
-        mhn.config['MONGO_PORT'],
-        mhn.config['MONGO_AUTH'],
-        mhn.config['MONGO_USER'],
-        mhn.config['MONGO_PASSWORD'],
-        mhn.config['MONGO_AUTH_MECHANISM']
+        os.getenv('MONGO_HOST'),
+        int(os.getenv('MONGO_PORT')),
+        True if os.getenv('MONGO_AUTH') == 'true' else False,
+        os.getenv('MONGO_USER'),
+        os.getenv('MONGO_PASSWORD'),
+        os.getenv('MONGO_AUTH_MECHANISM')
     )
 
 @mhn.route('/feed.json')
