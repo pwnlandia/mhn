@@ -73,6 +73,7 @@ if mhn.config['DEBUG']:
 
 def new_clio_connection():
     from mhn.common.clio import Clio
+    import os
     return Clio(
         os.getenv('MONGO_HOST'),
         int(os.getenv('MONGO_PORT')),
