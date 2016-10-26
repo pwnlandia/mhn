@@ -25,6 +25,10 @@ It also allows systems administrators to:
 
 ### INSTALLING SERVER (tested Ubuntu 12.0.4.3 x86_64 and Centos 6.7)
 
+- The MHN server is supported on Ubuntu 12, Ubuntu 14, and Centos 6.7.  
+- Ubuntu 16 is not supported at this time.  
+- Other flavors/versions of Linux may work, but are generally not tested or supported.
+
 Note: if you run into trouble during the install, please checkout the [troubleshooting guide](https://github.com/threatstream/MHN/wiki/MHN-Troubleshooting-Guide) on the wiki.  If you only want to experiment with MHN on some virtual machines, please check out the [Getting up and Running with Vagrant](https://github.com/threatstream/mhn/wiki/Getting-up-and-running-using-Vagrant) guide on the wiki.
 
 Install Git
