@@ -18,6 +18,10 @@ elif [ -f /etc/redhat-release ]; then
         $SCRIPTDIR/install_python2.7.sh
     fi
 
+    if  [ ! -f /usr/local/bin/pip2.7 ]; then
+        $SCRIPTDIR/install_python2.7.sh
+    fi
+
     #use python2.7/pip2.7
     PYTHON=/usr/local/bin/python2.7
     PIP=/usr/local/bin/pip2.7

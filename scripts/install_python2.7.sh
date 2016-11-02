@@ -8,7 +8,6 @@ MHN_HOME=$SCRIPTDIR/..
 if [ -f /etc/debian_version ]; then
     OS=Debian  # XXX or Ubuntu??
     INSTALLER='apt-get'
-    #fixme
 
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL
@@ -28,7 +27,9 @@ elif [ -f /etc/redhat-release ]; then
         cd Python-2.7.6
         ./configure --prefix=/usr/local
         make && make install
+    fi
 
+    if  [ ! -f /usr/local/bin/pip2.7 ]; then
         #install pip
         wget https://bootstrap.pypa.io/ez_setup.py
         /usr/local/bin/python2.7 ./ez_setup.py install
