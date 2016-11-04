@@ -14,7 +14,7 @@ elif [ -f /etc/redhat-release ]; then
     export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
     yum -y update
     yum -y groupinstall "Development tools"
-    yum -y install openssl-devel wget
+    yum -y install openssl-devel wget epel-release
 
     #rabbitmq is necessary for celery
     yum -y install rabbitmq-server
