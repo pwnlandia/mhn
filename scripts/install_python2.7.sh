@@ -14,11 +14,12 @@ elif [ -f /etc/redhat-release ]; then
     export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
     yum -y update
     yum -y groupinstall "Development tools"
-    yum -y install openssl-devel wget epel-release
+    yum -y install openssl-devel wget
+    #epel-release
 
     #rabbitmq is necessary for celery
-    yum -y install rabbitmq-server
-    /etc/init.d/rabbitmq-server start
+    #yum -y install rabbitmq-server
+    #/etc/init.d/rabbitmq-server start
 
 
     if  [ ! -f /usr/local/bin/python2.7 ]; then
