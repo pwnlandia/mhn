@@ -33,7 +33,7 @@ elif [ -f /etc/redhat-release ]; then
 
     #install supervisor from pip2.7
     $PIP install supervisor
-    
+
 else
     echo -e "ERROR: Unknown OS\nExiting!"
     exit -1
@@ -52,6 +52,8 @@ $VIRTUALENV  -p $PYTHON env
 pip install -r server/requirements.txt
 if [ -f /etc/redhat-release ]; then
     pip install pysqlite==2.8.1
+    #start the redis service
+    systemctl start redis.service
 fi
 
 echo "DONE installing python virtualenv"
