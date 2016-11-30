@@ -71,7 +71,7 @@ EOF
 elif [ -f /etc/debian_version ]; then
     # Add ppa to apt sources (Needed for Dionaea).
     apt-get update
-    apt-get install -y python-software-properties
+    apt-get install -y python-software-properties software-properties-common
     add-apt-repository -y ppa:honeynet/nightly
     apt-get update
 
