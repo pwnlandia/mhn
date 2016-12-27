@@ -87,4 +87,5 @@ startsecs=10
 EOF
 
 ldconfig /usr/local/lib/
+/etc/init.d/supervisor start || true
 supervisorctl update
