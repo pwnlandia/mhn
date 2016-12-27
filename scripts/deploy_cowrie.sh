@@ -13,6 +13,9 @@ if [ $# -ne 2 ]
         exit 1
 fi
 
+apt-get update
+apt-get install -y python
+
 server_url=$1
 deploy_key=$2
 
