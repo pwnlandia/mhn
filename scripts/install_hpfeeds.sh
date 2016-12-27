@@ -69,6 +69,7 @@ pip install pyopenssl==0.14
 pip install pymongo
 pip install -e git+https://github.com/rep/evnet.git#egg=evnet-dev
 pip install .
+deactivate
 
 mkdir -p /var/log/mhn
 mkdir -p /etc/supervisor/
@@ -88,4 +89,5 @@ EOF
 
 ldconfig /usr/local/lib/
 /etc/init.d/supervisor start || true
+sleep 5
 supervisorctl update
