@@ -28,7 +28,7 @@ apt-get update
 apt-get -y install python-dev git supervisor authbind openssl python-virtualenv build-essential python-gmpy2 libgmp-dev libmpfr-dev libmpc-dev libssl-dev python-pip libffi-dev
 
 pip install -U supervisor
-/etc/init.d/supervisor start
+/etc/init.d/supervisor start || true
 
 sed -i 's/Port 22$/Port 2222/g' /etc/ssh/sshd_config
 service ssh restart
