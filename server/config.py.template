@@ -42,7 +42,7 @@ RENDERED_RULES_PATH = os.path.join(_basedir, 'mhn/static/mhn.rules')
 CELERYBEAT_SCHEDULE = {
     'fetch-emerging-rules': {
             'task': 'mhn.tasks.rules.fetch_sources',
-            'schedule': crontab(hour=12),
+            'schedule': crontab(minute=0, hour=12),
             'args': ()
     }
 }
