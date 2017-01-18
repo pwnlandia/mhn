@@ -16,11 +16,6 @@ elif [ -f /etc/redhat-release ]; then
     yum -y groupinstall "Development tools"
     yum -y install openssl-devel wget
 
-    #rabbitmq is necessary for celery
-    yum -y install rabbitmq-server
-    /etc/init.d/rabbitmq-server start
-
-
     if  [ ! -f /usr/local/bin/python2.7 ]; then
         wget --no-check-certificate https://www.python.org/ftp/python/2.7.6/Python-2.7.6.tar.xz
         tar xf Python-2.7.6.tar.xz
