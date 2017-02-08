@@ -21,7 +21,7 @@ elif [ -f /etc/redhat-release ]; then
     yum install -y yum-utils
     yum-config-manager --add-repo=https://copr.fedoraproject.org/coprs/librehat/shadowsocks/repo/epel-6/librehat-shadowsocks-epel-6.repo
     yum update -y
-    yum -y install epel-release libffi-devel libssl-devel shadowsocks-libev-devel
+    yum -y install epel-release libffi-devel libssl-devel shadowsocks-libev-devel libev
 
     if  [ ! -f /usr/local/bin/python2.7 ]; then
         $SCRIPTS/install_python2.7.sh
