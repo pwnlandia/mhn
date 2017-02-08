@@ -52,10 +52,10 @@ EOF
     yum -y update
     mkdir -p /data
     mkdir -p /data/db
-    yum -y install mongodb-org-server mongodb-org-shell mongodb-org-tools
+    yum -y install mongodb-server mongodb
 
     if [ ! -f /var/run/mongodb/mongod.pid ]; then
-        /etc/init.d/mongod start
+        systemctl start mongod
     fi
 
 else
