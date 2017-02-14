@@ -89,50 +89,6 @@ If the installation scripts ran successfully, you should have a number of servic
     mhn-uwsgi                        RUNNING    pid 29911, uptime 0:18:41
     mnemosyne                        RUNNING    pid 28173, uptime 0:30:08
 
-### Manual Password Reset
-
-If email based password resets are not working for you, here is another method.
-
-    $ cd $MHN_HOME
-    $ source env/bin/activate
-    $ cd server
-    $ python manual_password_reset.py 
-    Enter email address: YOUR_USER@YOUR_SITE.com
-    Enter new password: 
-    Enter new password (again): 
-    user found, updating password
-
-### Deploying honeypots with MHN
-
-MHN was designed to make scalable deployment of honeypots easier.  Here are the steps for deploying a honeypot with MHN:
-
-1. Login to your MHN server web app.
-2. Click the "Deploy" link in the upper left hand corner.
-3. Select a type of honeypot from the drop down menu (e.g. "Ubuntu 12.04 Dionaea").
-4. Copy the deployment command.
-5. Login to a honeypot server and run this command as root.
-6. That's it!
-
-### Integration with Splunk and ArcSight
-
-hpfeeds-logger can be used to integrate MHN with Splunk and ArcSight.  Installation below.
-
-#### Splunk
-
-
-    cd /opt/mhn/scripts/
-    sudo ./install_hpfeeds-logger-splunk.sh
-
-This will log the events as key/value pairs to /var/log/mhn-splunk.log.  This log should be monitored by the SplunkUniveralForwarder.
-
-#### Arcsight
-
-
-    cd /opt/mhn/scripts/
-    sudo ./install_hpfeeds-logger-arcsight.sh
-
-This will log the events as CEF to /var/log/mhn-arcsight.log
-
 ### Running MHN Behind a Proxy
 
 For each of the files below, make sure the proxy settings are added (and obviously change the user/pass/domain/port)
@@ -195,6 +151,52 @@ If done immediately before installing MHN or a honeypot, be sure to run this rig
 ```
 source /etc/environment
 ```
+
+
+### Manual Password Reset
+
+If email based password resets are not working for you, here is another method.
+
+    $ cd $MHN_HOME
+    $ source env/bin/activate
+    $ cd server
+    $ python manual_password_reset.py 
+    Enter email address: YOUR_USER@YOUR_SITE.com
+    Enter new password: 
+    Enter new password (again): 
+    user found, updating password
+
+### Deploying honeypots with MHN
+
+MHN was designed to make scalable deployment of honeypots easier.  Here are the steps for deploying a honeypot with MHN:
+
+1. Login to your MHN server web app.
+2. Click the "Deploy" link in the upper left hand corner.
+3. Select a type of honeypot from the drop down menu (e.g. "Ubuntu 12.04 Dionaea").
+4. Copy the deployment command.
+5. Login to a honeypot server and run this command as root.
+6. That's it!
+
+### Integration with Splunk and ArcSight
+
+hpfeeds-logger can be used to integrate MHN with Splunk and ArcSight.  Installation below.
+
+#### Splunk
+
+
+    cd /opt/mhn/scripts/
+    sudo ./install_hpfeeds-logger-splunk.sh
+
+This will log the events as key/value pairs to /var/log/mhn-splunk.log.  This log should be monitored by the SplunkUniveralForwarder.
+
+#### Arcsight
+
+
+    cd /opt/mhn/scripts/
+    sudo ./install_hpfeeds-logger-arcsight.sh
+
+This will log the events as CEF to /var/log/mhn-arcsight.log
+
 
 ### Data
 
