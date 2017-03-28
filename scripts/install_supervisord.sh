@@ -41,7 +41,7 @@ elif [ -f /etc/redhat-release ]; then
     mkdir -p /etc/supervisor/conf.d
     $PIP install supervisor
 
-    echo_supervisord_conf > /etc/supervisord.conf
+    /usr/local/bin/echo_supervisord_conf > /etc/supervisord.conf
 
 cat >> /etc/supervisord.conf <<EOF
 [include]
@@ -49,6 +49,6 @@ files = /etc/supervisor/conf.d/*.conf
 EOF
 
     /usr/local/bin/supervisord -c /etc/supervisord.conf
-    supervisorctl update
+    /usr/local/bin/supervisorctl update
 
 fi
