@@ -1,3 +1,6 @@
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 import string
 from random import choice
 from datetime import datetime
@@ -127,7 +130,7 @@ class Rule(db.Model, APIModel):
         for r in refs:
             ref = Reference()
             ref.rule = self
-            ref.text = r
+            ref.text = r.decode('utf-8')
             db.session.add(ref)
         db.session.commit()
 
