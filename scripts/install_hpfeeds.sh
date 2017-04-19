@@ -19,9 +19,8 @@ if [ -f /etc/debian_version ]; then
 elif [ -f /etc/redhat-release ]; then
     export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
     yum install -y yum-utils
-    yum-config-manager --add-repo=https://copr.fedoraproject.org/coprs/librehat/shadowsocks/repo/epel-6/librehat-shadowsocks-epel-6.repo
     yum update -y
-    yum -y install epel-release libffi-devel libssl-devel shadowsocks-libev-devel libev
+    yum -y install epel-release libffi-devel libssl-devel libev
 
     if  [ ! -f /usr/local/bin/python2.7 ]; then
         $SCRIPTS/install_python2.7.sh
@@ -49,7 +48,7 @@ $PIP install virtualenv
 
 cd /tmp
 wget https://github.com/threatstream/hpfeeds/releases/download/libev-4.15/libev-4.15.tar.gz
-tar zxvf libev-4.15.tar.gz 
+tar zxvf libev-4.15.tar.gz
 cd libev-4.15
 ./configure && make && make install
 ldconfig /usr/local/lib/
@@ -76,7 +75,7 @@ mkdir -p /etc/supervisor/
 mkdir -p /etc/supervisor/conf.d
 
 
-cat >> /etc/supervisor/conf.d/hpfeeds-broker.conf <<EOF 
+cat >> /etc/supervisor/conf.d/hpfeeds-broker.conf <<EOF
 [program:hpfeeds-broker]
 command=/opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/feedbroker.py
 directory=/opt/hpfeeds
