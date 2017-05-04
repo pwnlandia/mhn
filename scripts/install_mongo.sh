@@ -39,23 +39,22 @@ EOF
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL
     export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
+   
+    echo "[mongodb-org-3.4]" > /etc/yum.repos.d/mongodb.repo
+    echo "name=MongoDB Repository" >> /etc/yum.repos.d/mongodb.repo
+    echo "baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/3.4/x86_64/" >> /etc/yum.repos.d/mongodb.repo
+    echo "gpgcheck=1" >> /etc/yum.repos.d/mongodb.repo
+    echo "enabled=1" >> /etc/yum.repos.d/mongodb.repo
+    echo "gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc" >> /etc/yum.repos.d/mongodb.repo
 
-cat >> /etc/yum.repos.d/mongodb.repo <<EOF
-[mongodb-org]
-name=MongoDB Repository
-baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
-gpgcheck=0
-enabled=1
-EOF
 
-    yum-config-manager --add-repo=/etc/yum.repos.d/mongodb.repo
     yum -y update
     mkdir -p /data
     mkdir -p /data/db
-    yum -y install mongodb-org-server mongodb-org-shell mongodb-org-tools
+    yum -y install mongodb-org*
 
     if [ ! -f /var/run/mongodb/mongod.pid ]; then
-        /etc/init.d/mongod start
+        service mongod start
     fi
 
 else
