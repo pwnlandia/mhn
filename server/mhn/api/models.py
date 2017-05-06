@@ -1,4 +1,7 @@
 import string
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 from random import choice
 from datetime import datetime
 
