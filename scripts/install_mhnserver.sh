@@ -3,6 +3,7 @@
 set -e
 set -x
 SCRIPTDIR=`dirname "$(readlink -f "$0")"`
+BACKUP_DATE=`date +%Y-%m-%d`
 MHN_HOME=$SCRIPTDIR/..
 
 
@@ -77,6 +78,7 @@ if [ $OS == "Debian" ]; then
     mkdir -p /etc/nginx/sites-available
     mkdir -p /etc/nginx/sites-enabled
     NGINXCONFIG=/etc/nginx/sites-available/default
+    mv $NGINXCONFIG $NGINXCONFIG.$BACKUP_DATE
     touch $NGINXCONFIG
     ln -fs /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
     NGINXUG='www-data:www-data'
@@ -92,11 +94,11 @@ cat > $NGINXCONFIG <<EOF
 server {
     listen       80;
     server_name  _;
-    
-    location / { 
-        try_files \$uri @mhnserver; 
+
+    location / {
+        try_files \$uri @mhnserver;
     }
-    
+
     root /opt/www;
 
     location @mhnserver {
@@ -111,7 +113,7 @@ server {
 EOF
 
 
-cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
+cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF
 [program:mhn-uwsgi]
 command=$MHN_HOME/env/bin/uwsgi -s /tmp/uwsgi.sock -w mhn:mhn -H $MHN_HOME/env --chmod-socket=666 -b 40960
 directory=$MHN_HOME/server
@@ -122,7 +124,7 @@ autorestart=true
 startsecs=10
 EOF
 
-cat > /etc/supervisor/conf.d/mhn-celery-worker.conf <<EOF 
+cat > /etc/supervisor/conf.d/mhn-celery-worker.conf <<EOF
 [program:mhn-celery-worker]
 command=$MHN_HOME/env/bin/celery worker -A mhn.tasks --loglevel=INFO
 directory=$MHN_HOME/server
@@ -137,7 +139,7 @@ EOF
 touch /var/log/mhn/mhn-celery-worker.log /var/log/mhn/mhn-celery-worker.err
 chown $NGINXUG /var/log/mhn/mhn-celery-worker.*
 
-cat > /etc/supervisor/conf.d/mhn-celery-beat.conf <<EOF 
+cat > /etc/supervisor/conf.d/mhn-celery-beat.conf <<EOF
 [program:mhn-celery-beat]
 command=$MHN_HOME/env/bin/celery beat -A mhn.tasks --loglevel=INFO
 directory=$MHN_HOME/server
@@ -160,7 +162,7 @@ cat > $MHN_HOME/server/collector.json <<EOF
 }
 EOF
 
-cat > /etc/supervisor/conf.d/mhn-collector.conf <<EOF 
+cat > /etc/supervisor/conf.d/mhn-collector.conf <<EOF
 [program:mhn-collector]
 command=$MHN_HOME/env/bin/python collector_v2.py collector.json
 directory=$MHN_HOME/server
