@@ -89,6 +89,15 @@ elif [ -f /etc/debian_version ]; then
 cat > /tmp/dionaea.hpfeeds.patch <<EOF
 --- /etc/dionaea/dionaea.conf
 +++ /etc/dionaea/dionaea.conf.new
+@@ -170,7 +170,7 @@
+ 	*/
+ 	     
+ 	mode = "manual"
+-	addrs = { eth0 = ["::"] }
++	addrs = { eth0 = ["::", "0.0.0.0"] }
+ }
+ 
+ modules = {
 @@ -252,10 +252,10 @@
  		tftp = {
  			root = "var/dionaea/wwwroot"
