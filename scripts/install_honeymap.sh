@@ -50,10 +50,10 @@ wget https://storage.googleapis.com/golang/${GO_PACKAGE}
 tar zxf ${GO_PACKAGE} && rm ${GO_PACKAGE}
 
 cd /usr/bin/
-for X in /usr/local/go/bin/*; 
-do 
-    echo $X; 
-    ln -s $X; 
+for X in /usr/local/go/bin/*;
+do
+    echo $X;
+    ln -s $X;
 done
 ####################################################################
 
@@ -61,7 +61,7 @@ SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 /opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py honeymap $SECRET "" "geoloc.events"
 
 cd /opt
-git clone https://github.com/threatstream/honeymap.git
+git clone https://github.com/kc-abena/honeymap.git
 
 cd /opt/honeymap/server
 export GOPATH=`pwd`
@@ -82,7 +82,7 @@ make
 
 mkdir -p /var/log/mhn
 
-cat > /etc/supervisor/conf.d/honeymap.conf <<EOF 
+cat > /etc/supervisor/conf.d/honeymap.conf <<EOF
 [program:honeymap]
 command=/opt/honeymap/server/server
 directory=/opt/honeymap
@@ -107,7 +107,7 @@ cat > /opt/hpfeeds/geoloc.json <<EOF
 {
     "HOST": "localhost",
     "PORT": 10000,
-    "IDENT": "geoloc", 
+    "IDENT": "geoloc",
     "SECRET": "$SECRET",
     "CHANNELS": [
         "dionaea.connections",
@@ -129,7 +129,7 @@ cat > /opt/hpfeeds/geoloc.json <<EOF
 }
 EOF
 
-cat > /etc/supervisor/conf.d/geoloc.conf <<EOF 
+cat > /etc/supervisor/conf.d/geoloc.conf <<EOF
 [program:geoloc]
 command=/opt/hpfeeds/env/bin/python /opt/hpfeeds/examples/geoloc/geoloc.py /opt/hpfeeds/geoloc.json
 directory=/opt/hpfeeds/
@@ -141,6 +141,3 @@ startsecs=10
 EOF
 
 supervisorctl update
-
-
-
