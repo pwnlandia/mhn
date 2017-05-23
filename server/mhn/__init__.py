@@ -140,7 +140,7 @@ def create_clean_db():
             'Ubuntu - Conpot': path.abspath('../scripts/deploy_conpot.sh'),
             'Ubuntu - Dionaea': path.abspath('../scripts/deploy_dionaea.sh'),
             'Ubuntu - Snort': path.abspath('../scripts/deploy_snort.sh'),
-            'RHEL/Amazon Linux - Snort': path.abspath('../scripts/deploy_rhel-amazon.sh'),
+            'RHEL/Amazon Linux - Snort': path.abspath('../scripts/deploy_snort-rhel.sh'),
             'Ubuntu - cowrie': path.abspath('../scripts/deploy_cowrie.sh'),
             'Ubuntu/Raspberry Pi - Kippo': path.abspath('../scripts/deploy_kippo.sh'),
             'Ubuntu - Amun': path.abspath('../scripts/deploy_amun.sh'),

@@ -1,10 +1,7 @@
 #!/bin/bash
 #
-# Author: Joenel de Asis
-# Email: joeneldeasis@gmail.com
-#
-# NOTE: This script were tested and is working under Amazon Linux AMI 2016.09
-#       More fix will be applied soon in able to get this to work with CentOS 6.x
+# NOTE: This script was tested and is working under Amazon Linux AMI 2016.09
+#       More fix will be applied soon in able to get this to work with RHEL/CentOS 6.x based OSes
 #
 
 INTERFACE=eth0
