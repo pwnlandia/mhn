@@ -20,6 +20,10 @@ elif [ -f /etc/redhat-release ]; then
     OS=RHEL
     sudo yum -y install curl
 
+elif [ -f /etc/os-release ]; then
+    OS=RHEL
+    sudo yum -y install curl
+
 else
     echo -e "ERROR: Unknown OS\nExiting!"
     exit -1
@@ -27,8 +31,8 @@ fi
 
 
 curl -s -X POST -H "Content-Type: application/json" -d "{
-	\"name\": \"${hostname}-${honeypot}\", 
-	\"hostname\": \"$hostname\", 
+	\"name\": \"${hostname}-${honeypot}\",
+	\"hostname\": \"$hostname\",
 	\"deploy_key\": \"$deploy_key\",
 	\"honeypot\": \"$honeypot\"
 }" $server_url/api/sensor/ > /tmp/deploy.json

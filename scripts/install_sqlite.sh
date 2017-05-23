@@ -18,9 +18,9 @@ elif [ -f /etc/redhat-release ]; then
     yum -y install epel-release wget
     yum -y groupinstall "Development tools"
 
-    wget https://sqlite.org/2016/sqlite-autoconf-3100100.tar.gz
-    tar -xvzf sqlite-autoconf-3100100.tar.gz
-    cd sqlite-autoconf-3100100
+    wget https://www.sqlite.org/2017/sqlite-autoconf-3180000.tar.gz
+    tar -xvzf sqlite-autoconf-3180000.tar.gz
+    cd sqlite-autoconf-3180000
     ./configure
     make && make install
 

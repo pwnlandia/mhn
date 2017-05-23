@@ -3,12 +3,12 @@ Modern Honey Network
 
 Multi-snort and honeypot sensor management, uses a network of VMs, small footprint SNORT installations, stealthy dionaeas, and a centralized server for management.
 
-For questions regarding installation please review the [MHN Troubleshooting Guide](https://github.com/threatstream/mhn/wiki/MHN-Troubleshooting-Guide).  Search past questions on the [modern-honey-network Google Group](https://groups.google.com/forum/#!forum/modern-honey-network).  Or send emails to <modern-honey-network@googlegroups.com>.
+For questions regarding installation please review the [MHN Troubleshooting Guide](https://github.com/joeneldeasis/mhn/wiki/MHN-Troubleshooting-Guide).  Search past questions on the [modern-honey-network Google Group](https://groups.google.com/forum/#!forum/modern-honey-network).  Or send emails to <modern-honey-network@googlegroups.com>.
 
 
 ### HONEYPOT
 
-Deployed sensors with intrusion detection software installed: Snort, Kippo, Conpot, and Dionaea. 
+Deployed sensors with intrusion detection software installed: Snort, Kippo, Conpot, and Dionaea.
 
 ### MANAGEMENT SERVER
 
@@ -29,20 +29,20 @@ It also allows systems administrators to:
 - Ubuntu 16 is not supported at this time.  
 - Other flavors/versions of Linux may work, but are generally not tested or supported.
 
-Note: if you run into trouble during the install, please checkout the [troubleshooting guide](https://github.com/threatstream/MHN/wiki/MHN-Troubleshooting-Guide) on the wiki.  If you only want to experiment with MHN on some virtual machines, please check out the [Getting up and Running with Vagrant](https://github.com/threatstream/mhn/wiki/Getting-up-and-running-using-Vagrant) guide on the wiki.
+Note: if you run into trouble during the install, please checkout the [troubleshooting guide](https://github.com/joeneldeasis/MHN/wiki/MHN-Troubleshooting-Guide) on the wiki.  If you only want to experiment with MHN on some virtual machines, please check out the [Getting up and Running with Vagrant](https://github.com/joeneldeasis/mhn/wiki/Getting-up-and-running-using-Vagrant) guide on the wiki.
 
 Install Git
 
     # on Debian or Ubuntu
     $ sudo apt-get install git -y
-    
+
     # on Centos or RHEL
     $ sudo yum install -y git
 
 Install MHN
-    
+
     $ cd /opt/
-    $ sudo git clone https://github.com/threatstream/mhn.git
+    $ sudo git clone https://github.com/joeneldeasis/mhn.git
     $ cd mhn/
 
 Run the following script to complete the installation.  While this script runs, you will
@@ -52,23 +52,23 @@ be prompted for some configuration options.  See below for how this looks.
 
 
 ### Configuration:
-    
+
     ===========================================================
     MHN Configuration
     ===========================================================
     Do you wish to run in Debug mode?: y/n n
     Superuser email: YOUR_EMAIL@YOURSITE.COM
-    Superuser password: 
-    Server base url ["http://1.2.3.4"]: 
+    Superuser password:
+    Server base url ["http://1.2.3.4"]:
     Honeymap url ["http://1.2.3.4:3000"]:
-    Mail server address ["localhost"]: 
-    Mail server port [25]: 
+    Mail server address ["localhost"]:
+    Mail server port [25]:
     Use TLS for email?: y/n n
     Use SSL for email?: y/n n
-    Mail server username [""]: 
-    Mail server password [""]: 
-    Mail default sender [""]: 
-    Path for log file ["mhn.log"]: 
+    Mail server username [""]:
+    Mail server password [""]:
+    Mail default sender [""]:
+    Path for log file ["mhn.log"]:
 
 
 ### Running
@@ -123,7 +123,7 @@ Acquire::ftp::proxy "http://user:password@your.corporate.proxy.hostname.com:8080
 
 # Commands:
 
-These commands will make the above changes. 
+These commands will make the above changes.
 
 ```
 PROXY='http://user:password@your.corporate.proxy.hostname.com:8080'
@@ -160,10 +160,10 @@ If email based password resets are not working for you, here is another method.
     $ cd $MHN_HOME
     $ source env/bin/activate
     $ cd server
-    $ python manual_password_reset.py 
+    $ python manual_password_reset.py
     Enter email address: YOUR_USER@YOUR_SITE.com
-    Enter new password: 
-    Enter new password (again): 
+    Enter new password:
+    Enter new password (again):
     user found, updating password
 
 ### Deploying honeypots with MHN
