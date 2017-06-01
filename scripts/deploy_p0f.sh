@@ -18,8 +18,21 @@ chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "p0f"
 
-apt-get update
-apt-get -y install git supervisor libpcap-dev libjansson-dev gcc
+if [ -f /etc/redhat-release ]; then
+    OS=RHEL
+    export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
+	yum update
+	yum -y install git  libpcap-devel gcc jansson-devel jansson curl python
+	sudo bash -c "curl https://bootstrap.pypa.io/get-pip.py | python2.7"
+    yum -y install python-pip
+    pip install supervisor
+    mkdir -p /etc/supervisor
+    mkdir -p /etc/supervisor/conf.d
+else
+    apt-get update
+    apt-get -y install git supervisor libpcap-dev libjansson-dev gcc
+fi
+
 
 # install p0f
 cd /opt
