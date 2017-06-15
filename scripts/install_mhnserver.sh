@@ -33,7 +33,7 @@ elif [ -f /etc/redhat-release ]; then
 
     #install supervisor from pip2.7
     $PIP install supervisor
-    
+
 else
     echo -e "ERROR: Unknown OS\nExiting!"
     exit -1
@@ -52,6 +52,7 @@ $VIRTUALENV  -p $PYTHON env
 pip install -r server/requirements.txt
 if [ -f /etc/redhat-release ]; then
     pip install pysqlite==2.8.1
+    service redis start
 fi
 
 echo "DONE installing python virtualenv"
@@ -112,7 +113,7 @@ EOF
 
 cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
 [program:mhn-uwsgi]
-command=$MHN_HOME/env/bin/uwsgi -s /tmp/uwsgi.sock -w mhn:mhn -H $MHN_HOME/env --chmod-socket=666
+command=$MHN_HOME/env/bin/uwsgi -s /tmp/uwsgi.sock -w mhn:mhn -H $MHN_HOME/env --chmod-socket=666 -b 40960
 directory=$MHN_HOME/server
 stdout_logfile=/var/log/mhn/mhn-uwsgi.log
 stderr_logfile=/var/log/mhn/mhn-uwsgi.err

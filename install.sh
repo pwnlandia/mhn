@@ -7,6 +7,7 @@ then
 fi
 
 set -e
+set -x
 
 MHN_HOME=`dirname "$(readlink -f "$0")"`
 WWW_OWNER="www-data"

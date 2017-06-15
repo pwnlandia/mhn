@@ -89,6 +89,70 @@ If the installation scripts ran successfully, you should have a number of servic
     mhn-uwsgi                        RUNNING    pid 29911, uptime 0:18:41
     mnemosyne                        RUNNING    pid 28173, uptime 0:30:08
 
+### Running MHN Behind a Proxy
+
+For each of the files below, make sure the proxy settings are added (and obviously change the user/pass/domain/port)
+
+These need to be set for both the MHN server and the honey systems you intend to deploy on (assuming the honeypots are behind the firewall).
+
+## /etc/environment
+
+```
+ALL_PROXY=http://user:password@your.corporate.proxy.hostname.com:8080
+HTTP_PROXY=http://user:password@your.corporate.proxy.hostname.com:8080
+HTTPS_PROXY=http://user:password@your.corporate.proxy.hostname.com:8080
+http_proxy=http://user:password@your.corporate.proxy.hostname.com:8080
+https_proxy=http://user:password@your.corporate.proxy.hostname.com:8080
+```
+
+## /etc/apt/apt.conf.d/95proxies
+
+```
+Acquire::http::proxy "http://user:password@your.corporate.proxy.hostname.com:8080";
+Acquire::https::proxy "http://user:password@your.corporate.proxy.hostname.com:8080";
+Acquire::ftp::proxy "http://user:password@your.corporate.proxy.hostname.com:8080";
+```
+
+
+## ~/.gitconfig
+
+```
+[http]
+	proxy = http://user:password@your.corporate.proxy.hostname.com:8080
+```
+
+# Commands:
+
+These commands will make the above changes. 
+
+```
+PROXY='http://user:password@your.corporate.proxy.hostname.com:8080'
+
+grep -F "$PROXY" /etc/environment || cat >> /etc/environment <<EOF
+ALL_PROXY=$PROXY
+http_proxy=$PROXY
+HTTP_PROXY=$PROXY
+https_proxy=$PROXY
+HTTPS_PROXY=$PROXY
+EOF
+
+cat > /etc/apt/apt.conf.d/95proxies << EOF
+Acquire::http::proxy "$PROXY";
+Acquire::https::proxy "$PROXY";
+Acquire::ftp::proxy "$PROXY";
+EOF
+
+git config --global --add http.proxy "$PROXY"
+
+```
+
+If done immediately before installing MHN or a honeypot, be sure to run this right after the above commands:
+
+```
+source /etc/environment
+```
+
+
 ### Manual Password Reset
 
 If email based password resets are not working for you, here is another method.
@@ -145,12 +209,11 @@ MHN is an open source project brought to you by the passionate folks at Anomali,
 MHN leverages and extends upon several awesome projects by the Honeynet project. Please show them your support by way of donation.
 
 
-
 ## LICENSE
 
 Modern Honeypot Network
 
-Copyright (C) 2014 - Anomali, Inc.
+Copyright (C) 2017 - Anomali, Inc.
 
 This program free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
