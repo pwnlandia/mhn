@@ -204,7 +204,7 @@ The MHN server reports anonymized attack data back to Anomali, Inc. (formerly kn
 
 ### Security
 
-Please be aware that by default the MHN server web app is communicating plaintext. To change that install SSL/TLS certificates to your nginx. Propper configuration can be found at [bettercrypto.org](https://bettercrypto.org)
+Please be aware that by default the MHN server web app is communicating plaintext. To change that, install SSL/TLS certificates to your nginx. Proper configuration can be found at [bettercrypto.org](https://bettercrypto.org)
 
     sudo vi /etc/nginx/sites-enabled/default
 
