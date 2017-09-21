@@ -17,7 +17,7 @@ chmod 755 registration.sh
 . ./registration.sh $server_url $deploy_key "shockpot"
 
 apt-get update
-apt-get -y install git python-pip supervisor
+apt-get -y install git python python-pip supervisor
 pip install virtualenv
 
 # Get the Shockpot source
