@@ -45,13 +45,13 @@ files = /etc/supervisor/conf.d/*.conf
 EOF
 # Install hpfeeds and required libs...
 
-#cd /tmp
-#rm -rf libev*
-#wget https://github.com/threatstream/hpfeeds/releases/download/libev-4.15/libev-4.15.tar.gz
-#tar zxvf libev-4.15.tar.gz 
-#cd libev-4.15
-#./configure && make && make install
-#ldconfig
+cd /tmp
+rm -rf libev*
+wget https://github.com/threatstream/hpfeeds/releases/download/libev-4.15/libev-4.15.tar.gz
+tar zxvf libev-4.15.tar.gz 
+cd libev-4.15
+./configure && make && make install
+ldconfig
 
 cd /tmp
 rm -rf hpfeeds
@@ -60,12 +60,12 @@ cd hpfeeds/appsupport/libhpfeeds
 autoreconf --install
 ./configure && make && make install 
 
-#cd /tmp
-#rm -rf snort
-#git clone -b hpfeeds-support https://github.com/threatstream/snort.git
-#export CPPFLAGS=-I/include
-#cd snort
-#./configure --prefix=/opt/snort && make && make install 
+cd /tmp
+rm -rf snort
+git clone -b hpfeeds-support https://github.com/threatstream/snort.git
+export CPPFLAGS=-I/include
+cd snort
+./configure --prefix=/opt/snort && make && make install 
 
 mkdir -p /opt/snort/etc /opt/snort/rules /opt/snort/lib/snort_dynamicrules /opt/snort/lib/snort_dynamicpreprocessor /var/log/snort/
 cd etc
