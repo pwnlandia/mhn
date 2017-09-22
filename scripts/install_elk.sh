@@ -6,20 +6,45 @@ set -e
 DIR=`dirname "$0"`
 $DIR/install_hpfeeds-logger-json.sh
 
-# install Java
-apt-get install -y python-software-properties
-add-apt-repository -y ppa:webupd8team/java
-apt-get update
-apt-get -y install oracle-java8-installer
+echo 'begin'
 
-# Install ES
-wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch |  apt-key add -
-echo 'deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' |  tee /etc/apt/sources.list.d/elasticsearch.list
-apt-get update
-apt-get -y install elasticsearch=1.4.4
-sed -i '/network.host/c\network.host\:\ localhost' /etc/elasticsearch/elasticsearch.yml
-service elasticsearch restart
-update-rc.d elasticsearch defaults 95 10
+if [ -f /etc/redhat-release ]; then
+    OS=RHEL
+    export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
+    echo 'install elastic'
+    yum install -y java-1.8.0-openjdk 
+    rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+cat > /etc/yum.repos.d/elasticsearch.repo  <<-EOF
+[elasticsearch-5.x]
+name=Elasticsearch repository for 5.x packages
+baseurl=https://artifacts.elastic.co/packages/5.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+EOF
+
+    yum -y update -x bash
+    yum -y install elasticsearch 
+    
+else
+    # install Java
+    apt-get install -y python-software-properties
+    add-apt-repository -y ppa:webupd8team/java
+    apt-get update
+    apt-get -y install oracle-java8-installer
+    
+    # Install ES
+    wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch |  apt-key add -
+    echo 'deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' |  tee /etc/apt/sources.list.d/elasticsearch.list
+    apt-get update
+    apt-get -y install elasticsearch=1.4.4
+    sed -i '/network.host/c\network.host\:\ localhost' /etc/elasticsearch/elasticsearch.yml
+    service elasticsearch restart
+    update-rc.d elasticsearch defaults 95 10
+fi
 
 # Install Kibana
 mkdir /tmp/kibana
@@ -43,13 +68,36 @@ startsecs=10
 EOF
 
 # Install Logstash
+if [ -f /etc/redhat-release ]; then
+OS=RHEL
+export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
 
+rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+cat > /etc/yum.repos.d/logstash.repo <<-EOF
+[logstash-5.x]
+name=Elastic repository for 5.x packages
+baseurl=https://artifacts.elastic.co/packages/5.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+EOF
+
+yum install logstash -y
+
+
+else
 echo 'deb http://packages.elasticsearch.org/logstash/1.5/debian stable main' |  tee /etc/apt/sources.list.d/logstash.list
 apt-get update
 apt-get install logstash
-cd /opt/logstash
+fi
 
-cat > /opt/logstash/mhn.conf <<EOF
+mkdir -p /opt/logstash
+cd /opt/logstash
+touch test
+cat > /opt/logstash/mhn.conf <<-EOF
 
 input {
   file {
@@ -103,7 +151,7 @@ output {
 
 EOF
 
-cat > /opt/logstash/mhn-template.json <<EOF
+cat > /opt/logstash/mhn-template.json <<-EOF
 {
   "template": "mhn-*",
   "settings": {
@@ -440,7 +488,7 @@ cat > /opt/logstash/mhn-template.json <<EOF
 }
 EOF
 
-cat > /etc/supervisor/conf.d/logstash.conf <<EOF
+cat > /etc/supervisor/conf.d/logstash.conf <<-EOF
 [program:logstash]
 command=/opt/logstash/bin/logstash -f mhn.conf
 directory=/opt/logstash/
@@ -452,3 +500,5 @@ startsecs=10
 EOF
 
 supervisorctl update
+
+
