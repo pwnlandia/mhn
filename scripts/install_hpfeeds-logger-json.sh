@@ -3,9 +3,18 @@
 set -e
 set -x
 
-apt-get update
-apt-get install -y git python-pip python-dev libgeoip-dev
-pip install virtualenv
+if [ -f /etc/redhat-release ]; then
+    OS=RHEL
+    export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
+
+    yum update -y -x bash 
+    yum install -y git python-pip python-devel libgeoip-devel
+    pip install virtualenv
+else
+    apt-get update
+    apt-get install -y git python-pip python-dev libgeoip-dev
+    pip install virtualenv
+fi
 
 SCRIPTS=`dirname $0`
 
@@ -55,7 +64,7 @@ python /opt/hpfeeds/broker/add_user.py "$IDENT" "$SECRET" "" "$CHANNELS"
 
 mkdir -p /var/log/mhn
 
-apt-get install -y supervisor
+#apt-get install -y supervisor
 
 cat >> /etc/supervisor/conf.d/hpfeeds-logger-json.conf <<EOF 
 [program:hpfeeds-logger-json]

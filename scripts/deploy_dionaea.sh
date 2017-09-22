@@ -32,22 +32,26 @@ files = /etc/supervisor/conf.d/*.conf
 EOF
 
     supervisord -c /etc/supervisord.conf
-cat > /etc/yum.repos.d/docker.repo <<EOF
-[dockerrepo]
-name=Docker Repository
-baseurl=http://yum.dockerproject.org/repo/main/centos/6/
-enabled=1
-gpgcheck=0
-EOF
-
-    yum -y install docker-engine
-    service docker start
+#cat > /etc/yum.repos.d/docker.repo <<EOF
+#[dockerrepo]
+#name=Docker Repository
+#baseurl=http://yum.dockerproject.org/repo/main/centos/6/
+#enabled=1
+#gpgcheck=0
+#EOF
+    yum install -y yum-utils
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    yum-config-manager --enable docker-ce-edge
+    yum makecache fast
+    yum -y install docker-ce
+    systemctl start docker
+	
     mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log  /var/dionaea/bitstreams /var/dionaea/rtp /var/dionaea/bistreams
     mkdir -p /etc/dionaea/
 
     #fixme
     chmod -R a+wrx /var/dionaea
-    docker pull threatstream/dionaea-mhn
+    docker pull scopion/dionaea
 
     echo "Getting dionea from $server_url"
     curl $server_url/static/dionaea.conf | sed -e "s/HPF_HOST/$HPF_HOST/" | sed -e "s/HPF_PORT/$HPF_PORT/" | sed -e "s/HPF_IDENT/$HPF_IDENT/" | sed -e "s/HPF_SECRET/$HPF_SECRET/" > /etc/dionaea/dionaea.conf
