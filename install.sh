@@ -36,25 +36,25 @@ if [ -f /etc/redhat-release ]; then
 
     if [ ! -f /usr/local/bin/python2.7 ]; then
         echo "[`date`] Installing Python2.7 as a pre-req"
-        ./install_python2.7.sh
+       ./install_python2.7.sh
     fi
 
-    ./install_supervisord.sh
+     ./install_supervisord.sh
 fi
 
 echo "[`date`] Starting Installation of all MHN packages"
 
 echo "[`date`] ========= Installing hpfeeds ========="
-./install_hpfeeds.sh
+ ./install_hpfeeds.sh
 
 echo "[`date`] ========= Installing menmosyne ========="
-./install_mnemosyne.sh
+ ./install_mnemosyne.sh
 
 echo "[`date`] ========= Installing Honeymap ========="
-./install_honeymap.sh
+ ./install_honeymap.sh
 
 echo "[`date`] ========= Installing MHN Server ========="
-./install_mhnserver.sh
+ ./install_mhnserver.sh
 
 echo "[`date`] ========= MHN Server Install Finished ========="
 echo ""
