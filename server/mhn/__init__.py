@@ -1,6 +1,6 @@
 from urlparse import urljoin
 
-from flask import Flask, request, jsonify, abort, url_for, session
+from flask import Flask, request, jsonify, abort, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.security import Security, SQLAlchemyUserDatastore
 from flask.ext.security.utils import encrypt_password as encrypt
@@ -8,8 +8,9 @@ from flask.ext.mail import Mail
 from werkzeug.contrib.atom import AtomFeed
 import xmltodict
 import uuid
-import random
-import string
+import os
+import imp
+
 from flask_wtf.csrf import CsrfProtect
 csrf = CsrfProtect()
 
@@ -34,7 +35,7 @@ db.init_app(mhn)
 # Setup flask-security for auth.
 Security(mhn, user_datastore)
 
-# Registering blueprints.
+# Registering core blueprints.
 from mhn.api.views import api
 mhn.register_blueprint(api)
 
@@ -43,6 +44,25 @@ mhn.register_blueprint(ui)
 
 from mhn.auth.views import auth
 mhn.register_blueprint(auth)
+
+# Registering Add-Ons (Blueprints)
+with mhn.test_request_context():
+    db.create_all()
+    from mhn.api.models import AddOns
+
+    if mhn.config['ADD_ONS']:
+        addons_basedir = os.path.join(os.getcwd(), "mhn/addons/")
+        addons = AddOns.query.all()
+
+        for addon in addons:
+            if addon.dir_name not in mhn.config['DISABLED_ADDONS']:
+                fp, pathname, description = imp.find_module('views', [os.path.join(addons_basedir, addon.dir_name)])
+                loaded_module = imp.load_module(addon.dir_name, fp, pathname, description)
+                mhn.register_blueprint(getattr(loaded_module, addon.dir_name))
+
+                addon.reboot = False
+                db.session.add(addon)
+                db.session.commit()
 
 # Trigger templatetag register.
 from mhn.common.templatetags import format_date

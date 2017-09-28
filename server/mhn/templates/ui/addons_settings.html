@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+    <div class="row" style="margin-bottom:30px;">
+        <div class="small-4 large-centered columns">
+            <h2>Active Add-Ons</h2>
+        </div>
+    </div>
+    {% for a in active_addons %}
+        <div class="row">
+            <div class="small-8 large-centered columns">
+                <div class="row">
+                    <div class="small-6 columns" style="background-color:#CCCCCC">
+                        <h6 class="left">
+                            {{ a.menu_name }}
+                        </h6>
+                    </div>
+                    <div class="small-6 columns">
+                        <ul class="button-group round">
+                            <li><a class="button tiny alert" href="{{ url_for('ui.toggle_active_addon', addon_id=a.id, toggle_action = 'deactivate') }}">Deactivate</a></li>
+                            <li><a class="delete-addon button tiny alert" addon-id="{{ a.id }}" href="{{ url_for('ui.delete_addon', addon_id=a.id) }}">Delete</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="small-8 large-centered columns">
+                <div class="row">
+                    <div class="small-6 columns">
+                        <h6 class="left">
+                            There are no Active Add-Ons
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="row" style="margin-bottom:30px;">
+        <div class="small-4 large-centered columns">
+            <h2>Inactive Add-Ons</h2>
+        </div>
+    </div>
+    {% for i in inactive_addons %}
+        <div class="row">
+            <div class="small-8 large-centered columns">
+                <div class="row">
+                    <div class="small-6 columns" style="background-color:#CCCCCC">
+                        <h6 class="left">
+                            {{ i.menu_name }}
+                        </h6>
+                    </div>
+                    <div class="small-6 columns">
+                        <ul class="button-group round">
+                            <li><a class="button tiny success" href="{{ url_for('ui.toggle_active_addon', addon_id=i.id, toggle_action = 'activate') }}">Activate</a></li>
+                            <li><a class="delete-addon button tiny alert" addon-id="{{ i.id }}" href="{{ url_for('ui.delete_addon', addon_id=i.id) }}">Delete</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="small-8 large-centered columns">
+                <div class="row">
+                    <div class="small-6 columns">
+                        <h6 class="left">
+                            There are no Inactive Add-Ons
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% if need_reboot %}
+        <hr>
+        <div class="row">
+            <div class="small-8 large-centered columns">
+                <div data-alert class="alert-box warning">
+                    There are recently loaded add-ons, this add-ons will be loaded by mhn after a reboot of the server:
+                    Issue: <b>sudo supervisorctl restart mhn-uwsgi</b>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <hr>
+    <div class="row">
+        <div class="small-7 columns">
+            <div class="row" style="margin-top:30px;">
+                <div class="small-10 large-centered columns">
+                    <h2>Upload Add-On</h2>
+                </div>
+            </div>
+            <form id="addon-form" action="{{ url_for('ui.load_addons') }}" method="post" enctype="multipart/form-data">
+                <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="menu_name-edit" name="menu_name" type="text" placeholder="Name of the Add-On (It shows in the Menu Add-Ons)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <div class="small-4 columns">
+                            <label for="dir_name-edit" class="right">Select Add-On:</label>
+                        </div>
+                        <div class="small-8 columns left">
+                            <input id="dir_name-edit" name="dir_name" type="file" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="active-edit" name="active" type="checkbox"><label for="active-edit">Activate the Add-On</label>
+                    </div>
+                </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="row">
+                            {% for category, message in messages %}
+                                <div class="small-10 large-centered columns">
+                                    <div data-alert class="{{ category }}">
+                                        {{ message  }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="row">
+                    <div class="small-10 large-centered columns">
+                        <input id="submit-addon" class="tiny button right" type="submit" value="LOAD" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

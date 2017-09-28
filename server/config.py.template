@@ -20,6 +20,7 @@ SERVER_BASE_URL = '{{SERVER_BASE_URL}}'
 HONEYMAP_URL = '{{HONEYMAP_URL}}'
 DEPLOY_KEY = '{{DEPLOY_KEY}}'
 LOG_FILE_PATH = '{{LOG_FILE_PATH}}'
+ADD_ONS = '{{ADD_ONS}}'
 
 MAIL_SERVER = '{{MAIL_SERVER}}'
 MAIL_PORT = {{MAIL_PORT}}
@@ -71,3 +72,6 @@ HONEYPOT_CHANNELS = {
     'suricata': ['suricata.events'],
     'elastichoney': ['elastichoney.events'],
 }
+
+# Disable problematic Add-ons
+DISABLED_ADDONS = []

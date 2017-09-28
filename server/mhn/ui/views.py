@@ -3,20 +3,26 @@ from pygal.style import *
 import pygal
 from flask import (
         Blueprint, render_template, request, url_for,
-        redirect, g)
+        redirect, g, jsonify, flash)
 from flask_security import logout_user as logout
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, and_
 
 from mhn.ui.utils import get_flag_ip, get_sensor_name
 from mhn.api.models import (
         Sensor, Rule, DeployScript as Script,
-        RuleSource)
-from mhn.auth import login_required, current_user
+        RuleSource, AddOns)
+from mhn.auth import login_required, current_user, roles_accepted
 from mhn.auth.models import User, PasswdReset, ApiKey
 from mhn import db, mhn
 from mhn.common.utils import (
-        paginate_options, alchemy_pages, mongo_pages)
+        paginate_options, alchemy_pages, mongo_pages, allowed_addon_filename, error_response, change_own)
 from mhn.common.clio import Clio
+from mhn.api import errors as apierrors
+from sqlalchemy.exc import IntegrityError
+from werkzeug import secure_filename
+import os
+import shutil
+import tarfile
 
 ui = Blueprint('ui', __name__, url_prefix='/ui')
 from mhn import mhn as app
@@ -164,19 +170,143 @@ def deploy_mgmt():
             'ui/script.html', scripts=Script.query.order_by(Script.date.desc()),
             script=script)
 
+
 @ui.route('/honeymap/', methods=['GET'])
 @login_required
 def honeymap():
     return render_template('ui/honeymap.html')
 
+
 @ui.route('/add-user/', methods=['GET'])
 @login_required
-def settings():
+def user_settings():
     return render_template(
-        'ui/settings.html', 
+        'ui/user_settings.html',
         users=User.query.filter_by(active=True),
         apikey=ApiKey.query.filter_by(user_id=current_user.id).first()
     )
+
+
+@ui.route('/add-addons/', methods=['GET'])
+@login_required
+def addons_settings():
+    if AddOns.query.filter(and_(AddOns.reboot == True, AddOns.active == True)).count() != 0:
+        return render_template('ui/addons_settings.html',
+                           active_addons=AddOns.query.filter_by(active=True),
+                           inactive_addons=AddOns.query.filter_by(active=False), need_reboot=True)
+    else:
+        return render_template('ui/addons_settings.html',
+                           active_addons=AddOns.query.filter_by(active=True),
+                           inactive_addons=AddOns.query.filter_by(active=False))
+
+
+@ui.route('/load-addons/', methods=['POST'])
+@login_required
+def load_addons():
+    data = request.form.to_dict()
+    addon_file = request.files['dir_name']
+
+    data['reboot'] = True
+
+    if 'active' not in data:
+        data['active'] = False
+    else:
+        data['active'] = True
+
+    if 'dir_name' not in data:
+        data['dir_name'] = secure_filename(addon_file.filename)
+
+    missing = AddOns.check_required(data)
+    if missing:
+        flash(apierrors.API_FIELDS_MISSING.format(missing), 'alert-box alert round')
+        return redirect(url_for('ui.addons_settings'))
+    else:
+        try:
+            addon = AddOns()
+            addon.menu_name = data['menu_name']
+            filename = data['dir_name']
+            resp = allowed_addon_filename(filename)
+            if not resp[0]:
+                flash(resp[1], 'alert-box alert round')
+                return redirect(url_for('ui.addons_settings'))
+
+            try:
+                addon_file.save(os.path.join(os.getcwd(), "mhn/addons/", filename))
+            except:
+                flash(apierrors.API_ADDON_UPLOAD_PROBLEM.format(addon.dir_name), 'alert-box alert round')
+                os.remove(os.path.join(os.getcwd(), "mhn/addons/", filename))
+                return redirect(url_for('ui.addons_settings'))
+
+
+            addon.dir_name = filename.split(".")[0]
+            addon.active = data['active']
+            addon.reboot = data['reboot']
+
+            try:
+                tar = tarfile.open(os.path.join(os.getcwd(), "mhn/addons/", filename))
+                tar.extractall(os.path.join(os.getcwd(), "mhn/addons/"))
+                tar.close()
+                os.remove(os.path.join(os.getcwd(), "mhn/addons/", filename))
+                change_own(os.path.join(os.getcwd(), "mhn/addons/", addon.dir_name), "www-data", "www-data")
+            except:
+                flash(apierrors.API_ADDON_NOT_TARFILE.format(addon.dir_name), 'alert-box alert round')
+                if os.path.exists(os.path.join(os.getcwd(), "mhn/addons/", filename)):
+                    os.remove(os.path.join(os.getcwd(), "mhn/addons/", filename))
+                elif os.path.exists(os.path.join(os.getcwd(), "mhn/addons/", addon.dir_name)):
+                    shutil.rmtree(os.path.join(os.getcwd(), "mhn/addons/", addon.dir_name))
+                return redirect(url_for('ui.addons_settings'))
+
+
+            db.session.add(addon)
+            db.session.commit()
+
+        except IntegrityError:
+            flash(apierrors.API_ADDON_NAME_EXISTS.format(addon.dir_name), 'alert-box alert round')
+            if os.path.exists(os.path.join(os.getcwd(), "mhn/addons/", filename)):
+                os.remove(os.path.join(os.getcwd(), "mhn/addons/", filename))
+            elif os.path.exists(os.path.join(os.getcwd(), "mhn/addons/", addon.dir_name)):
+                shutil.rmtree(os.path.join(os.getcwd(), "mhn/addons/", addon.dir_name))
+            return redirect(url_for('ui.addons_settings'))
+        else:
+            flash('Add-On {} Successfully Loaded'.format(addon.dir_name), 'alert-box success round')
+            return redirect(url_for('ui.addons_settings'))
+
+
+@ui.route('/toggle_activate_addon/<addon_id>/<toggle_action>', methods=['GET'])
+@login_required
+@roles_accepted('admin')
+def toggle_active_addon(addon_id, toggle_action):
+    addon = AddOns.query.get(addon_id)
+    if not addon:
+        return redirect(url_for('ui.addons_settings'))
+    if toggle_action == 'deactivate':
+        addon.active = False
+    elif toggle_action == 'activate':
+        addon.active = True
+    else:
+        return redirect(url_for('ui.addons_settings'))
+
+    db.session.add(addon)
+    db.session.commit()
+
+    return redirect(url_for('ui.addons_settings'))
+
+
+@ui.route('/delete_addon/<addon_id>/', methods=['DELETE'])
+@roles_accepted('admin')
+def delete_addon(addon_id):
+    addon = AddOns.query.get(addon_id)
+    if not addon:
+        return error_response(apierrors.API_ADDON_NOT_FOUND, 404)
+
+    try:
+        shutil.rmtree(os.path.join(os.getcwd(), "mhn/addons/", addon.dir_name))
+    except:
+        return error_response(apierrors.API_ADDON_NOT_DELETED, 400)
+
+    db.session.delete(addon)
+    db.session.commit()
+    return jsonify({})
 
 
 @ui.route('/forgot-password/<hashstr>/', methods=['GET'])

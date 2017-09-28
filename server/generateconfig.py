@@ -71,6 +71,8 @@ def generate_config():
                               help='Log file path')
     parser_unatt.add_argument('-d', '--debug', action='store_true',
                               help='Run in debug mode')
+    parser_unatt.add_argument('-a', '--add_ons', action='store_true',
+                              help='Activate the add-ons engine')
 
     if (len(sys.argv) < 2):
         args = parser.parse_args(['generate'])
@@ -96,6 +98,7 @@ def generate_config():
         mail_password = args.mail_pass
         default_mail_sender = args.mail_sender
         log_file_path = args.log_file_path
+        add_ons = args.add_ons
     else:
         # Collect values from user
         debug = raw_input('Do you wish to run in Debug mode?: y/n ')
@@ -148,6 +151,11 @@ def generate_config():
 
         log_file_path = raw_input('Path for log file ["{}"]: '.format(default_log_path))
 
+        add_ons = raw_input('Do you wish to enable the Add-Ons engine?: y/n ')
+        while add_ons not in ['y', 'n']:
+            add_ons = raw_input('Please y or n ')
+        add_ons = True if add_ons == 'y' else False
+
     server_base_url = server_base_url if server_base_url.strip() else default_base_url
     honeymap_url = honeymap_url if honeymap_url.strip() else default_honeymap_url
     log_file_path = log_file_path if log_file_path else default_log_path
@@ -165,6 +173,7 @@ def generate_config():
     localconfig['MAIL_PASSWORD'] = mail_password if mail_password else ''
     localconfig['DEFAULT_MAIL_SENDER'] = default_mail_sender if default_mail_sender else ""
     localconfig['LOG_FILE_PATH'] = log_file_path
+    localconfig['ADD_ONS'] = add_ons
 
     with open('config.py.template', 'r') as templfile,\
          open('config.py', 'w') as confile:

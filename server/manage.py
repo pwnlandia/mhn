@@ -28,6 +28,9 @@ except ImportError:
 
 from mhn import mhn, db
 from mhn.tasks.rules import fetch_sources
+from mhn.api.models import (
+        User, Sensor, Rule, DeployScript as Script,
+        RuleSource, AddOns)
 
 
 if __name__ == '__main__':
@@ -53,5 +56,9 @@ if __name__ == '__main__':
     @manager.command
     def fetch_rules():
         fetch_sources()
+
+    @manager.shell
+    def make_shell_context():
+        return dict(mhn=mhn, db=db, User=User, Sensor=Sensor, Rule=Rule, RuleSource=RuleSource, Script=Script, AddOns=AddOns)
 
     manager.run()

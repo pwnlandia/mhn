@@ -42,10 +42,19 @@
                             <li><a href="{{ url_for('ui.add_sensor') }}">Add sensor</a></li>
                         </ul>
                     </li>
-            
-				
-				
-			 <li class="has-dropdown">
+
+			        {% if settings.add_ons_enabled %}
+			        <li class="has-dropdown">
+                        <a>Add-Ons</a>
+                        <ul class="dropdown">
+                            {% for item in settings.add_ons%}
+                                <li><a href="{{ url_for(item[0] ~ '.home') }}">{{ item[1] }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                    <li class="has-dropdown">
                         <a href="/ui/chart">Charts</a>
                         <ul class="dropdown">
                             <li><a href="/image/top_passwords.svg">Kippo/Cowrie Top Passwords</a></li>
@@ -61,13 +70,17 @@
 				
                 <!-- Right Nav Section -->
                 <ul class="right">
+                    {% if current_user.has_role('admin') %}
+                    <li class="has-dropdown">
+                        <a>Settings</a>
+                        <ul class="dropdown">
+                            <li><a href="{{ url_for('ui.user_settings') }}">User Settings</a></li>
+                            <li><a href="{{ url_for('ui.addons_settings') }}">Add-Ons Settings</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
                     <li class="active"><a id="out-btn" href="#">LOGOUT</a></li>
                 </ul>
-                {% if current_user.has_role('admin') %}
-                <ul class="right">
-                    <li class=""><a id="out-btn" href="{{ url_for('ui.settings') }}">Settings</a></li>
-                </ul>
-                {% endif %}
             </section>
         </nav>
         {% endif %}

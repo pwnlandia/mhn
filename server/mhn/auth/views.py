@@ -55,13 +55,13 @@ def create_user():
         return error_response(
                 apierrors.API_FIELDS_MISSING.format(missing), 400)
     else:
-        user = get_datastore().create_user(
+        try:
+            user = get_datastore().create_user(
                 email=request.json.get('email'),
                 password=encrypt_password(request.json.get('password')))
-        userrole = user_datastore.find_role('admin')
-        user_datastore.add_role_to_user(user, userrole)
+            userrole = user_datastore.find_role('admin')
+            user_datastore.add_role_to_user(user, userrole)
 
-        try:
             db.session.add(user)
             db.session.flush()
 
@@ -81,8 +81,10 @@ def delete_user(user_id):
     user = User.query.get(user_id)
     if not user:
         return error_response(errors.AUTH_NOT_FOUND.format(user_id), 404)
-    user.active= False
-    db.session.add(user)
+    #user.active= False
+    #db.session.add(user)
+    #Lets delete the user instead of deactivate them
+    db.session.delete(user)
     db.session.commit()
     return jsonify({})
 

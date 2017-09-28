@@ -143,14 +143,14 @@ EOF
 else
     cat > /etc/supervisor/conf.d/kippo.conf <<EOF
 [program:kippo]
-command=/opt/kippo/start.sh
+command=su kippo -c "authbind --deep twistd -n -y /opt/kippo/kippo.tac -l /opt/kippo/log/kippo.log --pidfile /opt/kippo/kippo.pid"
 directory=/opt/kippo
 stdout_logfile=/opt/kippo/log/kippo.out
 stderr_logfile=/opt/kippo/log/kippo.err
 autostart=true
 autorestart=true
 redirect_stderr=true
-stopsignal=QUIT
+stopasgroup = true
 EOF
 fi
 
