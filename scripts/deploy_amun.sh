@@ -25,9 +25,6 @@ apt-get -y install git python-pip supervisor
 cd /opt
 git clone https://github.com/zeroq/amun.git
 cd amun
-# Currently only the development branch supports hpfeeds
-git checkout development
-mkdir hexdumps
 AMUN_HOME=/opt/amun 
 
 # Configure Amun (disable vuln-http, too many false alarms here)
