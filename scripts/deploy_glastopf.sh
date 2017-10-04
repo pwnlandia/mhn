@@ -10,6 +10,17 @@ if [ $# -ne 2 ]
         exit 1
 fi
 
+# Check if Ubuntu 14.04 or 16.04
+if [ "$(lsb_release -r -s)" != "14.04" ] && [ "$(lsb_release -r -s)" != "16.04" ]; then
+    echo "WARNING: This operating system may not be supported by this script."
+    echo "Continue? (y/n)"
+    read PROMPT
+    if [ "$PROMPT" == "n" -o "$PROMPT" == "N" ]                               
+    then                                                                        
+        exit
+    fi    
+fi
+
 server_url=$1
 deploy_key=$2
 GLASTOPF_HOME=/opt/glastopf
@@ -23,7 +34,11 @@ chmod 0755 registration.sh
 apt-get update
 
 # Install Prerequisites
-apt-get install -y python2.7 python-openssl python-gevent libevent-dev python2.7-dev build-essential make python-chardet python-requests python-sqlalchemy python-lxml python-beautifulsoup mongodb python-pip python-dev python-setuptools g++ git php5 php5-dev liblapack-dev gfortran libmysqlclient-dev libxml2-dev libxslt-dev supervisor
+if [ "$(lsb_release -r -s)" == "14.04" ]; then
+    apt-get install -y python2.7 python-openssl python-gevent libevent-dev python2.7-dev build-essential make python-chardet python-requests python-sqlalchemy python-lxml python-beautifulsoup mongodb python-pip python-dev python-setuptools g++ git php5 php5-dev liblapack-dev gfortran libmysqlclient-dev libxml2-dev libxslt-dev supervisor
+else
+    apt-get install -y apache2 python2.7 python-openssl python-gevent libevent-dev python2.7-dev build-essential make python-chardet python-requests python-sqlalchemy python-lxml python-beautifulsoup mongodb python-pip python-dev python-setuptools g++ git php php-dev liblapack-dev gfortran libmysqlclient-dev libxml2-dev libxslt-dev supervisor
+fi
 
 pip install -e git+https://github.com/threatstream/hpfeeds.git#egg=hpfeeds-dev
 
@@ -36,8 +51,13 @@ phpize
 make && make install
 
 # Updated php.ini to add bfr.so
-BFR_BUILD_OUTPUT=`find /usr/lib/php5/ -type f -name "bfr.so" | awk -F"/" '{print $5}'`
-echo "zend_extension = /usr/lib/php5/$BFR_BUILD_OUTPUT/bfr.so" >> /etc/php5/apache2/php.ini
+if [ "$(lsb_release -r -s)" == "14.04" ]; then
+    BFR_BUILD_OUTPUT=`find /usr/lib/php5/ -type f -name "bfr.so" | awk -F"/" '{print $5}'`
+    echo "zend_extension = /usr/lib/php5/$BFR_BUILD_OUTPUT/bfr.so" >> /etc/php5/apache2/php.ini
+else
+    BFR_BUILD_OUTPUT=`find /usr/lib/php/ -type f -name "bfr.so" | awk -F"/" '{print $5}'`
+    echo "zend_extension = /usr/lib/php/$BFR_BUILD_OUTPUT/bfr.so" >> /etc/php/7.0/fpm/php.ini
+fi
 
 # Stop apache2 and disable it from start up
 service apache2 stop
