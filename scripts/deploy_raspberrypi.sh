@@ -57,7 +57,7 @@ cat > /tmp/dionaea.hpfeeds.patch <<EOF
 +				ident = "$HPF_IDENT"
 +				secret = "$HPF_SECRET"
 +				// dynip_resolve: enable to lookup the sensor ip through a webservice
-+				dynip_resolve = "http://queryip.net/ip/"
++				dynip_resolve = "http://icanhazip.com/"
 +			}
 +		}
  		logsql = {
