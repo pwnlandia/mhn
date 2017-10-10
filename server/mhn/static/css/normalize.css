@@ -6,14 +6,12 @@
 }
 
 input[type="text"], input[type="password"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="month"], input[type="week"], input[type="email"], input[type="number"],   input[type="search"], input[type="tel"], input[type="time"], input[type="url"], textarea {
-    margin-top: .5rem;
-    margin-bottom: .5rem;
+    margin: 0;
 }
 
 h2 {
     text-align: center;
-} 
-
+}
 /* ==========================================================================
    HTML5 display definitions
    ========================================================================== */
