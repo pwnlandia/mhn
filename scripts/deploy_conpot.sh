@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Minor changes by n0xa to get this working on Ubuntu 16.04LTS and Raspbian Jessie Lite (July 2017 image)
+
 if [ $# -ne 2 ]
     then
         echo "Wrong number of arguments supplied."
@@ -10,15 +12,15 @@ fi
 server_url=$1
 deploy_key=$2
 
+apt update
+apt install -y python
+
 wget $server_url/static/registration.txt -O registration.sh
 chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "conpot"
 
-echo "deb http://en.archive.ubuntu.com/ubuntu precise main multiverse" | sudo tee -a /etc/apt/sources.list
-apt-get update
-apt-get install -y git libmysqlclient-dev libsmi2ldbl snmp-mibs-downloader python-dev libevent-dev libxslt1-dev libxml2-dev python-pip python-mysqldb pkg-config libvirt-dev supervisor
-apt-get install -y zlib1g-dev # needed for Ubuntu 14.04
+apt install -y git libmysqlclient-dev libsmi2ldbl snmp-mibs-downloader python-dev libevent-dev libxslt1-dev libxml2-dev python-pip python-mysqldb pkg-config libvirt-dev supervisor zlib1g-dev
 pip install --upgrade distribute
 pip install virtualenv
 
