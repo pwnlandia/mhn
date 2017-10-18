@@ -48,7 +48,7 @@ only_exploits = True
 
 [fetch_public_ip]
 enabled = True
-urls = ["http://www.telize.com/ip", "http://queryip.net/ip/", "http://ifconfig.me/ip"]
+urls = ["http://www.telize.com/ip", "http://icanhazip.com", "http://ifconfig.me/ip"]
 
 [template]
 title = It Works!

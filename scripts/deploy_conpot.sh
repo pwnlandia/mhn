@@ -81,7 +81,7 @@ contact_email = ...
 
 [fetch_public_ip]
 enabled = True
-urls = ["http://www.telize.com/ip", "http://queryip.net/ip/", "http://ifconfig.me/ip"]
+urls = ["http://www.telize.com/ip", "http://icanhazip.com/", "http://ifconfig.me/ip"]
 
 [change_mac_addr]
 enabled = False
