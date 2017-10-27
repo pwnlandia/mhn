@@ -27,6 +27,7 @@ EOF
 
         systemctl start mongodb
         systemctl status mongodb
+        systemctl enable mongodb
 
     else
         apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
