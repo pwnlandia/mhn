@@ -102,6 +102,10 @@ services running on your MHN server.  See below for checking these.
 For directions on running MHN behind a web proxy, follow the directions in the
 [wiki.](https://github.com/threatstream/mhn/wiki/Running-MHN-Behind-a-Web-Proxy)
 
+### Running MHN Over HTTPS
+
+By default MHN will run without HTTPS, to configure your installation to use SSL
+certificates directions can be found in the [wiki.](https://github.com/threatstream/mhn/wiki/Running-MHN-Over-HTTPS)
 
 ## Deploying honeypots with MHN
 
@@ -149,22 +153,6 @@ This data reporting can be disabled by running the following command from the
 MHN server after completing the initial installation steps outlined above:
 `/opt/mhn/scripts/disable_collector.sh`
 
-## Security
-
-Please be aware that by default the MHN server web app is communicating
-plaintext. To change that, install SSL/TLS certificates to your nginx. Proper
-configuration can be found at [bettercrypto.org](https://bettercrypto.org)
-
-    sudo vi /etc/nginx/sites-enabled/default
-
-Insert the SSL configuration and the keys.
-
-Restart nginx:
-
-    service nginx restart
-
-Same applies to the honeymap running on port 3000. It might be helpful to
-install iptables rules to restrict access to the honeymap.
 
 ## Support or Contact
 MHN is an open source project brought to you by the passionate folks at Anomali,
