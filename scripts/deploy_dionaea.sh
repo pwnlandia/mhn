@@ -13,11 +13,6 @@ fi
 server_url=$1
 deploy_key=$2
 
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "dionaea"
-
 if [ -f /etc/redhat-release ]; then
     export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
     yum -y update
@@ -48,6 +43,12 @@ EOF
     #fixme
     chmod -R a+wrx /var/dionaea
     docker pull threatstream/dionaea-mhn
+
+    # Register the sensor with MHN server.
+    wget $server_url/static/registration.txt -O registration.sh
+    chmod 755 registration.sh
+    # Note: this will export the HPF_* variables
+    . ./registration.sh $server_url $deploy_key "dionaea"
 
     echo "Getting dionea from $server_url"
     curl $server_url/static/dionaea.conf | sed -e "s/HPF_HOST/$HPF_HOST/" | sed -e "s/HPF_PORT/$HPF_PORT/" | sed -e "s/HPF_IDENT/$HPF_IDENT/" | sed -e "s/HPF_SECRET/$HPF_SECRET/" > /etc/dionaea/dionaea.conf
@@ -83,7 +84,11 @@ elif [ -f /etc/debian_version ]; then
             apt-get install -y dionaea supervisor patch
     fi
 
-
+    # Register the sensor with MHN server.
+    wget $server_url/static/registration.txt -O registration.sh
+    chmod 755 registration.sh
+    # Note: this will export the HPF_* variables
+    . ./registration.sh $server_url $deploy_key "dionaea"
 
     cp /etc/dionaea/dionaea.conf.dist /etc/dionaea/dionaea.conf
 cat > /tmp/dionaea.hpfeeds.patch <<EOF

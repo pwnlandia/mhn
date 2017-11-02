@@ -25,11 +25,6 @@ server_url=$1
 deploy_key=$2
 GLASTOPF_HOME=/opt/glastopf
 
-wget $server_url/static/registration.txt -O registration.sh
-chmod 0755 registration.sh
-# Note: This will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "glastopf"
-
 # Update repository
 apt-get update
 
@@ -73,6 +68,12 @@ pip uninstall --yes setuptools
 git clone https://github.com/mushorg/glastopf.git $GLASTOPF_HOME
 cd $GLASTOPF_HOME
 python setup.py install
+
+# Register the sensor with the MHN server.
+wget $server_url/static/registration.txt -O registration.sh
+chmod 0755 registration.sh
+# Note: This will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "glastopf"
 
 # Add the modified glastopf.cfg
 cat > $GLASTOPF_HOME/glastopf.cfg <<EOF
