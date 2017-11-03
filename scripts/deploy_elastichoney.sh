@@ -11,11 +11,6 @@ fi
 server_url=$1
 deploy_key=$2
 
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "elastichoney"
-
 apt-get update
 apt-get -y install git golang supervisor
 
@@ -28,6 +23,12 @@ cd elastichoney
 export GOPATH=/opt/elastichoney
 go get || true
 go build
+
+# Register the sensor with the MHN server.
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "elastichoney"
 
 cat > config.json<<EOF
 {

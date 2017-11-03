@@ -13,11 +13,6 @@ fi
 server_url=$1
 deploy_key=$2
 
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "amun"
-
 apt-get update
 apt-get -y install git python-pip supervisor
 
@@ -36,6 +31,12 @@ sed -i $'s/log_modules:/log_modules:\\\n    log-hpfeeds/g' conf/amun.conf
 echo "104854" > /proc/sys/fs/file-max
 ulimit -Hn 104854
 ulimit -n 104854
+
+# Register the sensor with the MHN server.
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "amun"
 
 # Setup HPFeeds
 cat > /opt/amun/conf/log-hpfeeds.conf <<EOF

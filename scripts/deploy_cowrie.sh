@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# tested on AWS: Ubuntu 14.04.5 LTS
-# 
-
 set -e
 set -x
 
@@ -18,11 +15,6 @@ apt-get install -y python
 
 server_url=$1
 deploy_key=$2
-
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "cowrie"
 
 apt-get update
 apt-get -y install python-dev git supervisor authbind openssl python-virtualenv build-essential python-gmpy2 libgmp-dev libmpfr-dev libmpc-dev libssl-dev python-pip libffi-dev
@@ -43,6 +35,12 @@ source cowrie-env/bin/activate
 # Could not find a version that satisfies the requirement csirtgsdk (from -r requirements.txt (line 10)) (from versions: 0.0.0a5, 0.0.0a6, 0.0.0a5.linux-x86_64, 0.0.0a6.linux-x86_64, 0.0.0a3)
 pip install csirtgsdk==0.0.0a6
 pip install -r requirements.txt 
+
+# Register sensor with MHN server.
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "cowrie"
 
 cp cowrie.cfg.dist cowrie.cfg
 sed -i 's/hostname = svr04/hostname = server/g' cowrie.cfg

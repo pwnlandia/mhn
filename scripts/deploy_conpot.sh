@@ -10,11 +10,6 @@ fi
 server_url=$1
 deploy_key=$2
 
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "conpot"
-
 echo "deb http://en.archive.ubuntu.com/ubuntu precise main multiverse" | sudo tee -a /etc/apt/sources.list
 apt-get update
 apt-get install -y git libmysqlclient-dev libsmi2ldbl snmp-mibs-downloader python-dev libevent-dev libxslt1-dev libxml2-dev python-pip python-mysqldb pkg-config libvirt-dev supervisor
@@ -31,6 +26,12 @@ pip install -U setuptools
 pip install -e git+https://github.com/threatstream/hpfeeds.git#egg=hpfeeds-dev
 pip install -e git+https://github.com/mushorg/conpot.git#egg=conpot-dev
 pip install -e git+https://github.com/mushorg/modbus-tk.git#egg=modbus-tk
+
+# Register sensor with MHN server.
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "conpot"
 
 cat > conpot.cfg <<EOF
 [common]

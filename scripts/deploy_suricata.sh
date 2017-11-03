@@ -19,11 +19,6 @@ fi
 server_url=$1
 deploy_key=$2
 
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "suricata"
- 
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libpcap-dev libjansson-dev libpcre3-dev libdnet-dev libdumbnet-dev libdaq-dev flex bison python-pip git make automake libtool zlib1g-dev python-dev libnetfilter-queue-dev libnetfilter-queue1 libnfnetlink-dev libnfnetlink0 libyaml-dev libmagic-dev autoconf libpcre3 libpcre3-dbg libnet1-dev libyaml-0-2 pkg-config zlib1g libcap-ng-dev libcap-ng0
 
@@ -68,6 +63,12 @@ export CPPFLAGS=-I/include
 make
 make install-full
 
+# Register the sensor with MHN server.
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "suricata"
+ 
 cd /opt/suricata/etc/suricata
 #sed -i -r "/\s*- alert-hpfeeds/,/\s*reconnect: yes # do we reconnect if publish fails/d" suricata.yaml
 #sed -i -r "s/^  # hpfeeds output/ # hpfeeds output\n  - alert-hpfeeds:\n      enabled: yes\n      host: $HPF_HOST\n      ident: $HPF_IDENT\n      secret: $HPF_SECRET\n      channel: suricata.events\n      reconnect: yes # do we reconnect if publish fails ?!\n/" suricata.yaml
