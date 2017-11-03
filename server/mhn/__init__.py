@@ -152,7 +152,7 @@ def create_clean_db():
             ['Ubuntu - Dionaea with HTTP', '../scripts/deploy_dionaea_http.sh'],
             ['Ubuntu - Shockpot Sinkhole', '../scripts/deploy_shockpot_sinkhole.sh'],
         ]
-        for honeypot, deploypath in deployscripts:
+        for honeypot, deploypath in reversed(deployscripts):
 
             with open(path.abspath(deploypath), 'r') as deployfile:
                 initdeploy = DeployScript()
