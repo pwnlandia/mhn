@@ -119,7 +119,7 @@ steps for deploying a honeypot with MHN:
 5. Login to a honeypot server and run this command as root.
 
 If the deploy script successfully completes you should see the new sensor listed
-under your deployed sensor list.
+under your deployed sensor list. For a full list of supported sensors, check the list here: [List of Supported Sensors](https://github.com/threatstream/mhn/wiki/List-of-Supported-Sensors)
 
 ## Integration with Splunk and ArcSight
 
