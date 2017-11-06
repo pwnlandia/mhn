@@ -138,24 +138,21 @@ def create_clean_db():
         #|-- deploy_kippo.sh
         deployscripts = [
             ['Ubuntu - Conpot', '../scripts/deploy_conpot.sh'],
-            ['Ubuntu - Dionaea', '../scripts/deploy_dionaea.sh'],
-            ['Ubuntu - Snort', '../scripts/deploy_snort.sh'],
-            ['Ubuntu - cowrie', '../scripts/deploy_cowrie.sh'],
-            ['Ubuntu/Raspberry Pi - Kippo', '../scripts/deploy_kippo.sh'],
-            ['Ubuntu - Amun', '../scripts/deploy_amun.sh'],
-            ['Ubuntu - Glastopf', '../scripts/deploy_glastopf.sh'],
             ['Ubuntu - Wordpot', '../scripts/deploy_wordpot.sh'],
             ['Ubuntu - Shockpot', '../scripts/deploy_shockpot.sh'],
             ['Ubuntu - p0f', '../scripts/deploy_p0f.sh'],
             ['Ubuntu - Suricata', '../scripts/deploy_suricata.sh'],
+            ['Ubuntu - Glastopf', '../scripts/deploy_glastopf.sh'],
             ['Ubuntu - ElasticHoney', '../scripts/deploy_elastichoney.sh'],
+            ['Ubuntu - Amun', '../scripts/deploy_amun.sh'],
+            ['Ubuntu - Snort', '../scripts/deploy_snort.sh'],
+            ['Ubuntu - Cowrie', '../scripts/deploy_cowrie.sh'],
+            ['Ubuntu 14.04/Centos 7 - Dionaea', '../scripts/deploy_dionaea.sh'],
             ['Raspberry Pi - Dionaea', '../scripts/deploy_raspberrypi.sh'],
             ['Ubuntu - Dionaea with HTTP', '../scripts/deploy_dionaea_http.sh'],
-            ['Ubuntu - Kippo as vulnerable Juniper Netscreen', '../scripts/deploy_kippo_as_juniper.sh'],
             ['Ubuntu - Shockpot Sinkhole', '../scripts/deploy_shockpot_sinkhole.sh'],
-            ['Redhat/Centos - Kippo', '../scripts/deploy_kippo-centos.sh'],
         ]
-        for honeypot, deploypath in deployscripts:
+        for honeypot, deploypath in reversed(deployscripts):
 
             with open(path.abspath(deploypath), 'r') as deployfile:
                 initdeploy = DeployScript()
