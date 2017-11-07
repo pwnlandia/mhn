@@ -1,36 +1,51 @@
-{% extends "base.html" %}
-{% block title %}Login{% endblock %}
-{% block content %}
-    <div class="row" style="margin-top: 15%;">
-        <div class="small-6 columns">
-            <h1>Welcome to the Modern Honeypot Network Server</h1>
-        </div>
-        <div class="small-6 columns">
-            <form id="login-form" action="" method="post">
-                <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
-                <fieldset>
-                    <legend>Log In</legend>
-                    <label>Email</label>
-                    <input id="email" name="email" type="text" />
-                    <label>Password</label>
-                    <input id="passwd" name="passwd" type="password" />
-                    <div class="row">
-                        <div class="small-8 columns">
-                            <div style="display:none;" id="alert-text" data-alert class="alert-box warning round">
-                                <div id="error-txt"></div>
-                            </div>
-                        </div>
-                        <div class="small-8 columns">
-                            <h5 style="float:left;">
-                                <a href={{ url_for('ui.reset_passwd') }}>Forgot password?</a>
-                            </h5>
-                        </div>
-                        <div class="small-4 columns">
-                            <input style="float:right;" type="submit" class="small button" id="log-btn" value="LOGIN"/>
-                        </div>
-                    </div>
-                </fieldset>
-            </form>
-        </div>
-    </div>
-{% endblock %}
+<!doctype html>
+    <head>
+        <title>{% block title %}Login{% endblock %}</title>
+        <script src="/static/js/vendor/jquery.js"></script>
+        <link rel="stylesheet" href="/static/css/foundation.min.css">
+        <link rel="stylesheet" href="/static/css/normalize.css">
+        <script src="/static/js/vendor/foundation.min.js"></script>
+        <script src="/static/js/vendor/modernizr.js"></script>
+        <script src="/static/js/main.js"></script>
+    </head>
+    <body>
+      {% block content %}
+          <div class="row" style="margin-top: 15%;">
+              <div class="small-6 columns">
+                  <h1>Welcome to the Modern Honeypot Network Server</h1>
+              </div>
+              <div class="small-6 columns">
+                  <form id="login-form" action="" method="post">
+                      <input id="_csrf_token" name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+                      <fieldset>
+                          <legend>Log In</legend>
+                          <label>Email</label>
+                          <input id="email" name="email" type="text" />
+                          <label>Password</label>
+                          <input id="passwd" name="passwd" type="password" />
+                          <div class="row">
+                              <div class="small-8 columns">
+                                  <div style="display:none;" id="alert-text" data-alert class="alert-box warning round">
+                                      <div id="error-txt"></div>
+                                  </div>
+                              </div>
+                              <div class="small-8 columns">
+                                  <h5 style="float:left;">
+                                      <a href={{ url_for('ui.reset_passwd') }}>Forgot password?</a>
+                                  </h5>
+                              </div>
+                              <div class="small-4 columns">
+                                  <input style="float:right;" type="submit" class="small button" id="log-btn" value="LOGIN"/>
+                              </div>
+                          </div>
+                      </fieldset>
+                  </form>
+              </div>
+          </div>
+      {% endblock %}
+        <script src="/static/js/vendor/fastclick.js"></script>
+        <script>
+            $(document).foundation();
+        </script>
+    </body>
+</html>
