@@ -28,6 +28,23 @@ useradd -d /home/cowrie -s /bin/bash -m cowrie -g users
 
 cd /opt
 git clone https://github.com/micheloosterhof/cowrie.git cowrie
+
+# Config for requirements.txt
+cat > /opt/cowrie/requirements.txt <<EOF
+twisted>=17.1.0
+cryptography>=0.9.1,<=1.8
+configparser
+pyopenssl
+pyparsing
+packaging
+appdirs>=1.4.0
+pyasn1_modules
+attrs
+service_identity
+python-dateutil
+tftpy
+EOF
+
 cd cowrie
 virtualenv cowrie-env #env name has changed to cowrie-env on latest version of cowrie
 source cowrie-env/bin/activate
