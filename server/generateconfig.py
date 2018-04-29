@@ -4,7 +4,6 @@ working config.py file from the config template.
 """
 
 from getpass import getpass
-import json
 import os.path
 from random import choice
 import string
@@ -24,7 +23,7 @@ def generate_config():
         print('config.py already exists')
         sys.exit()
 
-    pub_ip = json.load(urlopen('http://httpbin.org/ip'))['origin']
+    pub_ip = urlopen('http://ip.42.pl/raw').read()
     default_base_url = 'http://{}'.format(pub_ip)
     default_honeymap_url = '{}:3000'.format(default_base_url)
     default_log_path = '/var/log/mhn/mhn.log'
