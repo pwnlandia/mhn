@@ -6,7 +6,7 @@ allows you to deploy sensors quickly and to collect data immediately, viewable
 from a neat web interface. Honeypot deploy scripts include several common
 honeypot technologies, including [Snort](https://snort.org/),
 [Cowrie](http://www.micheloosterhof.com/cowrie/),
-[Dionaea](http://edgis-security.org/honeypot/dionaea/), and
+[Dionaea](https://www.edgis-security.org/single-post/dionaea-malware-honeypot), and
 [glastopf](https://github.com/glastopf/), among others.
 
 For questions regarding troubleshooting your installation, please review the
