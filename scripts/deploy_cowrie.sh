@@ -61,10 +61,10 @@ chmod 755 registration.sh
 
 cp cowrie.cfg.dist cowrie.cfg
 sed -i 's/hostname = svr04/hostname = server/g' cowrie.cfg
-sed -i 's/#listen_port = 2222/listen_port = 22/g' cowrie.cfg
 sed -i 's/listen_endpoints = tcp:2222:interface=0.0.0.0/listen_endpoints = tcp:22:interface=0.0.0.0/g' cowrie.cfg
-sed -i 's/ssh_version_string = SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u2/ssh_version_string = SSH-2.0-OpenSSH_6.7p1 Ubuntu-5ubuntu1.3/g' cowrie.cfg
+sed -i 's/version = SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u2/version = SSH-2.0-OpenSSH_6.7p1 Ubuntu-5ubuntu1.3/g' cowrie.cfg
 sed -i 's/#\[output_hpfeeds\]/[output_hpfeeds]/g' cowrie.cfg
+sed -i '/\[output_hpfeeds\]/!b;n;cenabled = true' cowrie.cfg
 sed -i "s/#server = hpfeeds.mysite.org/server = $HPF_HOST/g" cowrie.cfg
 sed -i "s/#port = 10000/port = $HPF_PORT/g" cowrie.cfg
 sed -i "s/#identifier = abc123/identifier = $HPF_IDENT/g" cowrie.cfg
