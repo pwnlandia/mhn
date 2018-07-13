@@ -24,8 +24,8 @@ apt-get update
 apt-get --yes --force-yes install libglib2.0-dev libssl-dev libcurl4-openssl-dev libreadline-dev libsqlite3-dev libtool automake autoconf build-essential subversion git-core flex bison pkg-config libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev libnl-route-3-dev liblcfg libemu libev dionaea-python dionaea-cython libpcap udns dionaea liblcfg supervisor
 
 # Download and install old version of openssl
-wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u6_armhf.deb
-sudo dpkg -i libssl1.0.0_1.0.1t-1+deb8u6_armhf.deb
+wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u8_armhf.deb
+sudo dpkg -i libssl1.0.0_1.0.1t-1+deb8u8_armhf.deb
 
 cp /opt/dionaea/etc/dionaea/dionaea.conf.dist /opt/dionaea/etc/dionaea/dionaea.conf
 chown nobody:nogroup /opt/dionaea/var/dionaea -R
