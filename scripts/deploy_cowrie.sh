@@ -59,17 +59,17 @@ chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "cowrie"
 
-cp cowrie.cfg.dist cowrie.cfg
-sed -i 's/hostname = svr04/hostname = server/g' cowrie.cfg
-sed -i 's/#listen_port = 2222/listen_port = 22/g' cowrie.cfg
-sed -i 's/listen_endpoints = tcp:2222:interface=0.0.0.0/listen_endpoints = tcp:22:interface=0.0.0.0/g' cowrie.cfg
-sed -i 's/ssh_version_string = SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u2/ssh_version_string = SSH-2.0-OpenSSH_6.7p1 Ubuntu-5ubuntu1.3/g' cowrie.cfg
-sed -i 's/#\[output_hpfeeds\]/[output_hpfeeds]/g' cowrie.cfg
-sed -i "s/#server = hpfeeds.mysite.org/server = $HPF_HOST/g" cowrie.cfg
-sed -i "s/#port = 10000/port = $HPF_PORT/g" cowrie.cfg
-sed -i "s/#identifier = abc123/identifier = $HPF_IDENT/g" cowrie.cfg
-sed -i "s/#secret = secret/secret = $HPF_SECRET/g" cowrie.cfg
-sed -i 's/#debug=false/debug=false/' cowrie.cfg
+cp etc/cowrie.cfg.dist etc/cowrie.cfg
+sed -i 's/hostname = svr04/hostname = server/g' etc/cowrie.cfg
+sed -i 's/#listen_port = 2222/listen_port = 22/g' etc/cowrie.cfg
+sed -i 's/listen_endpoints = tcp:2222:interface=0.0.0.0/listen_endpoints = tcp:22:interface=0.0.0.0/g' etc/cowrie.cfg
+sed -i 's/ssh_version_string = SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u2/ssh_version_string = SSH-2.0-OpenSSH_6.7p1 Ubuntu-5ubuntu1.3/g' etc/cowrie.cfg
+sed -i 's/#\[output_hpfeeds\]/[output_hpfeeds]/g' etc/cowrie.cfg
+sed -i "s/#server = hpfeeds.mysite.org/server = $HPF_HOST/g" etc/cowrie.cfg
+sed -i "s/#port = 10000/port = $HPF_PORT/g" etc/cowrie.cfg
+sed -i "s/#identifier = abc123/identifier = $HPF_IDENT/g" etc/cowrie.cfg
+sed -i "s/#secret = secret/secret = $HPF_SECRET/g" etc/cowrie.cfg
+sed -i 's/#debug=false/debug=false/' etc/cowrie.cfg
 
 chown -R cowrie:users /opt/cowrie/
 touch /etc/authbind/byport/22
