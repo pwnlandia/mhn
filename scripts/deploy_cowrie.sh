@@ -59,11 +59,12 @@ chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "cowrie"
 
+cd etc
 cp cowrie.cfg.dist cowrie.cfg
 sed -i 's/hostname = svr04/hostname = server/g' cowrie.cfg
 sed -i 's/#listen_port = 2222/listen_port = 22/g' cowrie.cfg
 sed -i 's/listen_endpoints = tcp:2222:interface=0.0.0.0/listen_endpoints = tcp:22:interface=0.0.0.0/g' cowrie.cfg
-sed -i 's/ssh_version_string = SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u2/ssh_version_string = SSH-2.0-OpenSSH_6.7p1 Ubuntu-5ubuntu1.3/g' cowrie.cfg
+sed -i 's/version = SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u2/version = SSH-2.0-OpenSSH_6.7p1 Ubuntu-5ubuntu1.3/g' cowrie.cfg
 sed -i 's/#\[output_hpfeeds\]/[output_hpfeeds]/g' cowrie.cfg
 sed -i "s/#server = hpfeeds.mysite.org/server = $HPF_HOST/g" cowrie.cfg
 sed -i "s/#port = 10000/port = $HPF_PORT/g" cowrie.cfg
@@ -76,6 +77,7 @@ touch /etc/authbind/byport/22
 chown cowrie /etc/authbind/byport/22
 chmod 770 /etc/authbind/byport/22
 
+cd ..
 # start.sh is deprecated on new Cowrie version and substituted by "bin/cowrie [start/stop/status]"
 sed -i 's/AUTHBIND_ENABLED=no/AUTHBIND_ENABLED=yes/' bin/cowrie
 sed -i 's/DAEMONIZE=""/DAEMONIZE="-n"/' bin/cowrie
