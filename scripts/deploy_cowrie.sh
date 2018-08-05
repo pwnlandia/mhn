@@ -59,6 +59,7 @@ chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "cowrie"
 
+cd etc
 cp cowrie.cfg.dist cowrie.cfg
 sed -i 's/hostname = svr04/hostname = server/g' cowrie.cfg
 sed -i 's/listen_endpoints = tcp:2222:interface=0.0.0.0/listen_endpoints = tcp:22:interface=0.0.0.0/g' cowrie.cfg
@@ -70,6 +71,7 @@ sed -i "s/#port = 10000/port = $HPF_PORT/g" cowrie.cfg
 sed -i "s/#identifier = abc123/identifier = $HPF_IDENT/g" cowrie.cfg
 sed -i "s/#secret = secret/secret = $HPF_SECRET/g" cowrie.cfg
 sed -i 's/#debug=false/debug=false/' cowrie.cfg
+cd ..
 
 chown -R cowrie:users /opt/cowrie/
 touch /etc/authbind/byport/22
