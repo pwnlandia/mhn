@@ -87,6 +87,7 @@ done
 
 while true;
 do
+    echo -n "ELK Script will only work on Debian Based systems like Ubuntu"
     echo -n "Would you like to install ELK? (y/n) "
     read ELK
     if [ "$ELK" == "y" -o "$ELK" == "Y" ]
