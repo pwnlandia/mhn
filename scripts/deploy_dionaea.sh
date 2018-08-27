@@ -1,5 +1,12 @@
 #!/bin/bash
 
+### !!!! ###
+### Works only on ubuntu 14.04 not 16 ###
+
+apt-get update
+apt-get upgrade -y
+apt install supervisor lsb -y
+
 set -e
 set -x
 
@@ -12,11 +19,6 @@ fi
 
 server_url=$1
 deploy_key=$2
-
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "dionaea"
 
 if [ -f /etc/redhat-release ]; then
     export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
@@ -49,6 +51,12 @@ EOF
     chmod -R a+wrx /var/dionaea
     docker pull threatstream/dionaea-mhn
 
+    # Register the sensor with MHN server.
+    wget $server_url/static/registration.txt -O registration.sh
+    chmod 755 registration.sh
+    # Note: this will export the HPF_* variables
+    . ./registration.sh $server_url $deploy_key "dionaea"
+
     echo "Getting dionea from $server_url"
     curl $server_url/static/dionaea.conf | sed -e "s/HPF_HOST/$HPF_HOST/" | sed -e "s/HPF_PORT/$HPF_PORT/" | sed -e "s/HPF_IDENT/$HPF_IDENT/" | sed -e "s/HPF_SECRET/$HPF_SECRET/" > /etc/dionaea/dionaea.conf
 
@@ -71,7 +79,7 @@ EOF
 elif [ -f /etc/debian_version ]; then
     # Add ppa to apt sources (Needed for Dionaea).
     apt-get update
-    apt-get install -y python-software-properties
+    apt-get install -y python-software-properties software-properties-common
     add-apt-repository -y ppa:honeynet/nightly
     apt-get update
 
@@ -83,7 +91,11 @@ elif [ -f /etc/debian_version ]; then
             apt-get install -y dionaea supervisor patch
     fi
 
-
+    # Register the sensor with MHN server.
+    wget $server_url/static/registration.txt -O registration.sh
+    chmod 755 registration.sh
+    # Note: this will export the HPF_* variables
+    . ./registration.sh $server_url $deploy_key "dionaea"
 
     cp /etc/dionaea/dionaea.conf.dist /etc/dionaea/dionaea.conf
 cat > /tmp/dionaea.hpfeeds.patch <<EOF
@@ -115,7 +127,7 @@ cat > /tmp/dionaea.hpfeeds.patch <<EOF
 +				ident = "$HPF_IDENT"
 +				secret = "$HPF_SECRET"
 +				// dynip_resolve: enable to lookup the sensor ip through a webservice
-+				dynip_resolve = "http://queryip.net/ip/"
++				dynip_resolve = "http://icanhazip.com/"
 +			}
 +		}
  		logsql = {

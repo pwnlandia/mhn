@@ -15,11 +15,6 @@ fi
 server_url=$1
 deploy_key=$2
 
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "snort"
- 
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libpcap-dev libjansson-dev libpcre3-dev libdnet-dev libdumbnet-dev libdaq-dev flex bison python-pip git make automake libtool zlib1g-dev
 
@@ -49,6 +44,12 @@ git clone -b hpfeeds-support https://github.com/threatstream/snort.git
 export CPPFLAGS=-I/include
 cd snort
 ./configure --prefix=/opt/snort && make && make install 
+
+# Register the sensor with the MHN server.
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "snort"
 
 mkdir -p /opt/snort/etc /opt/snort/rules /opt/snort/lib/snort_dynamicrules /opt/snort/lib/snort_dynamicpreprocessor /var/log/snort/
 cd etc

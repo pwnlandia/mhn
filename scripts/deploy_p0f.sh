@@ -13,11 +13,6 @@ fi
 server_url=$1
 deploy_key=$2
 
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "p0f"
-
 apt-get update
 apt-get -y install git supervisor libpcap-dev libjansson-dev gcc
 
@@ -29,6 +24,12 @@ git checkout origin/hpfeeds
 ./build.sh
 useradd -d /var/empty/p0f -M -r -s /bin/nologin p0f-user || true
 mkdir -p -m 755 /var/empty/p0f
+
+# Register the sensor with the MHN server.
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "p0f"
 
 cat > /etc/supervisor/conf.d/p0f.conf <<EOF
 [program:p0f]

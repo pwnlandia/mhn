@@ -23,6 +23,10 @@ echo "deb http://packages.s7t.de/raspbian wheezy main" >> /etc/apt/sources.list
 apt-get update
 apt-get --yes --force-yes install libglib2.0-dev libssl-dev libcurl4-openssl-dev libreadline-dev libsqlite3-dev libtool automake autoconf build-essential subversion git-core flex bison pkg-config libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev libnl-route-3-dev liblcfg libemu libev dionaea-python dionaea-cython libpcap udns dionaea liblcfg supervisor
 
+# Download and install old version of openssl
+wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u6_armhf.deb
+sudo dpkg -i libssl1.0.0_1.0.1t-1+deb8u6_armhf.deb
+
 cp /opt/dionaea/etc/dionaea/dionaea.conf.dist /opt/dionaea/etc/dionaea/dionaea.conf
 chown nobody:nogroup /opt/dionaea/var/dionaea -R
 
@@ -57,7 +61,7 @@ cat > /tmp/dionaea.hpfeeds.patch <<EOF
 +				ident = "$HPF_IDENT"
 +				secret = "$HPF_SECRET"
 +				// dynip_resolve: enable to lookup the sensor ip through a webservice
-+				dynip_resolve = "http://queryip.net/ip/"
++				dynip_resolve = "http://icanhazip.com/"
 +			}
 +		}
  		logsql = {

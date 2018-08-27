@@ -65,10 +65,12 @@ $VIRTUALENV -p $PYTHON env
 . env/bin/activate
 
 pip install cffi
-pip install pyopenssl==0.14
+pip install pyopenssl==17.3.0
 pip install pymongo
-pip install -e git+https://github.com/rep/evnet.git#egg=evnet-dev
+pip install -e git+https://github.com/couozu/pyev.git#egg=pyev
+pip install -e git+https://github.com/threatstream/evnet.git#egg=evnet-dev
 pip install .
+deactivate
 
 mkdir -p /var/log/mhn
 mkdir -p /etc/supervisor/
@@ -87,4 +89,6 @@ startsecs=10
 EOF
 
 ldconfig /usr/local/lib/
+/etc/init.d/supervisor start || true
+sleep 5
 supervisorctl update
