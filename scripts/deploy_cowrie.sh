@@ -46,6 +46,7 @@ tftpy
 EOF
 
 cd cowrie
+mkdir log
 virtualenv cowrie-env #env name has changed to cowrie-env on latest version of cowrie
 source cowrie-env/bin/activate
 # without the following, i get this error:
@@ -59,8 +60,7 @@ chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "cowrie"
 
-cd etc
-cp cowrie.cfg.dist cowrie.cfg
+cp etc/cowrie.cfg.dist cowrie.cfg
 sed -i 's/hostname = svr04/hostname = server/g' cowrie.cfg
 sed -i 's/listen_endpoints = tcp:2222:interface=0.0.0.0/listen_endpoints = tcp:22:interface=0.0.0.0/g' cowrie.cfg
 sed -i 's/version = SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u2/version = SSH-2.0-OpenSSH_6.7p1 Ubuntu-5ubuntu1.3/g' cowrie.cfg
