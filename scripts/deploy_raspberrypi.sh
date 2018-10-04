@@ -1,12 +1,5 @@
 #!/bin/bash
 
-### !!!! ###
-### Works only on ubuntu 14.04 not 16 ###
-
-apt-get update
-apt-get upgrade -y
-apt install supervisor lsb -y
-
 set -e
 set -x
 
@@ -20,87 +13,28 @@ fi
 server_url=$1
 deploy_key=$2
 
-if [ -f /etc/redhat-release ]; then
-    export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
-    yum -y update
-    yum -y install wget curl epel-release python-setuptools python-pip
-    easy_install supervisor
-    mkdir -p /etc/supervisor /etc/supervisor/conf.d
-    echo_supervisord_conf  > /etc/supervisord.conf
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "dionaea"
 
-cat >> /etc/supervisord.conf <<EOF
-[include]
-files = /etc/supervisor/conf.d/*.conf
-EOF
+# Install Dionaea
+echo "deb http://packages.s7t.de/raspbian wheezy main" >> /etc/apt/sources.list
+apt-get update
+apt-get --yes --force-yes install libglib2.0-dev libssl-dev libcurl4-openssl-dev libreadline-dev libsqlite3-dev libtool automake autoconf build-essential subversion git-core flex bison pkg-config libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev libnl-route-3-dev liblcfg libemu libev dionaea-python dionaea-cython libpcap udns dionaea liblcfg supervisor
 
-    supervisord -c /etc/supervisord.conf
-cat > /etc/yum.repos.d/docker.repo <<EOF
-[dockerrepo]
-name=Docker Repository
-baseurl=http://yum.dockerproject.org/repo/main/centos/6/
-enabled=1
-gpgcheck=0
-EOF
+# Download and install old version of openssl
+wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u6_armhf.deb
+sudo dpkg -i libssl1.0.0_1.0.1t-1+deb8u6_armhf.deb
 
-    yum -y install docker-engine
-    service docker start
-    mkdir -p /var/dionaea /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log  /var/dionaea/bitstreams /var/dionaea/rtp /var/dionaea/bistreams
-    mkdir -p /etc/dionaea/
+cp /opt/dionaea/etc/dionaea/dionaea.conf.dist /opt/dionaea/etc/dionaea/dionaea.conf
+chown nobody:nogroup /opt/dionaea/var/dionaea -R
 
-    #fixme
-    chmod -R a+wrx /var/dionaea
-    docker pull threatstream/dionaea-mhn
-
-    # Register the sensor with MHN server.
-    wget $server_url/static/registration.txt -O registration.sh
-    chmod 755 registration.sh
-    # Note: this will export the HPF_* variables
-    . ./registration.sh $server_url $deploy_key "dionaea"
-
-    echo "Getting dionea from $server_url"
-    curl $server_url/static/dionaea.conf | sed -e "s/HPF_HOST/$HPF_HOST/" | sed -e "s/HPF_PORT/$HPF_PORT/" | sed -e "s/HPF_IDENT/$HPF_IDENT/" | sed -e "s/HPF_SECRET/$HPF_SECRET/" > /etc/dionaea/dionaea.conf
-
-
-cat > /etc/supervisor/conf.d/dionaea.conf <<EOF
-[program:dionaea]
-command=docker run --cap-add=NET_BIND_SERVICE --rm=true -p 21:21 -p 42:42 -p 8080:80 -p 135:135 -p 443:443 -p 445:445 -p 1433:1433 -p 3306:3306 -p 5061:5061 -p 5060:5060 -p 69:69/udp -p 5060:5060/udp -v /var/dionaea:/data/dionaea -v /etc/dionaea:/etc/dionaea threatstream/dionaea-mhn:latest supervisord
-directory=/var/dionaea
-stdout_logfile=/var/log/dionaea.out
-stderr_logfile=/var/log/dionaea.err
-autostart=true
-autorestart=true
-redirect_stderr=true
-stopsignal=QUIT
-EOF
-
-    supervisorctl update
-    exit 0
-
-elif [ -f /etc/debian_version ]; then
-    # Add ppa to apt sources (Needed for Dionaea).
-    apt-get update
-    apt-get install -y python-software-properties software-properties-common
-    add-apt-repository -y ppa:honeynet/nightly
-    apt-get update
-
-    # Installing Dionaea.
-    if [[ `lsb_release -cs` == "trusty" ]]
-        then
-            apt-get install -y dionaea-phibo supervisor patch
-        else
-            apt-get install -y dionaea supervisor patch
-    fi
-
-    # Register the sensor with MHN server.
-    wget $server_url/static/registration.txt -O registration.sh
-    chmod 755 registration.sh
-    # Note: this will export the HPF_* variables
-    . ./registration.sh $server_url $deploy_key "dionaea"
-
-    cp /etc/dionaea/dionaea.conf.dist /etc/dionaea/dionaea.conf
+# previous .conf file, but no difference
+cp /opt/dionaea/etc/dionaea/dionaea.conf.dist /opt/dionaea/etc/dionaea/dionaea.conf
 cat > /tmp/dionaea.hpfeeds.patch <<EOF
---- /etc/dionaea/dionaea.conf
-+++ /etc/dionaea/dionaea.conf.new
+--- /opt/dionaea/etc/dionaea/dionaea.conf
++++ /opt/dionaea/etc/dionaea/dionaea.conf.new
 @@ -252,10 +252,10 @@
  		tftp = {
  			root = "var/dionaea/wwwroot"
@@ -151,8 +85,8 @@ cat > /tmp/dionaea.hpfeeds.patch <<EOF
  
  	}
 
---- /usr/lib/dionaea/python/dionaea/ihandlers.py
-+++ /usr/lib/dionaea/python/dionaea/ihandlers.py.new
+--- /opt/dionaea/lib/dionaea/python/dionaea/ihandlers.py
++++ /opt/dionaea/lib/dionaea/python/dionaea/ihandlers.py.new
 @@ -129,6 +129,13 @@ def new():
  		import dionaea.submit_http
  		g_handlers.append(dionaea.submit_http.handler('*'))
@@ -169,7 +103,7 @@ cat > /tmp/dionaea.hpfeeds.patch <<EOF
  		g_handlers.append(dionaea.fail2ban.fail2banhandler())
 EOF
 
-cat > /usr/lib/dionaea/python/dionaea/hpfeeds.py <<EOF
+cat > /opt/dionaea/lib/dionaea/python/dionaea/hpfeeds.py <<EOF
 #********************************************************************************
 #*                               Dionaea
 #*                           - catches bugs -
@@ -542,32 +476,29 @@ cd /
 patch -p0 < /tmp/dionaea.hpfeeds.patch
 
 # Editing configuration for Dionaea.
-mkdir -p /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/bitstreams
-chown -R nobody:nogroup /var/dionaea
+mkdir -p /opt/dionaea/var/dionaea/wwwroot /opt/dionaea/var/dionaea/binaries /opt/dionaea/var/dionaea/log
+chown -R nobody:nogroup /opt/dionaea/var/dionaea
 
+sed -i 's/var\/dionaea\///g' /opt/dionaea/etc/dionaea/dionaea.conf
+sed -i 's/log\//\/var\/dionaea\/log\//g' /opt/dionaea/etc/dionaea/dionaea.conf
+sed -i 's/levels = "all"/levels = "warning,error"/1' /opt/dionaea/etc/dionaea/dionaea.conf
+sed -i 's/mode = "getifaddrs"/mode = "manual"/1' /opt/dionaea/etc/dionaea/dionaea.conf
+sed -i 's/addrs = { eth0 = \["::"\] }/addrs = { eth0 = ["::", "0.0.0.0"] }/' /opt/dionaea/etc/dionaea/dionaea.conf
 
-sed -i 's/var\/dionaea\///g' /etc/dionaea/dionaea.conf
-sed -i 's/log\//\/var\/dionaea\/log\//g' /etc/dionaea/dionaea.conf
-sed -i 's/levels = "all"/levels = "warning,error"/1' /etc/dionaea/dionaea.conf
-sed -i 's/mode = "getifaddrs"/mode = "manual"/1' /etc/dionaea/dionaea.conf
-sed --in-place='.bak' 's/addrs = { eth0 = \["::"\] }/addrs = { eth0 = ["::", "0.0.0.0"] }/' /etc/dionaea/dionaea.conf
+mkdir -p /opt/dionaea/var/dionaea/bistreams 
+chown nobody:nogroup /opt/dionaea/var/dionaea/bistreams
 
-mkdir -p /var/dionaea/bistreams 
-chown nobody:nogroup /var/dionaea/bistreams
-
-fi
-
+# Config for supervisor.
 cat > /etc/supervisor/conf.d/dionaea.conf <<EOF
 [program:dionaea]
-command=dionaea -c /etc/dionaea/dionaea.conf -w /var/dionaea -u nobody -g nogroup
-directory=/var/dionaea
-stdout_logfile=/var/log/dionaea.out
-stderr_logfile=/var/log/dionaea.err
+command=/opt/dionaea/bin/dionaea -c /opt/dionaea/etc/dionaea/dionaea.conf -w /opt/dionaea/var/dionaea -u nobody -g nogroup
+directory=/opt/dionaea/var/dionaea
+stdout_logfile=/opt/dionaea/var/log/dionaea.out
+stderr_logfile=/opt/dionaea/var/log/dionaea.err
 autostart=true
 autorestart=true
 redirect_stderr=true
 stopsignal=QUIT
 EOF
-
 
 supervisorctl update

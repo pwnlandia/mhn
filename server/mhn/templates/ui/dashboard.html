@@ -53,6 +53,38 @@
         </div>
         <div class="row" style="margin-top:30px;">
             <div class="small-6 columns">
+                <h3>TOP 5 Honey Pots:</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-10 push-2 columns">
+                <ol>
+                {% for hp in top_hp %}
+                    <li><strong>
+                    <a href="{{ url_for('ui.get_attacks', honeypot=hp.honeypot) }}">{{ hp.honeypot }} ({{ hp.count | number_format }} attacks)</a>
+                    </li></strong>
+                {% endfor %}
+                </ol>
+            </div>
+        </div>
+        <div class="row" style="margin-top:30px;">
+            <div class="small-6 columns">
+                <h3>TOP 5 Sensors:</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-10 push-2 columns">
+                <ol>
+                {% for s in top_sensor %}
+                    <li><strong>
+                    <a href="{{ url_for('ui.get_attacks', identifier=s.identifier) }}">{{ get_sensor_name(s.identifier) }} ({{ s.count | number_format }} attacks)</a>
+                    </li></strong>
+                {% endfor %}
+                </ol>
+            </div>
+        </div>
+        <div class="row" style="margin-top:30px;">
+            <div class="small-6 columns">
                 <h3>TOP 5 Attacks Signatures:</h3>
             </div>
         </div>

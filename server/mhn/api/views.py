@@ -46,6 +46,15 @@ def create_sensor():
         else:
             return jsonify(sensor.to_dict())
 
+@api.route('/sensor/', methods=['GET'])
+@token_auth
+def get_sensors():
+    req = request.args.to_dict()
+    if 'api_key' in req:
+        del req['api_key']
+    resp = make_response(json.dumps([s.to_dict() for s in Sensor.query.filter_by(**req)]))
+    resp.headers['Content-Type'] = "application/json"
+    return resp
 
 @api.route('/sensor/<uuid>/', methods=['PUT'])
 @csrf.exempt
@@ -207,6 +216,24 @@ def top_attackers():
         meta={
             'size': len(results),
             'query': 'top_attackers',
+            'options': options
+        }
+    )
+
+@api.route('/attacker_stats/<ip>/', methods=['GET'])
+@token_auth
+def attacker_stats(ip):
+    options = request.args.to_dict()
+    hours_ago = int(options.get('hours_ago', '720')) # 30 days
+
+    for name in options.keys():
+        if name not in ('hours_ago', 'limit',):
+            del options[name]
+    results = Clio().session.attacker_stats(ip, hours_ago=hours_ago)
+    return jsonify(
+        data=results,
+        meta={
+            'query': 'attacker_stats',
             'options': options
         }
     )
@@ -387,7 +414,7 @@ def get_script():
     if request.args.get('script_id'):
         script = DeployScript.query.get(request.args.get('script_id'))
     else:
-        script = DeployScript.query.order_by(DeployScript.date.desc()).first()
+        return error_response(errors.API_RESOURCE_NOT_FOUND, 404)
     if request.args.get('text') in ['1', 'true']:
         resp = make_response(script.script)
         resp.headers['Content-Disposition'] = "attachment; filename=deploy.sh"

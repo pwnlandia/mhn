@@ -136,22 +136,25 @@ def create_clean_db():
         #|-- deploy_dionaea.sh
         #|-- deploy_snort.sh
         #|-- deploy_kippo.sh
-        deployscripts = {
-            'Ubuntu - Conpot': path.abspath('../scripts/deploy_conpot.sh'),
-            'Ubuntu - Dionaea': path.abspath('../scripts/deploy_dionaea.sh'),
-            'Ubuntu - Snort': path.abspath('../scripts/deploy_snort.sh'),
-            'Ubuntu - Kippo': path.abspath('../scripts/deploy_kippo.sh'),
-            'Ubuntu - Amun': path.abspath('../scripts/deploy_amun.sh'),
-            'Ubuntu - Glastopf': path.abspath('../scripts/deploy_glastopf.sh'),
-            'Ubuntu - Wordpot': path.abspath('../scripts/deploy_wordpot.sh'),
-            'Ubuntu - Shockpot': path.abspath('../scripts/deploy_shockpot.sh'),
-            'Ubuntu - p0f': path.abspath('../scripts/deploy_p0f.sh'),
-            'Ubuntu - Suricata': path.abspath('../scripts/deploy_suricata.sh'),
-            #'Raspberry Pi - Dionaea': path.abspath('../scripts/deploy_raspberrypi.sh'),
-        }
-        for honeypot, deploypath in deployscripts.iteritems():
+        deployscripts = [
+            ['Ubuntu - Conpot', '../scripts/deploy_conpot.sh'],
+            ['Ubuntu - Wordpot', '../scripts/deploy_wordpot.sh'],
+            ['Ubuntu - Shockpot', '../scripts/deploy_shockpot.sh'],
+            ['Ubuntu - p0f', '../scripts/deploy_p0f.sh'],
+            ['Ubuntu - Suricata', '../scripts/deploy_suricata.sh'],
+            ['Ubuntu - Glastopf', '../scripts/deploy_glastopf.sh'],
+            ['Ubuntu - ElasticHoney', '../scripts/deploy_elastichoney.sh'],
+            ['Ubuntu - Amun', '../scripts/deploy_amun.sh'],
+            ['Ubuntu - Snort', '../scripts/deploy_snort.sh'],
+            ['Ubuntu - Cowrie', '../scripts/deploy_cowrie.sh'],
+            ['Ubuntu 14.04/Centos 7 - Dionaea', '../scripts/deploy_dionaea.sh'],
+            ['Raspberry Pi - Dionaea', '../scripts/deploy_raspberrypi.sh'],
+            ['Ubuntu - Dionaea with HTTP', '../scripts/deploy_dionaea_http.sh'],
+            ['Ubuntu - Shockpot Sinkhole', '../scripts/deploy_shockpot_sinkhole.sh'],
+        ]
+        for honeypot, deploypath in reversed(deployscripts):
 
-            with open(deploypath, 'r') as deployfile:
+            with open(path.abspath(deploypath), 'r') as deployfile:
                 initdeploy = DeployScript()
                 initdeploy.script = deployfile.read()
                 initdeploy.notes = 'Initial deploy script for {}'.format(honeypot)

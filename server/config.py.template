@@ -61,6 +61,7 @@ HONEYPOT_CHANNELS = {
     'conpot': ['conpot.events'],
     'snort': ['snort.alerts'],
     'kippo': ['kippo.sessions'],
+    'cowrie': ['cowrie.sessions'],
     'thug': ['thug.files', 'thug.events'],
     'glastopf': ['glastopf.files', 'glastopf.events'],
     'amun': ['amun.events'],
@@ -68,4 +69,5 @@ HONEYPOT_CHANNELS = {
     'shockpot': ['shockpot.events'],
     'p0f': ['p0f.events'],
     'suricata': ['suricata.events'],
+    'elastichoney': ['elastichoney.events'],
 }

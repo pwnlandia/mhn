@@ -60,10 +60,15 @@ def fetch_sources():
                             zrules.extract(member, path=tmpdir)
                     # All rule files found are now extracted into tmpdir.
                     for rname in ruleslist:
-                        rulepath = os.path.join(tmpdir, rname)
-                        with open(rulepath, 'rb') as rfile:
-                            rules.extend(from_buffer(rfile.read()))
-                        os.remove(rulepath)
+                        try:
+                            rulepath = os.path.join(tmpdir, rname)
+                            with open(rulepath, 'rb') as rfile:
+                                rules.extend(from_buffer(rfile.read()))
+                            os.remove(rulepath)
+                        except Exception as e:
+                            app.logger.exception("Unhandled exception: {}. Continuing".format(e))
+                            continue
+
                     # A subdirectory /rules/ is created when extracting,
                     # removing that first then the whole tmpdir.
                     os.rmdir(os.path.join(tmpdir, 'rules'))

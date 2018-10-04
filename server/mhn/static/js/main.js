@@ -64,7 +64,7 @@ $(document).ready(function() {
         $('.text-edit').focusout(function() {
             var input = $(this);
             var fieldName = input.attr('data-field-name');
-            var data = new Object();
+            var data = {};
             var ruleId = $(this).attr('data-rule-id');
 
             data[fieldName] = input.val();
@@ -212,7 +212,7 @@ $(document).ready(function() {
         $('.text-edit').focusout(function() {
             var input = $(this);
             var fieldName = input.attr('data-field-name');
-            var data = new Object();
+            var data = {};
             var sensorId = $(this).attr('data-sensor-id');
 
             data[fieldName] = input.val();

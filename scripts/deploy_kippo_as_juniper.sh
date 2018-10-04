@@ -19,7 +19,7 @@ chmod 755 registration.sh
 . ./registration.sh $server_url $deploy_key "kippo"
 
 apt-get update
-apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twisted git python-pip supervisor authbind ssh
+apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twisted git python-pip supervisor authbind
 
 
 # Change real SSH Port to 2222
@@ -33,6 +33,7 @@ useradd -d /home/kippo -s /bin/bash -m kippo -g users
 cd /opt
 git clone https://github.com/threatstream/kippo
 cd kippo
+git checkout -b juniper-router origin/juniper-router
 
 # Determine if IPTables forwarding is going to work
 # Capture stdout, if there there is something there, then the command failed
@@ -52,8 +53,8 @@ echo "iptable_support: $iptable_support"
 
 # Configure Kippo
 
-HONEYPOT_HOSTNAME="db01"
-HONEYPOT_SSH_VERSION="SSH-2.0-OpenSSH_5.5p1 Debian-4ubuntu5"
+HONEYPOT_HOSTNAME="netscreen"
+HONEYPOT_SSH_VERSION="SSH-2.0-NetScreen"
 
 if $iptable_support; 
 then
@@ -92,6 +93,10 @@ port = $HPF_PORT
 identifier = $HPF_IDENT
 secret = $HPF_SECRET
 debug = false
+EOF
+
+cat > /opt/kippo/data/userdb.txt <<EOF
+root:0:<<< %s(un='%s') = %u
 EOF
 
 

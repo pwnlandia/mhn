@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 set -x
 
@@ -14,17 +13,34 @@ server_url=$1
 deploy_key=$2
 
 wget $server_url/static/registration.txt -O registration.sh
+sed -i s/apt-get/yum/ registration.sh
 chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "kippo"
 
-apt-get update
-apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twisted git python-pip supervisor authbind ssh
+yum -y install epel-release 
+#yum -y update
+
+yum -y install rpm-build python-devel openssl python-pyasn1 python-twisted git python-pip  gcc
+#supervisor is supervisor 2
+pip install meld3==1.0.0 supervisor
+
+#No package authbind available.
+
+cd /tmp
+wget http://ftp.debian.org/debian/pool/main/a/authbind/authbind_2.1.1.tar.gz -O authbind-2.1.1.tar.gz
+gunzip -d authbind-2.1.1.tar.gz
+tar xvf ./authbind-2.1.1.tar
+cd authbind-2.1.1
+make
+make install
 
 
+
+#
 # Change real SSH Port to 2222
-sed -i 's/Port 22$/Port 2222/g' /etc/ssh/sshd_config
-service ssh restart
+sed -i 's/#Port 22$/Port 2222/g' /etc/ssh/sshd_config
+/etc/init.d/sshd restart
 
 # Create Kippo user
 useradd -d /home/kippo -s /bin/bash -m kippo -g users
@@ -34,17 +50,21 @@ cd /opt
 git clone https://github.com/threatstream/kippo
 cd kippo
 
+
 # Determine if IPTables forwarding is going to work
 # Capture stdout, if there there is something there, then the command failed
 if [ -z "$(sysctl -w net.ipv4.conf.eth0.route_localnet=1 2>&1 >/dev/null)" ]
     then
         iptable_support=true
         echo "Adding iptables port forwarding rule...\n"
-        iptables -F -t nat
+        chkconfig iptables on
+        #iptables -F -t nat
+        iptables -F
+        #Change this to eth1 if working on Vagrant
         iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 22 -j DNAT --to-destination 127.0.0.1:64222
         
-        echo "net.ipv4.conf.eth0.route_localnet=1" > /etc/sysctl.conf
-        DEBIAN_FRONTEND=noninteractive  apt-get install -q -y iptables-persistent
+        echo "net.ipv4.conf.eth0.route_localnet=1" >> /etc/sysctl.conf
+        service iptables save
     else
         iptable_support=false
 fi
@@ -124,10 +144,83 @@ EOF
 fi
 chmod +x start.sh
 
+#Configure SupervisorD
+
+
+echo_supervisord_conf > /etc/supervisord.conf
+mkdir -p /etc/supervisor/conf.d/
+cat >> /etc/supervisord.conf << EOF 
+[include]
+files = /etc/supervisor/conf.d/*.conf
+EOF
+
+#Service configuration script
+
+cat > /etc/rc.d/init.d/supervisord << EOF
+#!/bin/sh
+#
+# /etc/rc.d/init.d/supervisord
+
+#
+# chkconfig: - 64 36
+# description: Supervisor Server
+# processname: supervisord
+
+# Source init functions
+. /etc/rc.d/init.d/functions
+
+prog="supervisord"
+
+prefix="/usr/"
+exec_prefix="${prefix}"
+prog_bin="${exec_prefix}/bin/supervisord"
+PIDFILE="/var/run/$prog.pid"
+
+start()
+{
+       echo -n $"Starting $prog: "
+       daemon $prog_bin --pidfile $PIDFILE
+       [ -f $PIDFILE ] && success $"$prog startup" || failure $"$prog startup"
+       echo
+}
+
+stop()
+{
+       echo -n $"Shutting down $prog: "
+       [ -f $PIDFILE ] && killproc $prog || success $"$prog shutdown"
+       echo
+}
+
+case "$1" in
+
+ start)
+   start
+ ;;
+
+ stop)
+   stop
+ ;;
+
+ status)
+       status $prog
+ ;;
+
+ restart)
+   stop
+   start
+ ;;
+
+ *)
+   echo "Usage: $0 {start|stop|restart|status}"
+ ;;
+
+esac
+EOF
+
 # Config for supervisor.
 if $iptable_support; 
 then
-    cat > /etc/supervisor/conf.d/kippo.conf <<EOF
+    cat >> /etc/supervisor/conf.d/kippo.conf <<EOF
 [program:kippo]
 command=/opt/kippo/start.sh
 directory=/opt/kippo
@@ -141,7 +234,7 @@ user=kippo
 stopasgroup=true
 EOF
 else
-    cat > /etc/supervisor/conf.d/kippo.conf <<EOF
+    cat >> /etc/supervisor/conf.d/kippo.conf <<EOF
 [program:kippo]
 command=/opt/kippo/start.sh
 directory=/opt/kippo
@@ -154,4 +247,7 @@ stopsignal=QUIT
 EOF
 fi
 
-supervisorctl update
+chmod +x /etc/rc.d/init.d/supervisord
+chkconfig --add supervisord
+chkconfig supervisord on
+supervisord -c /etc/supervisord.conf

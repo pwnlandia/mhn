@@ -87,7 +87,7 @@ class ResourceMixin(object):
 
         if 'hours_ago' in dirty:
             clean['timestamp'] = {
-                '$gte': datetime.datetime.utcnow() - datetime.timedelta(hours=int(dirty['hours_ago'])) 
+                '$gte': datetime.datetime.utcnow() - datetime.timedelta(hours=int(dirty['hours_ago']))
             }
 
         return clean
@@ -132,6 +132,10 @@ class ResourceMixin(object):
         todict = {}
         for attr in self.__class__.expected_filters:
             todict[attr] = getattr(self, attr)
+
+            if isinstance(todict[attr], datetime.datetime):
+                todict[attr] = todict[attr].isoformat()
+
         # Making sure dict is json serializable.
         todict['_id'] = str(todict['_id'])
         return todict
@@ -279,9 +283,9 @@ class Session(ResourceMixin):
 
         if hours_ago:
             match_query['timestamp'] = {
-                '$gte': datetime.datetime.now() - datetime.timedelta(hours=hours_ago) 
+                '$gte': datetime.datetime.now() - datetime.timedelta(hours=hours_ago)
             }
-               
+
         query = [
             {
                 '$match': match_query
@@ -314,6 +318,64 @@ class Session(ResourceMixin):
     def top_targeted_ports(self, top=5, hours_ago=None):
         return self._tops('destination_port', top, hours_ago)
 
+    def top_hp(self, top=5, hours_ago=None):
+        return self._tops('honeypot', top, hours_ago)
+    
+    def top_sensor(self, top=5, hours_ago=None):
+        return self._tops('identifier', top, hours_ago)
+    
+    def attacker_stats(self, ip, hours_ago=None):
+        match_query = { 'source_ip': ip }
+
+        if hours_ago:
+            match_query['timestamp'] = {
+                '$gte': datetime.datetime.now() - datetime.timedelta(hours=hours_ago)
+            }
+
+        query = [
+            {
+                '$match': match_query
+            },
+            {
+                '$group': {
+                    '_id': "source_ip",
+                    'count': {'$sum' : 1},
+                    'ports': { '$addToSet': "$destination_port"},
+                    'honeypots': {'$addToSet': "$honeypot"},
+                    'sensor_ids': {'$addToSet': "$identifier"},
+                    'first_seen': {'$min': '$timestamp'},
+                    'last_seen': {'$max': '$timestamp'},
+                }
+            },
+            {
+                '$project': {
+                    "count":1,
+                    'ports': 1,
+                    'honeypots':1,
+                    'first_seen':1,
+                    'last_seen':1,
+                    'num_sensors': {'$size': "$sensor_ids"}
+                }
+            }
+        ]
+
+        res = self.collection.aggregate(query)
+        if 'ok' in res and len(res['result']) > 0:
+            r = res['result'][0]
+            del r['_id']
+            r['first_seen'] = r['first_seen'].isoformat()
+            r['last_seen'] = r['last_seen'].isoformat()
+            return r
+
+        return {
+            'ip': ip,
+            'count': 0,
+            'ports': [],
+            'honeypots': [],
+            'num_sensors': 0,
+            'first_seen': None,
+            'last_seen': None,
+        }
 
 class SessionProtocol(ResourceMixin):
 
@@ -328,30 +390,31 @@ class HpFeed(ResourceMixin):
     collection_name = 'hpfeed'
     expected_filters = ('ident', 'channel', 'payload', '_id', 'timestamp', )
 
-    channel_map = {'snort.alerts':['date', 'sensor', 'source_ip', 'destination_port', 'priority', 'classification', 'signature'],
-                   'dionaea.capture':['url', 'daddr', 'saddr', 'dport', 'sport', 'sha512', 'md5'],
-                   'glastopf.events':['time', 'pattern', 'filename', 'source', 'request_url']}
-
+    channel_map = {
+        'snort.alerts':['date', 'sensor', 'source_ip', 'destination_port', 'priority', 'classification', 'signature'],
+        'dionaea.capture':['url', 'daddr', 'saddr', 'dport', 'sport', 'sha512', 'md5'],
+        'glastopf.events':['time', 'pattern', 'filename', 'source', 'request_url'],
+        'suricata.events':['timestamp', 'sensor', 'source_ip', 'destination_port', 'proto', 'signature'],
+    }
+    def json_payload(self, data):
+        if type(data) is dict:
+             o_data = data
+        else:
+             o_data = json.loads(data)
+        return o_data
+        
     def get_payloads(self, options, req_args):
         payloads = []
         columns = []
-        if 'payload' in req_args:
+        if len(req_args.get('payload','')) > 1:
             req_args['payload'] = {'$regex':req_args['payload']}
-        
+
         cnt_query = super(HpFeed, self)._clean_query(req_args)
         count = self.collection.find(cnt_query).count()
 
         columns = self.channel_map.get(req_args['channel'])
-        
-        feed_rows = self.get(options=options, **req_args)
-        for row in feed_rows:
-            try:
-                payload = json.loads(row.payload)
-            except:
-                pass
-            payloads.append(payload)
-        
-        return count,columns,payloads
+
+        return count,columns,(self.json_payload(fr.payload) for fr in self.get(options=options, **req_args))
 
 
     def count_passwords(self,payloads):
@@ -361,14 +424,14 @@ class HpFeed(ResourceMixin):
                 for cred in (creds['credentials']):
                     passwords.append(cred[1])
         return Counter(passwords).most_common(10)
-    
-    
+
+
     def count_users(self,payloads):
         users=[]
         for creds in payloads:
             if creds['credentials']!= None:
                 for cred in (creds['credentials']):
-                    users.append(cred[0])                
+                    users.append(cred[0])
         return Counter(users).most_common(10)
 
 
@@ -388,7 +451,7 @@ class HpFeed(ResourceMixin):
             query['hours_ago'] = hours_ago
 
         res = self.get(options={}, **query)
-        val_list = [rec.get(field) for rec in [json.loads(r.payload) for r in res] if field in rec]
+        val_list = [rec.get(field) for rec in [self.json_payload(r.payload) for r in res] if field in rec]
         cnt = Counter()
         for val in val_list:
             cnt[val] += 1

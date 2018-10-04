@@ -10,14 +10,9 @@ fi
 server_url=$1
 deploy_key=$2
 
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "conpot"
-
-
+echo "deb http://en.archive.ubuntu.com/ubuntu precise main multiverse" | sudo tee -a /etc/apt/sources.list
 apt-get update
-apt-get install -y git libsmi2ldbl snmp-mibs-downloader python-pip python-dev libxml2-dev libxslt-dev libmysqlclient-dev
+apt-get install -y git libmysqlclient-dev libsmi2ldbl snmp-mibs-downloader python-dev libevent-dev libxslt1-dev libxml2-dev python-pip python-mysqldb pkg-config libvirt-dev supervisor
 apt-get install -y zlib1g-dev # needed for Ubuntu 14.04
 pip install --upgrade distribute
 pip install virtualenv
@@ -29,12 +24,29 @@ virtualenv env
 . env/bin/activate
 pip install -U setuptools
 pip install -e git+https://github.com/threatstream/hpfeeds.git#egg=hpfeeds-dev
-pip install -e git+https://github.com/glastopf/conpot.git#egg=conpot-dev
-pip install -e git+https://github.com/glastopf/modbus-tk.git#egg=modbus-tk==0.4
+pip install -e git+https://github.com/mushorg/conpot.git#egg=conpot-dev
+pip install -e git+https://github.com/mushorg/modbus-tk.git#egg=modbus-tk
+
+# Register sensor with MHN server.
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "conpot"
 
 cat > conpot.cfg <<EOF
+[common]
+sensorid = default
+
 [session]
 timeout = 30
+
+[daemon]
+;user = conpot
+;group = conpot
+
+[json]
+enabled = False
+filename = /var/log/conpot.json
 
 [sqlite]
 enabled = False
@@ -70,12 +82,15 @@ contact_email = ...
 
 [fetch_public_ip]
 enabled = True
-urls = ["http://www.telize.com/ip", "http://queryip.net/ip/", "http://ifconfig.me/ip"]
+urls = ["http://www.telize.com/ip", "http://icanhazip.com/", "http://ifconfig.me/ip"]
+
+[change_mac_addr]
+enabled = False
+iface = eth0
+addr = 00:de:ad:be:ef:00
 EOF
 
 # setup supervisor
-
-apt-get install -y supervisor
 
 cat > /etc/supervisor/conf.d/conpot.conf <<EOF
 [program:conpot]

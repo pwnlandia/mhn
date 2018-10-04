@@ -11,6 +11,11 @@ fi
 server_url=$1
 deploy_key=$2
 
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "shockpot"
+
 apt-get update
 apt-get -y install git python-pip supervisor
 pip install virtualenv
@@ -23,12 +28,6 @@ cd shockpot
 virtualenv env
 . env/bin/activate
 pip install -r requirements.txt
-
-# Register sensor with MHN server.
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "shockpot"
 
 cat > shockpot.conf<<EOF
 [server]
@@ -45,14 +44,20 @@ port     = $HPF_PORT
 identity = $HPF_IDENT
 secret   = $HPF_SECRET
 channel  = shockpot.events
-only_exploits = True
+only_exploits = False
 
 [fetch_public_ip]
 enabled = True
-urls = ["http://www.telize.com/ip", "http://icanhazip.com", "http://ifconfig.me/ip"]
+urls = ["http://www.telize.com/ip", "http://icanhazip.com/", "http://ifconfig.me/ip"]
 
 [template]
 title = It Works!
+EOF
+
+cat > template.html <<EOF
+<html>
+PUT YOUR HTML HERE
+</html>
 EOF
 
 # Config for supervisor.

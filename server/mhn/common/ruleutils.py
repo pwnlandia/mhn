@@ -67,6 +67,7 @@ def from_buffer(rbuffer):
     creates a list of parsed rules in dict objects.
     """
     rules = []
+    rbuffer = rbuffer.decode(errors='ignore')
     for r in rbuffer.split('\n'):
         if not r.startswith('#') and r.strip():
             rules.append(_parse_plain(r))

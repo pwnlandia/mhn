@@ -26,8 +26,8 @@ def generate_config():
 
     pub_ip = json.load(urlopen('http://httpbin.org/ip'))['origin']
     default_base_url = 'http://{}'.format(pub_ip)
-    default_honeymap_url = 'http://{}:3000'.format(pub_ip)
-    default_log_path = 'mhn.log'
+    default_honeymap_url = '{}:3000'.format(default_base_url)
+    default_log_path = '/var/log/mhn/mhn.log'
     localconfig = {}
     localconfig['SECRET_KEY'] = rand_str(32)
     localconfig['DEPLOY_KEY'] = rand_str(8)
@@ -125,6 +125,9 @@ def generate_config():
         if server_base_url.endswith('/'):
             server_base_url = server_base_url[:-1]
 
+        server_base_url = server_base_url if server_base_url.strip() else default_base_url
+
+	default_honeymap_url = '{}:3000'.format(server_base_url)
         honeymap_url = raw_input('Honeymap url ["{}"]: '.format(default_honeymap_url))
         if honeymap_url.endswith('/'):
             honeymap_url = honeymap_url[:-1]
@@ -147,7 +150,6 @@ def generate_config():
 
         log_file_path = raw_input('Path for log file ["{}"]: '.format(default_log_path))
 
-    server_base_url = server_base_url if server_base_url.strip() else default_base_url
     honeymap_url = honeymap_url if honeymap_url.strip() else default_honeymap_url
     log_file_path = log_file_path if log_file_path else default_log_path
 
