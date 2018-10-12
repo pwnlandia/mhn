@@ -87,8 +87,8 @@ cat > /etc/supervisor/conf.d/cowrie.conf <<EOF
 [program:cowrie]
 command=/opt/cowrie/bin/cowrie start
 directory=/opt/cowrie
-stdout_logfile=/opt/cowrie/log/cowrie.out
-stderr_logfile=/opt/cowrie/log/cowrie.err
+stdout_logfile=/opt/cowrie/var/log/cowrie/cowrie.out
+stderr_logfile=/opt/cowrie/var/log/cowrie/cowrie.err
 autostart=true
 autorestart=true
 stopasgroup=true
@@ -97,3 +97,4 @@ user=cowrie
 EOF
 
 supervisorctl update
+
