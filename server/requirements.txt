@@ -14,7 +14,7 @@ redis==2.10.3
 requests==2.4.3
 xmltodict==0.9.0
 uWSGI==2.0.17.1
-pymongo==2.7.2
+pymongo==3.7.2
 hpfeeds-threatstream==1.0
 pygal==1.7.0
 hpfeeds-logger==0.0.7.3
