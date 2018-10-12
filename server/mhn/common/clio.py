@@ -302,7 +302,15 @@ class Session(ResourceMixin):
         ]
 
         result = self.collection.aggregate(query)
-        return list(result)
+        res = list(result)
+	def format_result(r):
+            result = dict(r['_id'])
+            result['count'] = r['count']
+            return result
+
+        return [
+            format_result(r) for r in res[:top]
+        ]
 
 
     def top_attackers(self, top=5, hours_ago=None):
