@@ -182,6 +182,15 @@ sensorid = None
 
 [profiler]
 enabled = False
+
+[s3storage]
+enabled = False
+endpoint = http://localhost:8080/
+aws_access_key_id = YOUR_aws_access_key_id
+aws_secret_access_key = YOUR_aws_access_key_id
+bucket = glastopf
+region = eu-west-1
+signature_version = s3	
 EOF
 
 # Set up supervisor
@@ -198,3 +207,4 @@ stopsignal=QUIT
 EOF
 
 supervisorctl update
+supervisorctl restart all
