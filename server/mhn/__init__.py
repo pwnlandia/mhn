@@ -138,6 +138,7 @@ def create_clean_db():
         #|-- deploy_kippo.sh
         deployscripts = [
             ['Ubuntu - Conpot', '../scripts/deploy_conpot.sh'],
+            ['Ubuntu - Drupot', '../scripts/deploy_drupot.sh'],
             ['Ubuntu - Wordpot', '../scripts/deploy_wordpot.sh'],
             ['Ubuntu - Shockpot', '../scripts/deploy_shockpot.sh'],
             ['Ubuntu - p0f', '../scripts/deploy_p0f.sh'],
