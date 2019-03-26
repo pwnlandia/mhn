@@ -24,7 +24,7 @@ def generate_config():
         print('config.py already exists')
         sys.exit()
 
-    pub_ip = json.load(urlopen('http://httpbin.org/ip'))['origin']
+    pub_ip = urlopen('http://icanhazip.com/')
     default_base_url = 'http://{}'.format(pub_ip)
     default_honeymap_url = '{}:3000'.format(default_base_url)
     default_log_path = '/var/log/mhn/mhn.log'
