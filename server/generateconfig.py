@@ -19,7 +19,7 @@ rand_str = lambda n: ''.join(choice(el) for _ in range(n))
 
 def get_pub_ip():
     sock = urlopen('http://icanhazip.com/')
-    ip = sock.read()
+    ip = sock.readline()
     sock.close()
     return ip
 
