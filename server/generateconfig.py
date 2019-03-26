@@ -17,6 +17,11 @@ import argparse
 el = string.ascii_letters + string.digits
 rand_str = lambda n: ''.join(choice(el) for _ in range(n))
 
+def get_pub_ip():
+    sock = urlopen('http://icanhazip.com/')
+    ip = sock.read()
+    sock.close()
+    return ip
 
 def generate_config():
     # Check if config file already exists
@@ -24,7 +29,7 @@ def generate_config():
         print('config.py already exists')
         sys.exit()
 
-    pub_ip = urlopen('http://icanhazip.com/')
+    pub_ip = get_pub_ip()
     default_base_url = 'http://{}'.format(pub_ip)
     default_honeymap_url = '{}:3000'.format(default_base_url)
     default_log_path = '/var/log/mhn/mhn.log'
