@@ -10,8 +10,8 @@ if [ $# -ne 2 ]
         exit 1
 fi
 
-# Check if Ubuntu 14.04 or 16.04
-if [ "$(lsb_release -r -s)" != "14.04" ] && [ "$(lsb_release -r -s)" != "16.04" ]; then
+# Check if Ubuntu 18.04 or 16.04
+if [ "$(lsb_release -r -s)" != "18.04" ] && [ "$(lsb_release -r -s)" != "16.04" ]; then
     echo "WARNING: This operating system may not be supported by this script."
     echo "Continue? (y/n)"
     read PROMPT
@@ -182,6 +182,15 @@ sensorid = None
 
 [profiler]
 enabled = False
+
+[s3storage]
+enabled = False
+endpoint = http://localhost:8080/
+aws_access_key_id = YOUR_aws_access_key_id
+aws_secret_access_key = YOUR_aws_access_key_id
+bucket = glastopf
+region = eu-west-1
+signature_version = s3	
 EOF
 
 # Set up supervisor
@@ -198,3 +207,4 @@ stopsignal=QUIT
 EOF
 
 supervisorctl update
+supervisorctl restart all

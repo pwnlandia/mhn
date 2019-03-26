@@ -42,6 +42,12 @@ if [ -f /etc/redhat-release ]; then
      ./install_supervisord.sh
 fi
 
+if [ -f /etc/debian_version ]; then
+    apt-get update && apt-get upgrade -y
+    apt-get install -y python-pip
+    pip install --upgrade pip
+fi
+
 echo "[`date`] Starting Installation of all MHN packages"
 
 echo "[`date`] ========= Installing hpfeeds ========="
@@ -87,6 +93,7 @@ done
 
 while true;
 do
+    echo -n "ELK Script will only work on Debian Based systems like Ubuntu"
     echo -n "Would you like to install ELK? (y/n) "
     read ELK
     if [ "$ELK" == "y" -o "$ELK" == "Y" ]

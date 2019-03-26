@@ -1,5 +1,12 @@
 #!/bin/bash
 
+### !!!! ###
+### Works only on ubuntu 14.04 not 16 ###
+
+apt-get update
+apt-get upgrade -y
+apt install supervisor lsb -y
+
 set -e
 set -x
 

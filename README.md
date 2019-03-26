@@ -6,7 +6,7 @@ allows you to deploy sensors quickly and to collect data immediately, viewable
 from a neat web interface. Honeypot deploy scripts include several common
 honeypot technologies, including [Snort](https://snort.org/),
 [Cowrie](http://www.micheloosterhof.com/cowrie/),
-[Dionaea](http://edgis-security.org/honeypot/dionaea/), and
+[Dionaea](https://www.edgis-security.org/single-post/dionaea-malware-honeypot), and
 [glastopf](https://github.com/glastopf/), among others.
 
 For questions regarding troubleshooting your installation, please review the
@@ -32,7 +32,7 @@ It also allows system administrators to:
 
 ## Installation
 
-- The MHN server is supported on Ubuntu 14.04, Ubuntu 16.04, and Centos 6.9.  
+- The MHN server is supported on Ubuntu 18.04, Ubuntu 16.04, and Centos 6.9.  
 - Other versions of Linux may work but are generally not tested or supported.
 
 Note: if you run into trouble during the install, please checkout the [troubleshooting guide](https://github.com/threatstream/MHN/wiki/MHN-Troubleshooting-Guide) on the wiki.  If you only want to experiment with MHN on some virtual machines, please check out the [Getting up and Running with Vagrant](https://github.com/threatstream/mhn/wiki/Getting-up-and-running-using-Vagrant) guide on the wiki.

@@ -301,16 +301,17 @@ class Session(ResourceMixin):
             }
         ]
 
-        res = self.collection.aggregate(query)
-        def format_result(r):
+        result = self.collection.aggregate(query)
+        res = list(result)
+	def format_result(r):
             result = dict(r['_id'])
             result['count'] = r['count']
             return result
 
-        if 'ok' in res:
-            return [
-                format_result(r) for r in res.get('result', [])[:top]
-            ]
+        return [
+            format_result(r) for r in res[:top]
+        ]
+
 
     def top_attackers(self, top=5, hours_ago=None):
         return self._tops('source_ip', top, hours_ago)
