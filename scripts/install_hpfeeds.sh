@@ -43,7 +43,7 @@ fi
 
 ldconfig /usr/local/lib/
 
-bash install_mongo.sh
+#bash install_mongo.sh
 
 $PIP install virtualenv
 
@@ -75,7 +75,6 @@ deactivate
 mkdir -p /var/log/mhn
 mkdir -p /etc/supervisor/
 mkdir -p /etc/supervisor/conf.d
-
 
 cat >> /etc/supervisor/conf.d/hpfeeds-broker.conf <<EOF 
 [program:hpfeeds-broker]

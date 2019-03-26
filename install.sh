@@ -48,6 +48,20 @@ if [ -f /etc/debian_version ]; then
     pip install --upgrade pip
 fi
 
+echo "[`date`] Geting configuration"
+
+echo "[`date`] ========= MongoDB configuration ========="
+# run get config in context of current shell and export environment variables related to mongodb to be used in other install scripts
+. ./get_config.sh
+export REMOTE_MONGO
+export MONGO_AUTH
+export MONGO_HOST
+export MONGO_PORT
+export MONGO_USER
+export MONGO_PASSWORD
+export MONGO_AUTH_MECHANISM
+
+
 echo "[`date`] Starting Installation of all MHN packages"
 
 echo "[`date`] ========= Installing hpfeeds ========="

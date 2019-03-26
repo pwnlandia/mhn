@@ -71,6 +71,17 @@ if mhn.config['DEBUG']:
     console.setFormatter(formatter)
     mhn.logger.addHandler(console)
 
+def new_clio_connection():
+    from mhn.common.clio import Clio
+    import os
+    return Clio(
+        os.getenv('MONGO_HOST'),
+        int(os.getenv('MONGO_PORT')),
+        True if os.getenv('MONGO_AUTH') == 'true' else False,
+        os.getenv('MONGO_USER'),
+        os.getenv('MONGO_PASSWORD'),
+        os.getenv('MONGO_AUTH_MECHANISM')
+    )
 
 @mhn.route('/feed.json')
 def json_feed():
@@ -89,14 +100,13 @@ def makeurl(uri):
 
 
 def get_feed():
-    from mhn.common.clio import Clio
     from mhn.auth import current_user
     authfeed = mhn.config['FEED_AUTH_REQUIRED']
     if authfeed and not current_user.is_authenticated():
         abort(404)
     feed = AtomFeed('MHN HpFeeds Report', feed_url=request.url,
                     url=request.url_root)
-    sessions = Clio().session.get(options={'limit': 1000})
+    sessions = new_clio_connection().session.get(options={'limit': 1000})
     for s in sessions:
         feedtext = u'Sensor "{identifier}" '
         feedtext += '{source_ip}:{source_port} on sensorip:{destination_port}.'

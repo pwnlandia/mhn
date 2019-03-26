@@ -152,6 +152,7 @@ MHN_UUID=`python -c 'import uuid;print str(uuid.uuid4())'`
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 /opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py "collector" "$SECRET" "" "geoloc.events"
 
+
 cat > $MHN_HOME/server/collector.json <<EOF
 {
   "IDENT": "collector",

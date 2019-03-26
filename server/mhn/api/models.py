@@ -4,10 +4,9 @@ from datetime import datetime
 
 from sqlalchemy import UniqueConstraint, func
 
-from mhn import db
+from mhn import db, mhn
 from mhn.api import APIModel
 from mhn.auth.models import User
-from mhn.common.clio import Clio
 
 
 class Sensor(db.Model, APIModel):
@@ -68,11 +67,13 @@ class Sensor(db.Model, APIModel):
 
     @property
     def attacks_count(self):
-        return Clio().counts.get_count(identifier=self.uuid)
+        from mhn import new_clio_connection
+        return new_clio_connection().counts.get_count(identifier=self.uuid)
 
     @property
     def authkey(self):
-        return Clio().authkey.get(identifier=self.uuid)
+        from mhn import new_clio_connection
+        return new_clio_connection().authkey.get(identifier=self.uuid)
 
     @staticmethod
     def get_channels(honeypot):

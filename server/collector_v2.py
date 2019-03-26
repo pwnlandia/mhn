@@ -5,6 +5,7 @@ import logging
 from hpfeedslogger import processors
 import pymongo
 import requests
+import os
 
 ch = logging.StreamHandler(sys.stdout)
 ch.setLevel(logging.DEBUG)
@@ -30,7 +31,7 @@ DEFAULT_CHANNELS = [
     "wordpot.events",
 ]
 
-def ensure_user_permissions(ident, secret, publish, subscribe):
+def ensure_user_permissions(ident, secret, publish, subscribe, mongo_host, mongo_port, mongo_auth, mongo_user, mongo_password, mongo_auth_mechanism):
     rec = {
         "identifier": ident,
         "secret": secret,
@@ -38,7 +39,9 @@ def ensure_user_permissions(ident, secret, publish, subscribe):
         "subscribe":subscribe
     }
 
-    client = pymongo.MongoClient()
+    client = pymongo.MongoClient(host=mongo_host, port=mongo_port)
+    if mongo_auth == 'true':
+        auth_res = client.hpfeeds.authenticate(mongo_user, mongo_password, mechanism=mongo_auth_mechanism)
     res = client.hpfeeds.auth_key.update({"identifier": ident}, {"$set": rec}, upsert=True)
     client.fsync()
     client.close()
@@ -88,7 +91,7 @@ def main():
         ip = None
     mhn_uuid = cfg['MHN_UUID']
 
-    ensure_user_permissions(cfg['IDENT'], cfg['SECRET'], [], cfg['CHANNELS'])
+    ensure_user_permissions(cfg['IDENT'], cfg['SECRET'], [], cfg['CHANNELS'], os.getenv('MONGO_HOST'), int(os.getenv('MONGO_PORT')), os.getenv('MONGO_AUTH'), os.getenv('MONGO_USER'), os.getenv('MONGO_PASSWORD'), os.getenv('MONGO_AUTH_MECHANISM'))
     subscriber = hpfeeds_connect(cfg['HOST'], cfg['PORT'], cfg['IDENT'], cfg['SECRET'])
     publisher = hpfeeds_connect(cfg['RHOST'], cfg['RPORT'], cfg['RIDENT'], cfg['RSECRET'])
     processor = processors.HpfeedsMessageProcessor(cfg['IP_GEO_DB'], cfg['IP_ASN_DB'])

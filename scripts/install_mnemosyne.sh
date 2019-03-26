@@ -39,7 +39,9 @@ else
 fi
 
 
-bash $SCRIPTS/install_mongo.sh
+if ! [ $REMOTE_MONGO == "true" ]; then 
+    bash $SCRIPTS/install_mongo.sh
+fi
 
 mkdir -p /opt
 cd /opt/
