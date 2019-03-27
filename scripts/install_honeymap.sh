@@ -96,8 +96,12 @@ EOF
 /opt/hpfeeds/env/bin/pip install geoip2
 
 cd /opt/
-wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz -O GeoLite2-City.tar.gz && tar xvf GeoLite2-City.tar.gz
-wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-ASN.tar.gz -O GeoLite2-ASN.tar.gz && tar xvf GeoLite2-ASN.tar.gz
+wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz -O GeoLite2-City.tar.gz 
+tar xvf GeoLite2-City.tar.gz -C GeoLite2-City
+mv GeoLite2-City/GeoLite2-City.mmdb ./
+wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-ASN.tar.gz -O GeoLite2-ASN.tar.gz 
+tar xvf GeoLite2-ASN.tar.gz -C GeoLite2-ASN
+mv GeoLite2-ASN/GeoLite2-ASN.mmdb ./
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 /opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py geoloc $SECRET
 "geoloc.events" amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,cowrie.sessions,conpot.events,snort.alerts,kippo.alerts,cowrie.alerts,wordpot.events,shockpot.events,p0f.events,suricata.events,elastichoney.events,drupot.events
