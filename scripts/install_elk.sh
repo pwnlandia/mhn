@@ -66,7 +66,7 @@ filter {
   geoip {
       source => "src_ip"
       target => "src_ip_geo"
-      database => "/opt/GeoLiteCity.dat"
+      database => "/opt/GeoLite2-City.mmdb"
       add_field => [ "[src_ip_geo][coordinates]", "%{[src_ip_geo][longitude]}" ]
       add_field => [ "[src_ip_geo][coordinates]", "%{[src_ip_geo][latitude]}"  ]
   }
@@ -77,7 +77,7 @@ filter {
   geoip {
     source => "dst_ip"
     target => "dst_ip_geo"
-    database => "/opt/GeoLiteCity.dat"
+    database => "/opt/GeoLite2-City.mmdb"
     add_field => [ "[dst_ip_geo][coordinates]", "%{[dst_ip_geo][longitude]}" ]
     add_field => [ "[dst_ip_geo][coordinates]", "%{[dst_ip_geo][latitude]}"  ]
   }

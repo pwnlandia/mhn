@@ -96,9 +96,8 @@ EOF
 /opt/hpfeeds/env/bin/pip install GeoIP
 
 cd /opt/
-wget https://src.fedoraproject.org/lookaside/pkgs/GeoIP/GeoLiteCity.dat.gz/2ec4a73cd879adddf916df479f3581c7/GeoLiteCity.dat.gz && gzip -d GeoLiteCity.dat.gz
-wget https://src.fedoraproject.org/lookaside/pkgs/GeoIP/GeoLiteCityv6.dat.gz/ca64d35383892b3e7f52888d9e73ee50/GeoLiteCityv6.dat.gz && gzip -d GeoLiteCityv6.dat.gz
-wget https://src.fedoraproject.org/lookaside/pkgs/GeoIP/GeoIPASNum.dat.gz/f8ed8b468ecee0f7a98cb05c33af7b14/GeoIPASNum.dat.gz && gzip -d GeoIPASNum.dat.gz
+wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz -o GeoLite2-City.tar.gz && gzip -d GeoLite2-City.tar.gz
+wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-ASN.tar.gz -o GeoLite2-ASN.tar.gz && gzip -d GeoLite2-ASN.tar.gz
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 /opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py geoloc $SECRET
 "geoloc.events" amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,cowrie.sessions,conpot.events,snort.alerts,kippo.alerts,cowrie.alerts,wordpot.events,shockpot.events,p0f.events,suricata.events,elastichoney.events,drupot.events
