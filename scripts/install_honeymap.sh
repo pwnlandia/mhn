@@ -40,9 +40,9 @@ fi
 # Install a decent version of golang
 if [ "$(uname -m)" == "x86_64" ] ;
 then
-    GO_PACKAGE="go1.9.linux-amd64.tar.gz"
+    GO_PACKAGE="go1.12.1.linux-amd64.tar.gz"
 else
-    GO_PACKAGE="go1.9.linux-386.tar.gz"
+    GO_PACKAGE="go1.12.1.linux-386.tar.gz"
 fi
 
 cd /usr/local/
