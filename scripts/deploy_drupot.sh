@@ -77,7 +77,7 @@ channel = "drupot.events"
 meta = "Drupal scan event detected"
 
 [fetch_public_ip]
-enabled = false
+enabled = true
 urls = ["http://icanhazip.com/", "http://ifconfig.me/ip"]
 
 EOF
