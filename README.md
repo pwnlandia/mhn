@@ -40,11 +40,8 @@ Note: if you run into trouble during the install, please checkout the [troublesh
 Install Git
 
     # on Debian or Ubuntu
-    $ sudo apt-get install git -y
+    $ sudo apt install git -y
     
-    # on Centos or RHEL
-    $ sudo yum install -y git
-
 Install MHN
     
     $ cd /opt/
@@ -132,7 +129,7 @@ hpfeeds-logger can be used to integrate MHN with Splunk and ArcSight.
     sudo ./install_hpfeeds-logger-splunk.sh
 
 This will log the events as key/value pairs to /var/log/mhn-splunk.log.  This
-log should be monitored by the SplunkUniveralForwarder.
+log should be monitored by the SplunkUniversalForwarder.
 
 #### Arcsight
 
