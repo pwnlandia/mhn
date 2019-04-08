@@ -60,7 +60,6 @@ cd /opt
 git clone https://github.com/threatstream/honeymap.git
 
 cd /opt/honeymap/server
-go build
 cat > config.json <<EOF
 {
    "host": "localhost",
