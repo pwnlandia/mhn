@@ -62,6 +62,8 @@ SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 
 cd /opt
 git clone https://github.com/threatstream/honeymap.git
+cd /opt/honeymap
+git checkout hpfeeds-upgrade
 
 cd /opt/honeymap/server
 export GOPATH=`pwd`
