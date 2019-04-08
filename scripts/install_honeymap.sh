@@ -32,10 +32,6 @@ else
     exit -1
 fi
 
-
-
-
-
 ####################################################################
 # Install a decent version of golang
 if [ "$(uname -m)" == "x86_64" ] ;
@@ -66,8 +62,6 @@ cd /opt/honeymap
 git checkout hpfeeds-upgrade
 
 cd /opt/honeymap/server
-export GOPATH=`pwd`
-go get
 go build
 cat > config.json <<EOF
 {
