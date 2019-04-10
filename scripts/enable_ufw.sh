@@ -16,7 +16,6 @@ ufw allow http
 ufw allow ssh
 ufw allow 3000
 ufw allow 10000
-ufw status
 
 while true;
 do
@@ -26,6 +25,7 @@ do
     if [ "$UFW" == "y" -o "$UFW" == "Y" ]
     then
         ufw enable
+        ufw status
         break
     elif [ "$UFW" == "n" -o "$UFW" == "N" ]
     then
