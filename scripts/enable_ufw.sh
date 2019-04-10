@@ -19,8 +19,8 @@ ufw status
 
 while true;
 do
-    echo -n "WARNING: If SSH port (22) is incorrect you may lock yourself out."
-    echo -n "Do you want to enable UFW? (y/n) "
+    echo "WARNING: If SSH port (22) is incorrect you may lock yourself out."
+    echo "Do you want to enable UFW? (y/n) "
     read UFW
     if [ "$UFW" == "y" -o "$UFW" == "Y" ]
     then
