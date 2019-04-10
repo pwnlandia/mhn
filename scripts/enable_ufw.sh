@@ -15,6 +15,7 @@ ufw allow https
 ufw allow http
 ufw allow ssh
 ufw allow 3000
+ufw allow 10000
 ufw status
 
 while true;
