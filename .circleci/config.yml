@@ -23,5 +23,5 @@ jobs:
       - run:
           name: install mhn
           command: |
-            ./install.sh
+            sudo ./install.sh
 
