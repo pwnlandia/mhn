@@ -164,7 +164,7 @@ Please show them your support by way of donation.
 
 Modern Honeypot Network
 
-Copyright (C) 2017 - Anomali, Inc.
+Copyright (C) 2019 - Anomali, Inc.
 
 This program free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
