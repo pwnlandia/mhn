@@ -25,6 +25,6 @@ jobs:
           command: |
             apt-get update && \
             apt-get -y install sudo && \
-            apt-get -y install lsb-relase
+            apt-get -y install lsb-release
             sudo ./install.sh
 
