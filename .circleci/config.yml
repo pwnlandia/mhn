@@ -25,6 +25,7 @@ jobs:
           command: |
             apt-get update && \
             apt-get -y install sudo && \
-            apt-get -y install lsb-release
+            apt-get -y install lsb-release && \
+            apt-get -y install apt-transport-https
             sudo ./install.sh
 
