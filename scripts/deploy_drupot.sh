@@ -37,6 +37,7 @@ done
 cd /opt
 git clone https://github.com/d1str0/drupot.git
 cd drupot
+git checkout v0.0.7
 
 export GO111MODULE=on
 
@@ -56,6 +57,9 @@ cat > config.toml<<EOF
 # Note: Ports under 1024 require sudo.
 port = 80
 
+# Set to false for 8.* as changelog isn't shown in these versions.
+changelog_enabled = false
+
 # Allows you to choose which changelog file to return to spoof different versions.
 # Always served as "http[s]://server/CHANGELOG.txt"
 changelog_filepath = "changelogs/CHANGELOG-7.63.txt"
@@ -63,7 +67,9 @@ changelog_filepath = "changelogs/CHANGELOG-7.63.txt"
 # Either 8.6 or 7.63
 version = "8.6"
 
-# TODO: Optional SSL/TLS Cert
+# Headers
+header_server = "Apache/2.4.29 (Ubuntu)"
+header_content_language = "en"
 
 [hpfeeds]
 enabled = true
@@ -77,6 +83,7 @@ channel = "drupot.events"
 meta = "Drupal scan event detected"
 
 [fetch_public_ip]
+# Warning: Only disable if running on a local machine for testing.
 enabled = true
 urls = ["http://icanhazip.com/", "http://ifconfig.me/ip"]
 
