@@ -1,12 +1,12 @@
 argparse==1.2.1
 Flask==0.12.4
-Flask-Login==0.2.11
+Flask-Login==0.4.1
 Flask-Mail==0.9.1
-Flask-Migrate==1.2.0
-Flask-SQLAlchemy==2.0
-Flask-Security==1.7.4
+Flask-Migrate==1.8.1
+Flask-SQLAlchemy==2.3.1
+Flask-Security==1.7.5
 Flask-Testing==0.4.2
-Flask-WTF==0.10.3
+Flask-WTF==0.14.2
 bcrypt==3.1.4
 python-dateutil==2.2
 celery==3.1.16
