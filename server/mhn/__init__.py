@@ -23,7 +23,6 @@ user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
 mhn = Flask(__name__)
 mhn.config.from_object('config')
-mhn.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 csrf.init_app(mhn)
 
 # Email app setup.
