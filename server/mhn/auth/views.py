@@ -2,7 +2,7 @@ import hashlib
 import random
 
 from flask import Blueprint, request, jsonify
-from flask.ext.mail import Message
+from flask_mail import Message
 from sqlalchemy.exc import IntegrityError
 from flask_security.utils import (
         login_user as login, verify_and_update_password,

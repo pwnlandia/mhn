@@ -10,7 +10,7 @@ import xmltodict
 import uuid
 import random
 import string
-from flask_wtf.csrf import CsrfProtect
+import CSRFProtect
 csrf = CsrfProtect()
 
 db = SQLAlchemy()
