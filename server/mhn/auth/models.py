@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask.ext.security import UserMixin, RoleMixin
+from flask_security import UserMixin, RoleMixin
 from flask import render_template
 
 from mhn import db
