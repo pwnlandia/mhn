@@ -10,8 +10,9 @@ import xmltodict
 import uuid
 import random
 import string
-import CSRFProtect
-csrf = CsrfProtect()
+from flask_wtf.csrf import CSRFProtect
+
+csrf = CSRFProtect()
 
 db = SQLAlchemy()
 # After defining `db`, import auth models due to
