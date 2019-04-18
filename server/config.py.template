@@ -33,6 +33,7 @@ MAIL_DEBUG = DEBUG
 # Other settings.
 FEED_AUTH_REQUIRED = False
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'mhn.db')
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 SECURITY_PASSWORD_HASH = 'bcrypt'
 SECURITY_PASSWORD_SALT = SECRET_KEY
 SECURITY_LOGIN_URL = '/ui/login/'
