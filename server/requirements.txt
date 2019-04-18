@@ -1,4 +1,4 @@
-argparse==1.2.1
+argparse==1.4.0
 Flask==0.12.4
 Flask-Login==0.3.2
 Flask-Mail==0.9.1
