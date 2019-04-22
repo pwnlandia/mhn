@@ -93,7 +93,7 @@ def get_feed():
     from mhn.common.clio import Clio
     from mhn.auth import current_user
     authfeed = mhn.config['FEED_AUTH_REQUIRED']
-    if authfeed and not current_user.is_authenticated():
+    if authfeed and not current_user.is_authenticated:
         abort(404)
     feed = AtomFeed('MHN HpFeeds Report', feed_url=request.url,
                     url=request.url_root)
