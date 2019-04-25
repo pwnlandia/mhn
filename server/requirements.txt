@@ -3,7 +3,7 @@ Flask==0.12.4
 Flask-Login==0.3.2
 Flask-Mail==0.9.1
 Flask-Migrate==1.8.1
-Flask-SQLAlchemy==2.3.2
+Flask-SQLAlchemy==2.4.0
 Flask-Security==1.7.5
 Flask-Testing==0.7.1
 Flask-WTF==0.14.2
