@@ -28,6 +28,8 @@ DEFAULT_CHANNELS = [
     "snort.alerts",
     "suricata.events",
     "wordpot.events",
+    "drupot.events",
+    "agave.events",
 ]
 
 def ensure_user_permissions(ident, secret, publish, subscribe):
