@@ -53,7 +53,7 @@ chmod 755 -R .
 
 IDENT=mnemosyne
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
-CHANNELS='amun.events,conpot.events,thug.events,beeswarm.hive,dionaea.capture,dionaea.connections,thug.files,beeswarn.feeder,cuckoo.analysis,kippo.sessions,cowrie.sessions,glastopf.events,glastopf.files,mwbinary.dionaea.sensorunique,snort.alerts,wordpot.events,p0f.events,suricata.events,shockpot.events,elastichoney.events,drupot.events'
+CHANNELS='amun.events,conpot.events,thug.events,beeswarm.hive,dionaea.capture,dionaea.connections,thug.files,beeswarn.feeder,cuckoo.analysis,kippo.sessions,cowrie.sessions,glastopf.events,glastopf.files,mwbinary.dionaea.sensorunique,snort.alerts,wordpot.events,p0f.events,suricata.events,shockpot.events,elastichoney.events,drupot.events,agave.events'
 
 cat > /opt/mnemosyne/mnemosyne.cfg <<EOF
 [webapi]
