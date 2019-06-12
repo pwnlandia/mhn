@@ -14,11 +14,13 @@ deploy_key=$2
 apt-get update
 apt-get -y install git supervisor
 
+####################################################################
+# Install a decent version of golang
 if [ "$(uname -m)" == "x86_64" ] ;
 then
-    GO_PACKAGE="go1.12.1.linux-amd64.tar.gz"
+    GO_PACKAGE="go1.12.6.linux-amd64.tar.gz"
 else
-    GO_PACKAGE="go1.12.1.linux-386.tar.gz"
+    GO_PACKAGE="go1.12.6.linux-386.tar.gz"
 fi
 
 cd /usr/local/
@@ -31,15 +33,15 @@ do
     echo $X; 
     ln -s $X; 
 done
+####################################################################
 
+export GO111MODULE=on
 
 # Get the drupot source
 cd /opt
 git clone https://github.com/d1str0/drupot.git
 cd drupot
-git checkout v0.0.7
-
-export GO111MODULE=on
+git checkout v0.2.3
 
 go build
 
@@ -47,7 +49,7 @@ go build
 wget $server_url/static/registration.txt -O registration.sh
 chmod 755 registration.sh
 # Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "drupot"
+. ./registration.sh $server_url $deploy_key "agave"
 
 cat > config.toml<<EOF
 # Drupot Configuration File
@@ -57,19 +59,10 @@ cat > config.toml<<EOF
 # Note: Ports under 1024 require sudo.
 port = 80
 
-# Set to false for 8.* as changelog isn't shown in these versions.
-changelog_enabled = false
+site_name = "Nothing"
+name_randomizer = true
 
-# Allows you to choose which changelog file to return to spoof different versions.
-# Always served as "http[s]://server/CHANGELOG.txt"
-changelog_filepath = "changelogs/CHANGELOG-7.63.txt"
-
-# Either 8.6 or 7.63
-version = "8.6"
-
-# Headers
-header_server = "Apache/2.4.29 (Ubuntu)"
-header_content_language = "en"
+# TODO: Optional SSL/TLS Cert
 
 [hpfeeds]
 enabled = true
@@ -77,13 +70,9 @@ host = "$HPF_HOST"
 port = $HPF_PORT
 ident = "$HPF_IDENT"
 auth = "$HPF_SECRET"
-channel = "drupot.events"
-
-# Meta data to be provided with each request phoned home
-meta = "Drupal scan event detected"
+channel = "agave.events"
 
 [fetch_public_ip]
-# Warning: Only disable if running on a local machine for testing.
 enabled = true
 urls = ["http://icanhazip.com/", "http://ifconfig.me/ip"]
 
@@ -92,7 +81,7 @@ EOF
 # Config for supervisor.
 cat > /etc/supervisor/conf.d/drupot.conf <<EOF
 [program:drupot]
-command=/opt/drupot/Drupot
+command=/opt/drupot/drupot
 directory=/opt/drupot
 stdout_logfile=/opt/drupot/drupot.out
 stderr_logfile=/opt/drupot/drupot.err
