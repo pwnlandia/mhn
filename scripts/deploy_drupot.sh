@@ -19,6 +19,9 @@ apt-get -y install git supervisor
 if [ "$(uname -m)" == "x86_64" ] ;
 then
     GO_PACKAGE="go1.12.6.linux-amd64.tar.gz"
+elif [ "$(uname -m)" == "armv7l" ] || [ "$(uname -m)" == "armv6l" ];
+then
+    GO_PACKAGE="go1.12.6.linux-armv6l.tar.gz"
 else
     GO_PACKAGE="go1.12.6.linux-386.tar.gz"
 fi
@@ -93,4 +96,5 @@ EOF
 
 supervisorctl update
 supervisorctl restart all
+
 
