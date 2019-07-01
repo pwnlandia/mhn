@@ -31,6 +31,10 @@ chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "p0f"
 
+# Note: This will change the interface in the p0f config
+Interface=$(basename -a /sys/class/net/e*)
+sed -i "s/INTERFACE=eth0/INTERFACE=$Interface/" /opt/p0f/p0f_wrapper.sh
+
 cat > /etc/supervisor/conf.d/p0f.conf <<EOF
 [program:p0f]
 command=/opt/p0f/p0f_wrapper.sh
