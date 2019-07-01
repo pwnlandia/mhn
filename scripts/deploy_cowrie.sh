@@ -32,7 +32,7 @@ git clone https://github.com/micheloosterhof/cowrie.git cowrie
 # Config for requirements.txt
 cat > /opt/cowrie/requirements.txt <<EOF
 twisted>=17.1.0
-cryptography>=0.9.1,<=1.8
+cryptography>=2.1
 configparser
 pyopenssl
 pyparsing
@@ -43,6 +43,7 @@ attrs
 service_identity
 python-dateutil
 tftpy
+bcrypt
 EOF
 
 cd cowrie
