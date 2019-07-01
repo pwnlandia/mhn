@@ -1,6 +1,7 @@
 #!/bin/bash
 
-INTERFACE=eth0
+
+INTERFACE=$(basename -a /sys/class/net/e*)
 
 set -e
 set -x
@@ -61,6 +62,7 @@ cd /opt/snort/etc/
 # out prefix is /opt/snort not /usr/local...
 sed -i 's#/usr/local/#/opt/snort/#' snort.conf 
 
+
 # disable all the built in rules
 sed -i -r 's,include \$RULE_PATH/(.*),# include $RULE_PATH/\1,' snort.conf
 
@@ -70,6 +72,7 @@ sed -i 's,# include $RULE_PATH/local.rules,include $RULE_PATH/local.rules,' snor
 # enable hpfeeds
 sed -i "s/# hpfeeds/# hpfeeds\noutput log_hpfeeds: host $HPF_HOST, ident $HPF_IDENT, secret $HPF_SECRET, channel snort.alerts, port $HPF_PORT/" snort.conf 
 
+#Set HOME_NET
 
 IP=$(ifconfig $INTERFACE | grep 'inet addr' | cut -f2 -d: | awk '{print $1}')
 sed -i "s/ipvar HOME_NET any/ipvar HOME_NET $IP/" snort.conf
