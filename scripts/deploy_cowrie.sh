@@ -28,6 +28,10 @@ useradd -d /home/cowrie -s /bin/bash -m cowrie -g users
 
 cd /opt
 git clone https://github.com/micheloosterhof/cowrie.git cowrie
+cd cowrie
+
+# Most recent known working version
+git checkout 34f8464
 
 # Config for requirements.txt
 cat > /opt/cowrie/requirements.txt <<EOF
@@ -46,7 +50,6 @@ tftpy
 bcrypt
 EOF
 
-cd cowrie
 virtualenv cowrie-env #env name has changed to cowrie-env on latest version of cowrie
 source cowrie-env/bin/activate
 # without the following, i get this error:
