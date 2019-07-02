@@ -7,10 +7,10 @@ DIR=`dirname "$0"`
 $DIR/install_hpfeeds-logger-json.sh
 
 # install Java
-apt-get install -y python-software-properties
-add-apt-repository -y ppa:webupd8team/java
+apt-get install -y software-properties-common
+add-apt-repository -y ppa:linuxuprising/java
 apt-get update
-apt-get -y install oracle-java8-installer
+apt-get install -y oracle-java11-installer
 
 # Install ES
 wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch |  apt-key add -

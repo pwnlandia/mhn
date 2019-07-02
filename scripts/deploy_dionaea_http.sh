@@ -20,7 +20,7 @@ chmod 755 registration.sh
 
 # Add ppa to apt sources (Needed for Dionaea).
 apt-get update
-apt-get install -y python-software-properties
+apt-get install -y software-properties-common
 add-apt-repository -y ppa:honeynet/nightly
 apt-get update
 
@@ -66,7 +66,7 @@ cat > /tmp/dionaea.hpfeeds.patch <<EOF
 @@ -129,6 +129,13 @@ def new():
  		import dionaea.submit_http
  		g_handlers.append(dionaea.submit_http.handler('*'))
- 
+
 +	if "hpfeeds" in g_dionaea.config()['modules']['python']['ihandlers']['handlers'] and 'hpfeeds' in g_dionaea.config()['modules']['python']:
 +		import dionaea.hpfeeds
 +		for client in g_dionaea.config()['modules']['python']['hpfeeds']:
@@ -87,23 +87,23 @@ cat > /usr/lib/dionaea/python/dionaea/hpfeeds.py <<EOF
 #*
 #*
 #* Copyright (C) 2010  Mark Schloesser
-#* 
+#*
 #* This program is free software; you can redistribute it and/or
 #* modify it under the terms of the GNU General Public License
 #* as published by the Free Software Foundation; either version 2
 #* of the License, or (at your option) any later version.
-#* 
+#*
 #* This program is distributed in the hope that it will be useful,
 #* but WITHOUT ANY WARRANTY; without even the implied warranty of
 #* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #* GNU General Public License for more details.
-#* 
+#*
 #* You should have received a copy of the GNU General Public License
 #* along with this program; if not, write to the Free Software
 #* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#* 
-#* 
-#*             contact nepenthesdev@gmail.com  
+#*
+#*
+#*             contact nepenthesdev@gmail.com
 #*
 #*******************************************************************************/
 
@@ -161,7 +161,7 @@ def strpack8(x):
 def strunpack8(x):
 	l = x[0]
 	return x[1:1+l], x[1+l:]
-	
+
 def msghdr(op, data):
 	return struct.pack('!iB', 5+len(data), op) + data
 def msgpublish(ident, chan, data):
@@ -338,35 +338,35 @@ class hpfeedihandler(ihandler):
 
 	def handle_incident(self, i):
 		pass
-	
+
 	def handle_incident_dionaea_connection_tcp_listen(self, icd):
 		self.connection_publish(icd, 'listen')
 		con=icd.con
-		logger.info("listen connection on %s:%i" % 
+		logger.info("listen connection on %s:%i" %
 			(con.remote.host, con.remote.port))
 
 	def handle_incident_dionaea_connection_tls_listen(self, icd):
 		self.connection_publish(icd, 'listen')
 		con=icd.con
-		logger.info("listen connection on %s:%i" % 
+		logger.info("listen connection on %s:%i" %
 			(con.remote.host, con.remote.port))
 
 	def handle_incident_dionaea_connection_tcp_connect(self, icd):
 		self.connection_publish(icd, 'connect')
 		con=icd.con
-		logger.info("connect connection to %s/%s:%i from %s:%i" % 
+		logger.info("connect connection to %s/%s:%i from %s:%i" %
 			(con.remote.host, con.remote.hostname, con.remote.port, self._ownip(icd), con.local.port))
 
 	def handle_incident_dionaea_connection_tls_connect(self, icd):
 		self.connection_publish(icd, 'connect')
 		con=icd.con
-		logger.info("connect connection to %s/%s:%i from %s:%i" % 
+		logger.info("connect connection to %s/%s:%i from %s:%i" %
 			(con.remote.host, con.remote.hostname, con.remote.port, self._ownip(icd), con.local.port))
 
 	def handle_incident_dionaea_connection_udp_connect(self, icd):
 		self.connection_publish(icd, 'connect')
 		con=icd.con
-		logger.info("connect connection to %s/%s:%i from %s:%i" % 
+		logger.info("connect connection to %s/%s:%i from %s:%i" %
 			(con.remote.host, con.remote.hostname, con.remote.port, self._ownip(icd), con.local.port))
 
 	def handle_incident_dionaea_connection_tcp_accept(self, icd):
@@ -378,22 +378,22 @@ class hpfeedihandler(ihandler):
 	def handle_incident_dionaea_connection_tls_accept(self, icd):
 		self.connection_publish(icd, 'accept')
 		con=icd.con
-		logger.info("accepted connection from %s:%i to %s:%i" % 
+		logger.info("accepted connection from %s:%i to %s:%i" %
 			(con.remote.host, con.remote.port, self._ownip(icd), con.local.port))
 
 
 	def handle_incident_dionaea_connection_tcp_reject(self, icd):
 		self.connection_publish(icd, 'reject')
 		con=icd.con
-		logger.info("reject connection from %s:%i to %s:%i" % 
+		logger.info("reject connection from %s:%i to %s:%i" %
 			(con.remote.host, con.remote.port, self._ownip(icd), con.local.port))
 
 	def handle_incident_dionaea_connection_tcp_pending(self, icd):
 		self.connection_publish(icd, 'pending')
 		con=icd.con
-		logger.info("pending connection from %s:%i to %s:%i" % 
+		logger.info("pending connection from %s:%i to %s:%i" %
 			(con.remote.host, con.remote.port, self._ownip(icd), con.local.port))
-	
+
 	def handle_incident_dionaea_download_complete_unique(self, i):
 		self.handle_incident_dionaea_download_complete_again(i)
 		if not hasattr(i, 'con') or not self.client.connected: return
@@ -408,7 +408,7 @@ class hpfeedihandler(ihandler):
 		logger.debug('hash complete, publishing md5 {0}, path {1}'.format(i.md5hash, i.file))
 		try:
 			sha512 = sha512file(i.file)
-			self.client.publish(CAPTURECHAN, saddr=i.con.remote.host, 
+			self.client.publish(CAPTURECHAN, saddr=i.con.remote.host,
 				sport=str(i.con.remote.port), daddr=self._ownip(i),
 				dport=str(i.con.local.port), md5=i.md5hash, sha512=sha512,
 				url=i.url
@@ -467,7 +467,7 @@ sed -i 's/levels = "all"/levels = "warning,error"/1' /etc/dionaea/dionaea.conf
 sed -i 's/mode = "getifaddrs"/mode = "manual"/1' /etc/dionaea/dionaea.conf
 sed --in-place='.bak' 's/addrs = { eth0 = \["::"\] }/addrs = { eth0 = ["::", "0.0.0.0"] }/' /etc/dionaea/dionaea.conf
 
-mkdir -p /var/dionaea/bistreams 
+mkdir -p /var/dionaea/bistreams
 chown nobody:nogroup /var/dionaea/bistreams
 
 # Config for supervisor.
