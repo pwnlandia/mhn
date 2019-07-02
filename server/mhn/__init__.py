@@ -139,7 +139,7 @@ def create_clean_db():
         #|-- deploy_kippo.sh
         deployscripts = [
             ['Ubuntu - Conpot', '../scripts/deploy_conpot.sh'],
-            ['Ubuntu - Drupot', '../scripts/deploy_drupot.sh'],
+            ['Ubuntu/Raspberry Pi - Drupot', '../scripts/deploy_drupot.sh'],
             ['Ubuntu - Wordpot', '../scripts/deploy_wordpot.sh'],
             ['Ubuntu - Shockpot', '../scripts/deploy_shockpot.sh'],
             ['Ubuntu - p0f', '../scripts/deploy_p0f.sh'],
@@ -149,9 +149,7 @@ def create_clean_db():
             ['Ubuntu - Amun', '../scripts/deploy_amun.sh'],
             ['Ubuntu - Snort', '../scripts/deploy_snort.sh'],
             ['Ubuntu - Cowrie', '../scripts/deploy_cowrie.sh'],
-            ['Ubuntu 14.04/Centos 7 - Dionaea', '../scripts/deploy_dionaea.sh'],
-            ['Raspberry Pi - Dionaea', '../scripts/deploy_raspberrypi.sh'],
-            ['Ubuntu - Dionaea with HTTP', '../scripts/deploy_dionaea_http.sh'],
+            ['Ubuntu/Raspberry Pi - Dionaea', '../scripts/deploy_dionaea.sh'],
             ['Ubuntu - Shockpot Sinkhole', '../scripts/deploy_shockpot_sinkhole.sh'],
         ]
         for honeypot, deploypath in reversed(deployscripts):
