@@ -140,6 +140,7 @@ def create_clean_db():
         deployscripts = [
             ['Ubuntu - Conpot', '../scripts/deploy_conpot.sh'],
             ['Ubuntu/Raspberry Pi - Drupot', '../scripts/deploy_drupot.sh'],
+            ['Ubuntu/Raspberry Pi - Magenpot', '../scripts/deploy_magenpot.sh'],
             ['Ubuntu - Wordpot', '../scripts/deploy_wordpot.sh'],
             ['Ubuntu - Shockpot', '../scripts/deploy_shockpot.sh'],
             ['Ubuntu - p0f', '../scripts/deploy_p0f.sh'],
