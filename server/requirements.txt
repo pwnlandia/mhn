@@ -17,6 +17,6 @@ uWSGI==2.0.18
 pymongo==3.7.2
 hpfeeds-threatstream==1.1
 pygal==2.4.0
-hpfeeds-logger==0.0.7.6
+hpfeeds-logger==0.0.7.7
 geoip2==2.9.0
 pysqlite>=2.8.0
