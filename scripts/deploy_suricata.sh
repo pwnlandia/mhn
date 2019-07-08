@@ -1,20 +1,33 @@
 #!/bin/bash
-#
-# This script was successfully tested on Ubuntu12.04 and Ubuntu14.10
-# i386 and x64 architecture distros both
-#
 
-INTERFACE=eth0
+INTERFACE=$(basename -a /sys/class/net/e*)
 
 set -e
 set -x
 
 if [ $# -ne 2 ]
     then
-        echo "Wrong number of arguments supplied."
-        echo "Usage: $0 <server_url> <deploy_key>."
+        if [ $# -eq 3 ]
+          then
+            INTERFACE=$3
+          else
+            echo "Wrong number of arguments supplied."
+            echo "Usage: $0 <server_url> <deploy_key>."
+            exit 1
+        fi
+
+fi
+
+compareint=$(echo "$INTERFACE" | wc -w)
+
+
+if [ "$INTERFACE" = "e*" ] || [ "$compareint" -ne 1 ]
+    then
+        echo "No Interface selectable, please provide manually."
+        echo "Usage: $0 <server_url> <deploy_key> <INTERFACE>"
         exit 1
 fi
+
 
 server_url=$1
 deploy_key=$2
@@ -96,7 +109,7 @@ COMMAND+="s/^( - .*\.rules)/#\1/;  s/rule-files:/rule-files:\n - local.rules/"
 
 sed -i -r "$COMMAND" suricata.yaml
 
-IP=$(ifconfig $INTERFACE | grep 'inet addr' | cut -f2 -d: | awk '{print $1}')
+IP=$(ip -f inet -o addr show $INTERFACE|head -n 1|cut -d\  -f 7 | cut -d/ -f 1)
 sed -i "s#    HOME_NET: \"\[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12\]\"#    HOME_NET: \"[$IP]\"#" suricata.yaml
 
 # Installing snort rules.
