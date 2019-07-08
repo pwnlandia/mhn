@@ -33,8 +33,8 @@ fi
 server_url=$1
 deploy_key=$2
 
-apt-get update
-apt-get -y install git supervisor libpcap-dev libjansson-dev gcc
+apt update
+apt install -y git supervisor libpcap-dev libjansson-dev gcc
 
 # install p0f
 cd /opt
@@ -51,8 +51,10 @@ chmod 755 registration.sh
 # Note: this will export the HPF_* variables
 . ./registration.sh $server_url $deploy_key "p0f"
 
-# Note: This will change the interface in the p0f config
-sed -i "s/INTERFACE=eth0/INTERFACE=$INTERFACE/" /opt/p0f/p0f_wrapper.sh
+# Note: This will change the interface and the ip in the p0f config
+sed -i "/INTERFACE=/c\INTERFACE=$INTERFACE" /opt/p0f/p0f_wrapper.sh
+sed -i "/MY_ADDRESS=/c\MY_ADDRESS=\$(ip -f inet -o addr show \$INTERFACE|head -n 1|cut -d\\\  -f 7 | cut -d/ -f 1)" /opt/p0f/p0f_wrapper.sh
+
 
 cat > /etc/supervisor/conf.d/p0f.conf <<EOF
 [program:p0f]
