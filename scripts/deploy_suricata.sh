@@ -1,11 +1,6 @@
 #!/bin/bash
-#
-# This script was successfully tested on Ubuntu12.04 and Ubuntu14.10
-# i386 and x64 architecture distros both
-#
 
 INTERFACE=$(basename -a /sys/class/net/e*)
-
 
 set -e
 set -x
@@ -114,7 +109,7 @@ COMMAND+="s/^( - .*\.rules)/#\1/;  s/rule-files:/rule-files:\n - local.rules/"
 
 sed -i -r "$COMMAND" suricata.yaml
 
-IP=$(ip -f inet -o addr show $INTERFACE|cut -d\  -f 7 | cut -d/ -f 1)
+IP=$(ip -f inet -o addr show $INTERFACE|head -n 1|cut -d\  -f 7 | cut -d/ -f 1)
 sed -i "s#    HOME_NET: \"\[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12\]\"#    HOME_NET: \"[$IP]\"#" suricata.yaml
 
 # Installing snort rules.
