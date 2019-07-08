@@ -91,7 +91,7 @@ sed -i "s/# hpfeeds/# hpfeeds\noutput log_hpfeeds: host $HPF_HOST, ident $HPF_ID
 
 #Set HOME_NET
 
-IP=$(ip -f inet -o addr show $INTERFACE|cut -d\  -f 7 | cut -d/ -f 1)
+IP=$(ip -f inet -o addr show $INTERFACE|head -n 1|cut -d\  -f 7 | cut -d/ -f 1)
 sed -i "/ipvar HOME_NET/c\ipvar HOME_NET $IP" /opt/snort/etc/snort.conf
 
 # Installing snort rules.
