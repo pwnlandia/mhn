@@ -1,16 +1,34 @@
 #!/bin/bash
 
-INTERFACE=eth0
+INTERFACE=$(basename -a /sys/class/net/e*)
+
 
 set -e
 set -x
 
 if [ $# -ne 2 ]
     then
-        echo "Wrong number of arguments supplied."
-        echo "Usage: $0 <server_url> <deploy_key>."
+        if [ $# -eq 3 ]
+          then
+            INTERFACE=$3
+          else
+            echo "Wrong number of arguments supplied."
+            echo "Usage: $0 <server_url> <deploy_key>."
+            exit 1
+        fi
+
+fi
+
+compareint=$(echo "$INTERFACE" | wc -w)
+
+
+if [ "$INTERFACE" = "e*" ] || [ "$compareint" -ne 1 ]
+    then
+        echo "No Interface selectable, please provide manually."
+        echo "Usage: $0 <server_url> <deploy_key> <INTERFACE>"
         exit 1
 fi
+
 
 server_url=$1
 deploy_key=$2
@@ -61,6 +79,7 @@ cd /opt/snort/etc/
 # out prefix is /opt/snort not /usr/local...
 sed -i 's#/usr/local/#/opt/snort/#' snort.conf 
 
+
 # disable all the built in rules
 sed -i -r 's,include \$RULE_PATH/(.*),# include $RULE_PATH/\1,' snort.conf
 
@@ -70,9 +89,10 @@ sed -i 's,# include $RULE_PATH/local.rules,include $RULE_PATH/local.rules,' snor
 # enable hpfeeds
 sed -i "s/# hpfeeds/# hpfeeds\noutput log_hpfeeds: host $HPF_HOST, ident $HPF_IDENT, secret $HPF_SECRET, channel snort.alerts, port $HPF_PORT/" snort.conf 
 
+#Set HOME_NET
 
-IP=$(ifconfig $INTERFACE | grep 'inet addr' | cut -f2 -d: | awk '{print $1}')
-sed -i "s/ipvar HOME_NET any/ipvar HOME_NET $IP/" snort.conf
+IP=$(ip -f inet -o addr show $INTERFACE|head -n 1|cut -d\  -f 7 | cut -d/ -f 1)
+sed -i "/ipvar HOME_NET/c\ipvar HOME_NET $IP" /opt/snort/etc/snort.conf
 
 # Installing snort rules.
 # mhn.rules will be used as local.rules.
