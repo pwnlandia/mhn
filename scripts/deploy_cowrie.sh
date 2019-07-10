@@ -22,6 +22,7 @@ apt-get -y install python-dev git supervisor authbind openssl python-virtualenv 
 pip install -U supervisor
 /etc/init.d/supervisor start || true
 
+sed -i 's/#Port/Port/g' /etc/ssh/sshd_config
 sed -i 's/Port 22$/Port 2222/g' /etc/ssh/sshd_config
 service ssh restart
 useradd -d /home/cowrie -s /bin/bash -m cowrie -g users
