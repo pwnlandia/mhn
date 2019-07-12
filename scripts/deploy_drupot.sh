@@ -18,12 +18,12 @@ apt-get -y install git supervisor
 # Install a decent version of golang
 if [ "$(uname -m)" == "x86_64" ] ;
 then
-    GO_PACKAGE="go1.12.6.linux-amd64.tar.gz"
+    GO_PACKAGE="go1.12.7.linux-amd64.tar.gz"
 elif [ "$(uname -m)" == "armv7l" ] || [ "$(uname -m)" == "armv6l" ];
 then
-    GO_PACKAGE="go1.12.6.linux-armv6l.tar.gz"
+    GO_PACKAGE="go1.12.7.linux-armv6l.tar.gz"
 else
-    GO_PACKAGE="go1.12.6.linux-386.tar.gz"
+    GO_PACKAGE="go1.12.7.linux-386.tar.gz"
 fi
 
 cd /usr/local/
@@ -44,7 +44,7 @@ export GO111MODULE=on
 cd /opt
 git clone https://github.com/d1str0/drupot.git
 cd drupot
-git checkout v0.2.3
+git checkout v0.2.4
 
 go build
 
