@@ -14,6 +14,8 @@ if [ -f /etc/debian_version ]; then
         ./install_mongodb_ub16.sh
     elif [ "$(lsb_release -r -s)" == "18.04" ]; then
         ./install_mongodb_ub18.sh
+    elif [ "$(lsb_release -c -s)" == "stretch" ]; then
+	./install_mongodb_db9.sh
     else
         echo -e "ERROR: Unknown OS\nExiting!"
         exit -1
