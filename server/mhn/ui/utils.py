@@ -7,9 +7,12 @@ from werkzeug.contrib.cache import SimpleCache
 import socket
 import struct
 from mhn.api.models import Sensor
+import geoip2.database
 
 flag_cache = SimpleCache(threshold=1000, default_timeout=300)
 sensor_cache = SimpleCache(threshold=1000, default_timeout=300)
+
+geoip2_reader = geoip2.database.Reader(MHN_SERVER_HOME+'/../../GeoLite2-City.mmdb')
 
 def is_RFC1918_addr(ip):
     # 10.0.0.0 = 167772160
@@ -30,14 +33,13 @@ def is_RFC1918_addr(ip):
 
     return False
 
-
 def get_flag_ip(ipaddr):
     if is_RFC1918_addr(ipaddr):
         return constants.DEFAULT_FLAG_URL
 
     flag = flag_cache.get(ipaddr)
     if not flag:
-        flag = _get_flag_ip(ipaddr)
+        flag = _get_flag_ip_localdb(ipaddr)
         flag_cache.set(ipaddr, flag)
     return flag
 
@@ -51,6 +53,22 @@ def get_sensor_name(sensor_id):
                 break
     print 'Name: %s' % sensor_name
     return sensor_name
+
+def _get_flag_ip_localdb(ipaddr):
+    flag_path = '/static/img/flags-iso/shiny/64/{}.png'
+    try:
+        r = geoip2_reader.city(ipaddr)
+        ccode = r.country.iso_code
+    except Exception:
+        app.logger.warning("Could not determine flag for ip (LOCALDB): {}".format(ipaddr))
+        return constants.DEFAULT_FLAG_URL
+    else:
+        # Constructs the flag source using country code
+        flag = flag_path.format(ccode.upper())
+        if os.path.exists(MHN_SERVER_HOME +"/mhn"+flag):
+            return flag
+        else:
+            return constants.DEFAULT_FLAG_URL
 
 def _get_flag_ip(ipaddr):
     """
