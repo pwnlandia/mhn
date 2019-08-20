@@ -19,8 +19,9 @@ chmod 755 registration.sh
 . ./registration.sh $server_url $deploy_key "kippo"
 
 apt-get update
-apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twisted git python-pip supervisor authbind ssh
+apt-get -y install python-dev openssl python-openssl python-pyasn1 git python-pip supervisor authbind ssh
 
+pip install twisted==15.1.0
 
 # Change real SSH Port to 2222
 sed -i 's/Port 22$/Port 2222/g' /etc/ssh/sshd_config
