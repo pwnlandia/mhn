@@ -104,6 +104,43 @@ For directions on running MHN behind a web proxy, follow the directions in the
 By default MHN will run without HTTPS, to configure your installation to use SSL
 certificates directions can be found in the [wiki.](https://github.com/threatstream/mhn/wiki/Running-MHN-Over-HTTPS)
 
+### Running MHN with Docker
+
+Running MHN in docker is not officially supported, but it works.
+The container takes a few minutes to start at the first launch to initialize.
+Splunk, ArcSight and ELK are not yet supported in Docker.
+
+#### Build it
+
+	$ docker build -t mhn .
+
+#### Run it
+
+    $ docker run -d -p 10000:10000 -p 80:80 -p 3000:3000 -p 8089:8089 \
+    $ --restart unless-stopped \
+    $ --name mhn \
+    $ -e SUPERUSER_EMAIL=root@localhost \
+    $ -e SUPERUSER_PASSWORD=password \
+    $ -e SERVER_BASE_URL="http://mhn" \
+    $ -e HONEYMAP_URL="http://mhn:3000" \
+    $ mhn
+	
+#### Environment variables
+
+	SUPERUSER_EMAIL
+	SUPERUSER_PASSWORD
+	SERVER_BASE_URL
+	HONEYMAP_URL
+	DEBUG_MODE
+	SMTP_HOST
+	SMTP_PORT
+	SMTP_TLS
+	SMTP_SSL
+	SMTP_USERNAME
+	SMTP_PASSWORD
+	SMTP_SENDER
+	MHN_LOG
+
 ## Deploying honeypots with MHN
 
 MHN was designed to make scalable deployment of honeypots easier.  Here are the
