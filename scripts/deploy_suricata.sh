@@ -42,7 +42,7 @@ pip install pyyaml
 
 cd /tmp
 rm -rf libev*
-wget https://github.com/Pwnlandia/hpfeeds/releases/download/libev-4.15/libev-4.15.tar.gz
+wget https://github.com/pwnlandia/hpfeeds/releases/download/libev-4.15/libev-4.15.tar.gz
 tar zxvf libev-4.15.tar.gz 
 cd libev-4.15
 ./configure && make && make install
@@ -50,7 +50,7 @@ ldconfig
 
 cd /tmp
 rm -rf hpfeeds
-git clone https://github.com/Pwnlandia/hpfeeds.git
+git clone https://github.com/pwnlandia/hpfeeds.git
 cd hpfeeds/appsupport/libhpfeeds
 autoreconf --install
 ./configure && make && make install 

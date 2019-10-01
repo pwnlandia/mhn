@@ -57,7 +57,7 @@ SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 /opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py honeymap $SECRET "" "geoloc.events"
 
 cd /opt
-git clone https://github.com/threatstream/honeymap.git
+git clone https://github.com/pwnlandia/honeymap.git
 
 cd /opt/honeymap/server
 cat > config.json <<EOF
