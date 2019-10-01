@@ -178,6 +178,7 @@ This will log the events as CEF to /var/log/mhn-arcsight.log
 
 
 ## Data
+*NOTICE* **This section is out of date. Community data is not collected by Anomali although MHN still attempts to send this data to Anomali servers.**
 
 The MHN server reports anonymized attack data back to Anomali, Inc. (formerly
 known as ThreatStream). If you are interested in viewing this data, get details
