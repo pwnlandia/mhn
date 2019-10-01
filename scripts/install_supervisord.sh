@@ -43,12 +43,34 @@ elif [ -f /etc/redhat-release ]; then
 
     echo_supervisord_conf > /etc/supervisord.conf
 
-cat >> /etc/supervisord.conf <<EOF
+    cat >> /etc/supervisord.conf <<EOF
 [include]
 files = /etc/supervisor/conf.d/*.conf
 EOF
 
-    /usr/local/bin/supervisord -c /etc/supervisord.conf
-    supervisorctl update
+    if  grep -q -i "release 6" /etc/redhat-release; then
+	/usr/local/bin/supervisord -c /etc/supervisord.conf
+    elif  grep -q -i "release 7" /etc/redhat-release; then
+	cat > /usr/lib/systemd/system/supervisord.service <<EOF
+[Unit]
+Description=supervisord - Supervisor process control system for UNIX
+Documentation=http://supervisord.org
+After=network.target
 
+ [Service]
+Type=forking
+ExecStart=/usr/local/bin/supervisord -c /etc/supervisord.conf
+ExecReload=/usr/local/bin/supervisorctl reload
+ExecStop=/usr/local/bin/supervisorctl shutdown
+
+[Install]
+WantedBy=multi-user.target
+EOF
+	systemctl daemon-reload
+	systemctl enable supervisord
+	systemctl start supervisord
+    fi	
+
+    supervisorctl update
+   
 fi

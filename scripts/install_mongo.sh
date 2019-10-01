@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install MongoDB for the appropriate OS and version.
-# Supports Ubuntu 14, 16, 18 and RHEL/CentOS 6.9
+# Supports Ubuntu 14, 16, 18 and RHEL/CentOS
 
 set -e
 set -x
@@ -20,7 +20,7 @@ if [ -f /etc/debian_version ]; then
     fi
 
 elif [ -f /etc/redhat-release ]; then
-    ./install_mongodb_rhel69.sh
+    ./install_mongodb_rhel.sh
 else
     echo -e "ERROR: Unknown OS\nExiting!"
     exit -1
