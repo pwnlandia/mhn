@@ -176,6 +176,17 @@ log should be monitored by the SplunkUniversalForwarder.
 
 This will log the events as CEF to /var/log/mhn-arcsight.log
 
+## Data	
+*NOTICE* **This section is out of date. Community data is not collected by Anomali although MHN still attempts to send this data to Anomali servers.**	
+
+The MHN server reports anonymized attack data back to Anomali, Inc. (formerly	
+known as ThreatStream). If you are interested in viewing this data, get details	
+in the	
+[wiki](https://github.com/Pwnlandia/mhn/wiki/Getting-Access-to-the-MHN-Community-Data).	
+This data reporting can be disabled by running the following command from the	
+MHN server after completing the initial installation steps outlined above:	
+`/opt/mhn/scripts/disable_collector.sh`	
+
 
 ## Support or Contact
 MHN is an open source project that relies on community involvement. Please check out our troubleshooting guide on the wiki. We will also lend a
