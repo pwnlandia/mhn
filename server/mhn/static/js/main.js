@@ -33,6 +33,7 @@ $(document).ready(function() {
                 success: function(resp) {
                     $('#sensor-info').show();
                     $('#sensor-id').html('UUID: ' + resp.uuid);
+                    $('#sensor-secret').html('Secret: ' + resp.secret);
                 },
                 contentType: 'application/json',
                 error: function(resp) {
