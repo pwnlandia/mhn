@@ -31,7 +31,7 @@ useradd -d /home/kippo -s /bin/bash -m kippo -g users
 
 # Get the Kippo source
 cd /opt
-git clone https://github.com/threatstream/kippo
+git clone https://github.com/pwnlandia/kippo
 cd kippo
 git checkout -b juniper-router origin/juniper-router
 

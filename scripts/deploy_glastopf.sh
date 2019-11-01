@@ -35,7 +35,7 @@ else
     apt-get install -y apache2 python2.7 python-openssl python-gevent libevent-dev python2.7-dev build-essential make python-chardet python-requests python-sqlalchemy python-lxml python-beautifulsoup mongodb python-pip python-dev python-setuptools g++ git php php-dev liblapack-dev gfortran libmysqlclient-dev libxml2-dev libxslt-dev supervisor
 fi
 
-pip install -e git+https://github.com/threatstream/hpfeeds.git#egg=hpfeeds-dev
+pip install -e git+https://github.com/pwnlandia/hpfeeds.git#egg=hpfeeds-dev
 
 # Install and configure the PHP sandbox
 cd /opt

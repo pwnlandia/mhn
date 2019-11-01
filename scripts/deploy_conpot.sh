@@ -23,7 +23,7 @@ cd $CONPOT_HOME
 virtualenv env
 . env/bin/activate
 pip install -U setuptools
-pip install -e git+https://github.com/threatstream/hpfeeds.git#egg=hpfeeds-dev
+pip install -e git+https://github.com/pwnlandia/hpfeeds.git#egg=hpfeeds-dev
 pip install -e git+https://github.com/mushorg/conpot.git@Release_0.5.2#egg=conpot-dev
 pip install -e git+https://github.com/mushorg/modbus-tk.git#egg=modbus-tk
 

@@ -16,7 +16,7 @@ apt-get -y install docker.io supervisor
 
 
 # Get the elastichoney docker image
-docker pull Pwnlandia/elastichoney
+docker pull pwnlandia/elastichoney
 
 # Register the sensor with the MHN server.
 wget $server_url/static/registration.txt -O registration.sh
@@ -55,7 +55,7 @@ EOF
 # Config for supervisor.
 cat > /etc/supervisor/conf.d/elastichoney.conf <<EOF
 [program:elastichoney]
-command=docker run -p 9200:9200 -p 10000:10000 -v /opt/elastichoney:/etc/elastichoney Pwnlandia/elastichoney:latest
+command=docker run -p 9200:9200 -p 10000:10000 -v /opt/elastichoney:/etc/elastichoney pwnlandia/elastichoney:latest
 directory=/opt/elastichoney
 stdout_logfile=/opt/elastichoney/elastichoney.out
 stderr_logfile=/opt/elastichoney/elastichoney.err
