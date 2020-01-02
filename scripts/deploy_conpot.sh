@@ -14,6 +14,8 @@ echo "deb http://en.archive.ubuntu.com/ubuntu precise main multiverse" | sudo te
 apt-get update
 apt-get install -y git libmysqlclient-dev libsmi2ldbl snmp-mibs-downloader python-dev libevent-dev libxslt1-dev libxml2-dev python-pip python-mysqldb pkg-config libvirt-dev supervisor
 apt-get install -y zlib1g-dev # needed for Ubuntu 14.04
+apt-get install libssl-dev -y # needed for Ubuntu 18.04 
+
 pip install --upgrade distribute
 pip install virtualenv
 
