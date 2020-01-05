@@ -9,7 +9,7 @@ $DIR/install_hpfeeds-logger-json.sh
 ######
 ### Install ELK (https://www.elastic.co)
 #
-# Make sure the system has enought RAM (2GB was not enought for basic stuff), otherwise ES can suddently stop
+# Make sure the system has enought RAM (2GB was not enough for basic stuff), otherwise ES can suddently stop
 #
 ### ElasticSearch - https://www.elastic.co/guide/en/elasticsearch/reference/7.5/deb.html#deb-repo
 #
@@ -24,7 +24,7 @@ $DIR/install_hpfeeds-logger-json.sh
 #
 ### Logstash - https://www.elastic.co/guide/en/logstash/7.5/installing-logstash.html#_apt
 #
-# Runs on localhost:9600-9700. Config file /etc/logstash/logstash.yml & /etc/logstash/logstash.conf
+# Runs on localhost:9600-9700. Config file /etc/logstash/logstash.yml & /etc/logstash/conf.d/mhn.conf
 # Status: systemctl status logstash.service
 #
 ######
@@ -53,7 +53,6 @@ systemctl enable logstash.service
 systemctl start logstash.service
 
 cat > /etc/logstash/conf.d/mhn.conf <<EOF
-
 input {
   file {
     path => "/var/log/mhn/mhn-json.log"
