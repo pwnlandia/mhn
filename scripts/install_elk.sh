@@ -9,23 +9,27 @@ $DIR/install_hpfeeds-logger-json.sh
 ######
 ### Install ELK (https://www.elastic.co)
 #
-# Make sure the system has enought RAM (2GB was not enough for basic stuff), otherwise ES can suddently stop
+# Make sure the system has enought RAM (2GB was not enought for basic stuff) and disk space, otherwise ES can suddently stop.
+# Recommended: 4GB RAM, 15 GB Disk.
+#
+# Known Issue: ES can fail to start after booting, no idea why. Restart the service with sudo systemctl restart elasticsearch.service
 #
 ### ElasticSearch - https://www.elastic.co/guide/en/elasticsearch/reference/7.5/deb.html#deb-repo
 #
 # Runs on localhost:9200. Config file: /etc/elasticsearch/elasticsearch.yml
-# Status: systemctl status elasticsearch.service
+# Status: sudo systemctl status elasticsearch.service
 # If exposed to the internet (not recommended), make sure to add FW rules to only allow trusted sources
 #
 ### Kibana - https://www.elastic.co/guide/en/kibana/7.5/deb.html#deb-repo
 #
 # Runs on localhost:5601. Config file: /etc/kibana/kibana.yml
-# Status: systemctl status kibana.service
+# Status: sudo systemctl status kibana.service
 #
 ### Logstash - https://www.elastic.co/guide/en/logstash/7.5/installing-logstash.html#_apt
 #
-# Runs on localhost:9600-9700. Config file /etc/logstash/logstash.yml & /etc/logstash/conf.d/mhn.conf
-# Status: systemctl status logstash.service
+# Runs on localhost:9600-9700. Config file /etc/logstash/logstash.yml & /etc/logstash/conf.d/logstash.conf
+# Status: sudo systemctl status logstash.service
+# List plugins: /usr/share/logstash/bin/logstash-plugin list
 #
 ######
 
@@ -56,7 +60,6 @@ cat > /etc/logstash/conf.d/mhn.conf <<EOF
 input {
   file {
     path => "/var/log/mhn/mhn-json.log"
-    start_position => "end"
   }
 }
 
@@ -69,23 +72,12 @@ filter {
     source => "src_ip"
     target => "src_ip_geo"
     database => "/opt/GeoLite2-City.mmdb"
-    add_field => [ "[src_ip_geo][coordinates]", "%{[src_ip_geo][longitude]}" ]
-    add_field => [ "[src_ip_geo][coordinates]", "%{[src_ip_geo][latitude]}"  ]
-  }
-  mutate {
-    convert => [ "[src_ip_geo][coordinates]", "float"]
   }
 
   geoip {
-    source => "dst_ip"
-    target => "dst_ip_geo"
+    source => "dest_ip"
+    target => "dest_ip_geo"
     database => "/opt/GeoLite2-City.mmdb"
-    add_field => [ "[dst_ip_geo][coordinates]", "%{[dst_ip_geo][longitude]}" ]
-    add_field => [ "[dst_ip_geo][coordinates]", "%{[dst_ip_geo][latitude]}"  ]
-  }
-
-  mutate {
-    convert => [ "[dst_ip_geo][coordinates]", "float"]
   }
 }
 
@@ -111,59 +103,61 @@ cat > /etc/logstash/conf.d/mhn-template.json <<EOF
   },
   "mappings": {
     "properties": {
-      "app": {
+      "src_ip": {
         "type": "keyword"
       },
-      "command": {
-        "type": "text"
-      },
-      "dest_area_code": {
+      "src_port": {
         "type": "keyword"
       },
-      "dest_city": {
-        "type": "keyword"
-      },
-      "dest_country_code": {
-        "type": "keyword"
-      },
-      "dest_country_code3": {
-        "type": "keyword"
-      },
-      "dest_country_name": {
-        "type": "keyword"
-      },
-      "dest_dma_code": {
-        "type": "keyword"
+      "src_ip_geo"  : {
+        "type" : "object",
+        "dynamic": true,
+        "properties": {
+          "city_name": { "type": "keyword" },
+          "continent_code": { "type": "keyword" },
+          "country_code2": { "type": "keyword" },
+          "country_code3": { "type": "keyword" },
+          "country_name": { "type": "keyword" },
+          "ip": { "type": "keyword" },
+          "latitude": { "type": "float" },
+          "longitude": { "type": "float" },
+          "postal_code": { "type": "keyword" },
+          "region_code": { "type": "keyword" },
+          "region_name": { "type": "keyword" },
+          "timezone": { "type": "keyword" },
+          "location" : { "type" : "geo_point" }
+        }
       },
       "dest_ip": {
-        "type": "keyword"
-      },
-      "dest_latitude": {
-        "type": "keyword"
-      },
-      "dest_longitude": {
-        "type": "keyword"
-      },
-      "dest_metro_code": {
-        "type": "keyword"
-      },
-      "dest_org": {
         "type": "keyword"
       },
       "dest_port": {
         "type": "keyword"
       },
-      "dest_postal_code": {
+      "dest_ip_geo": {
+        "type": "object",
+        "dynamic": true,
+        "properties": {
+          "city_name": { "type": "keyword" },
+          "continent_code": { "type": "keyword" },
+          "country_code2": { "type": "keyword" },
+          "country_code3": { "type": "keyword" },
+          "country_name": { "type": "keyword" },
+          "ip": { "type": "keyword" },
+          "latitude": { "type": "float" },
+          "longitude": { "type": "float" },
+          "postal_code": { "type": "keyword" },
+          "region_code": { "type": "keyword" },
+          "region_name": { "type": "keyword" },
+          "timezone": { "type": "keyword" },
+          "location" : { "type" : "geo_point" }
+        }
+      },
+      "app": {
         "type": "keyword"
       },
-      "dest_region": {
-        "type": "keyword"
-      },
-      "dest_region_name": {
-        "type": "keyword"
-      },
-      "dest_time_zone": {
-        "type": "keyword"
+      "command": {
+        "type": "text"
       },
       "dionaea_action": {
         "type": "keyword"
@@ -231,54 +225,6 @@ cat > /etc/logstash/conf.d/mhn-template.json <<EOF
       "signature": {
         "type": "keyword"
       },
-      "src_area_code": {
-        "type": "keyword"
-      },
-      "src_city": {
-        "type": "keyword"
-      },
-      "src_country_code": {
-        "type": "keyword"
-      },
-      "src_country_code3": {
-        "type": "keyword"
-      },
-      "src_country_name": {
-        "type": "keyword"
-      },
-      "src_dma_code": {
-        "type": "keyword"
-      },
-      "src_ip": {
-        "type": "keyword"
-      },
-      "src_latitude": {
-        "type": "keyword"
-      },
-      "src_longitude": {
-        "type": "keyword"
-      },
-      "src_metro_code": {
-        "type": "keyword"
-      },
-      "src_org": {
-        "type": "keyword"
-      },
-      "src_port": {
-        "type": "keyword"
-      },
-      "src_postal_code": {
-        "type": "keyword"
-      },
-      "src_region": {
-        "type": "keyword"
-      },
-      "src_region_name": {
-        "type": "keyword"
-      },
-      "src_time_zone": {
-        "type": "keyword"
-      },
       "ssh_password": {
         "type": "keyword"
       },
@@ -311,44 +257,6 @@ cat > /etc/logstash/conf.d/mhn-template.json <<EOF
       },
       "vendor_product": {
         "type": "keyword"
-      },
-      "src_ip_geo.city_name": {
-        "type": "keyword"
-      },
-      "src_ip_geo.region_name": {
-        "type": "keyword"
-      },
-      "src_ip_geo.timezone": {
-        "type": "keyword"
-      },
-      "src_ip_geo.country_name": {
-        "type": "keyword"
-      },
-      "src_ip_geo"  : {
-        "type" : "object",
-        "dynamic": true,
-        "properties" : {
-          "location" : { "type" : "geo_point" }
-        }
-      },
-      "dst_ip_geo.city_name": {
-        "type": "keyword"
-      },
-      "dst_ip_geo.region_name": {
-        "type": "keyword"
-      },
-      "dst_ip_geo.timezone": {
-        "type": "keyword"
-      },
-      "dst_ip_geo.country_name": {
-        "type": "keyword"
-      },
-      "dst_ip_geo"  : {
-        "type" : "object",
-        "dynamic": true,
-        "properties" : {
-          "location" : { "type" : "geo_point" }
-        }
       }
     }
   }
