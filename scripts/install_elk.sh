@@ -7,7 +7,7 @@ DIR=`dirname "$0"`
 $DIR/install_hpfeeds-logger-json.sh
 
 # install Java
-apt-get install -y python-software-properties
+apt-get install -y software-properties-common
 add-apt-repository -y ppa:webupd8team/java
 apt-get update
 apt-get -y install oracle-java8-installer
