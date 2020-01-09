@@ -13,8 +13,8 @@ apt-get update
 apt-get -y install oracle-java8-installer
 
 # Install ES
-wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch |  apt-key add -
-echo 'deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main' |  tee /etc/apt/sources.list.d/elasticsearch.list
+wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+echo "deb http://packages.elastic.co/elasticsearch/1.7/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-1.7.list
 apt-get update
 apt-get -y install elasticsearch=1.4.4
 sed -i '/network.host/c\network.host\:\ localhost' /etc/elasticsearch/elasticsearch.yml
