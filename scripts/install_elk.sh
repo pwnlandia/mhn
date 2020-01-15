@@ -21,6 +21,8 @@ $DIR/install_hpfeeds-logger-json.sh
 # If exposed to the internet (not recommended), make sure to add FW rules to only allow trusted sources
 #
 ### Kibana - https://www.elastic.co/guide/en/kibana/7.5/deb.html#deb-repo
+## https://www.elastic.co/guide/en/kibana/current/access.html
+## https://www.elastic.co/guide/en/kibana/current/kibana-authentication.html
 #
 # Runs on localhost:5601. Config file: /etc/kibana/kibana.yml
 # Status: sudo systemctl status kibana.service
@@ -262,3 +264,10 @@ cat > /etc/logstash/conf.d/mhn-template.json <<EOF
   }
 }
 EOF
+
+echo
+echo 'By default, ELK services listen on localhost. This could be troublesome if Kibana needs to be accessed on LAN or remotely.'
+echo 'To fix that, the server.host setting can be changed in /etc/kibana/kibana.yml.'
+echo 'However, please keep in mind that no authentication will be requested by default.'
+echo 'See https://www.elastic.co/guide/en/kibana/current/kibana-authentication.html to configure one.'
+echo
