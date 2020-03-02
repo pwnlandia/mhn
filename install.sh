@@ -92,47 +92,48 @@ do
     fi
 done
 
+# These scripts only work on debian-like systems
+if [ -f /etc/debian_version ]; then
+    while true;
+    do
+	echo -n "ELK Script will only work on Debian Based systems like Ubuntu"
+	echo -n "Would you like to install ELK? (y/n) "
+	read ELK
+	if [ "$ELK" == "y" -o "$ELK" == "Y" ]
+	then
+            ./install_elk.sh
+            break
+	elif [ "$ELK" == "n" -o "$ELK" == "N" ]
+	then
+            echo "Skipping ELK installation"
+            echo "The ELK installation can be completed at a later time by running this:"
+            echo "    cd /opt/mhn/scripts/"
+            echo "    sudo ./install_elk.sh"
+            break
+	fi
+    done
 
-while true;
-do
-    echo -n "ELK Script will only work on Debian Based systems like Ubuntu"
-    echo -n "Would you like to install ELK? (y/n) "
-    read ELK
-    if [ "$ELK" == "y" -o "$ELK" == "Y" ]
-    then
-        ./install_elk.sh
-        break
-    elif [ "$ELK" == "n" -o "$ELK" == "N" ]
-    then
-        echo "Skipping ELK installation"
-        echo "The ELK installation can be completed at a later time by running this:"
-        echo "    cd /opt/mhn/scripts/"
-        echo "    sudo ./install_elk.sh"
-        break
-    fi
-done
 
-
-while true;
-do
-    echo -n "A properly configured firewall is highly encouraged while running MHN."
-    echo -n "This script can enable and configure UFW for use with MHN."
-    echo -n "Would you like to add MHN rules to UFW? (y/n) "
-    read UFW
-    if [ "$UFW" == "y" -o "$UFW" == "Y" ]
-    then
-        ./enable_ufw.sh
-        break
-    elif [ "$UFW" == "n" -o "$UFW" == "N" ]
-    then
-        echo "Skipping UFW configuration"
-        echo "The UFW configuration can be completed at a later time by running this:"
-        echo "    cd /opt/mhn/scripts/"
-        echo "    sudo ./enable_ufw.sh"
-        break
-    fi
-done
-
+    while true;
+    do
+	echo -n "A properly configured firewall is highly encouraged while running MHN."
+	echo -n "This script can enable and configure UFW for use with MHN."
+	echo -n "Would you like to add MHN rules to UFW? (y/n) "
+	read UFW
+	if [ "$UFW" == "y" -o "$UFW" == "Y" ]
+	then
+            ./enable_ufw.sh
+            break
+	elif [ "$UFW" == "n" -o "$UFW" == "N" ]
+	then
+            echo "Skipping UFW configuration"
+            echo "The UFW configuration can be completed at a later time by running this:"
+            echo "    cd /opt/mhn/scripts/"
+            echo "    sudo ./enable_ufw.sh"
+            break
+	fi
+    done
+fi
 chown $WWW_OWNER /var/log/mhn/mhn.log
 
 chown $WWW_OWNER /var/log/mhn/mhn.log

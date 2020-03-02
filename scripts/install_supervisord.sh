@@ -33,7 +33,7 @@ elif [ -f /etc/redhat-release ]; then
 
     if [ -f /usr/local/bin/supervisord ]; then
         echo "Supervisord Already installed. Exiting"
-        exit 0
+        #exit 0
     fi
 
     #install supervisor from pip2.7

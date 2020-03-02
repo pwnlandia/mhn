@@ -90,11 +90,11 @@ EOF
 
 cd /opt/
 mkdir GeoLite2-City
-wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz -O GeoLite2-City.tar.gz 
+wget https://github.com/pwnlandia/geolite2/raw/master/GeoLite2-City.tar.gz -O GeoLite2-City.tar.gz 
 tar xvf GeoLite2-City.tar.gz -C GeoLite2-City --strip-components 1
 mv GeoLite2-City/GeoLite2-City.mmdb ./
 mkdir GeoLite2-ASN
-wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-ASN.tar.gz -O GeoLite2-ASN.tar.gz 
+wget https://github.com/pwnlandia/geolite2/raw/master/GeoLite2-ASN.tar.gz -O GeoLite2-ASN.tar.gz 
 tar xvf GeoLite2-ASN.tar.gz -C GeoLite2-ASN --strip-components 1
 mv GeoLite2-ASN/GeoLite2-ASN.mmdb ./
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
