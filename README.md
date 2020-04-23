@@ -19,7 +19,7 @@ emails to <modern-honey-network@googlegroups.com>.
 
 ## Features
 
-MHN is a Flask application that exposes an HTTP API that honeypots can use to:
+MHN is an application that exposes an HTTP API that honeypots can use to:
 - Download a deploy script
 - Connect and register
 - Download snort rules
