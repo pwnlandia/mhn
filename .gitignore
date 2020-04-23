@@ -1,28 +1,22 @@
-*.pyc
-server/config.py
-server/mhn.db
-server/mhn/static/mhn.rules
-server/mhn.log
-server/mhn/mhn.log
-
+mhn
+*.db
 *.swp
-*.log.*
 
-*test-mhn.db
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 
-celerybeat-schedule
-celerybeat.pid
+# Test binary, built with `go test -c`
+*.test
 
-honeypot/mhnclient.conf
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
 
-/.vagrant
-/env
+# Dependency directories (remove the comment below to include it)
+# vendor/
 
-index.html*
-
-# Emacs
-*~
-*#
-.#*
-
+# mac
 .DS_Store
