@@ -104,9 +104,9 @@ For directions on running MHN behind a web proxy, follow the directions in the
 By default MHN will run without HTTPS, to configure your installation to use SSL
 certificates directions can be found in the [wiki.](https://github.com/pwnlandia/mhn/wiki/Running-MHN-Over-HTTPS)
 
-### Running MHN with Docker
+### Running MHN with Docker (not maintained)
 
-Running MHN in docker is not officially supported, but it works.
+Running MHN in docker is not officially supported, but it might work.
 The container takes a few minutes to start at the first launch to initialize.
 Splunk, ArcSight and ELK are not yet supported in Docker.
 
