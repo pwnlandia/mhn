@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Installing MongoDB 3.6 for Ubuntu 14.04 LTS. Updated due to MongoDB dropping Ubuntu 14.04 LTS  andn repo and MongoDB 3.4 going EOL in Jan 2020.
+# Installing MongoDB 3.6 for Ubuntu 14.04 LTS. Updated due to MongoDB dropping Ubuntu 14.04 LTS from the main repo, and MongoDB 3.4 going EOL in Jan 2020, and moving ot only 64-bit support.
 
 set -e
 set -x
