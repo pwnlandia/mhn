@@ -22,7 +22,7 @@ pip install virtualenv
 
 # Get the Shockpot source
 cd /opt
-git clone https://github.com/threatstream/shockpot.git
+git clone https://github.com/pwnlandia/shockpot.git
 cd shockpot
 
 virtualenv env
@@ -48,7 +48,7 @@ only_exploits = False
 
 [fetch_public_ip]
 enabled = True
-urls = ["http://www.telize.com/ip", "http://queryip.net/ip/", "http://ifconfig.me/ip"]
+urls = ["http://www.telize.com/ip", "http://icanhazip.com/", "http://ifconfig.me/ip"]
 
 [template]
 title = It Works!

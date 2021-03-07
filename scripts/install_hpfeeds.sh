@@ -48,7 +48,7 @@ bash install_mongo.sh
 $PIP install virtualenv
 
 cd /tmp
-wget https://github.com/threatstream/hpfeeds/releases/download/libev-4.15/libev-4.15.tar.gz
+wget https://github.com/pwnlandia/hpfeeds/releases/download/libev-4.15/libev-4.15.tar.gz
 tar zxvf libev-4.15.tar.gz 
 cd libev-4.15
 ./configure && make && make install
@@ -58,17 +58,19 @@ ldconfig /usr/local/lib/
 mkdir -p /opt
 cd /opt
 rm -rf /opt/hpfeeds
-git clone https://github.com/threatstream/hpfeeds
+git clone https://github.com/pwnlandia/hpfeeds
 chmod 755 -R hpfeeds
 cd hpfeeds
 $VIRTUALENV -p $PYTHON env
 . env/bin/activate
 
 pip install cffi
-pip install pyopenssl==0.14
+pip install pyopenssl==17.3.0
 pip install pymongo
-pip install -e git+https://github.com/rep/evnet.git#egg=evnet-dev
+pip install -e git+https://github.com/couozu/pyev.git#egg=pyev
+pip install -e git+https://github.com/pwnlandia/evnet.git#egg=evnet-dev
 pip install .
+deactivate
 
 mkdir -p /var/log/mhn
 mkdir -p /etc/supervisor/
@@ -87,4 +89,6 @@ startsecs=10
 EOF
 
 ldconfig /usr/local/lib/
+/etc/init.d/supervisor start || true
+sleep 5
 supervisorctl update

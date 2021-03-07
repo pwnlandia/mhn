@@ -19,7 +19,7 @@ chmod 755 registration.sh
 . ./registration.sh $server_url $deploy_key "kippo"
 
 apt-get update
-apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twisted git python-pip supervisor authbind
+apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twisted git python-pip supervisor authbind ssh
 
 
 # Change real SSH Port to 2222
@@ -31,7 +31,7 @@ useradd -d /home/kippo -s /bin/bash -m kippo -g users
 
 # Get the Kippo source
 cd /opt
-git clone https://github.com/threatstream/kippo
+git clone https://github.com/pwnlandia/kippo
 cd kippo
 
 # Determine if IPTables forwarding is going to work

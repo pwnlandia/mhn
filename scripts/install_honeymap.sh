@@ -32,17 +32,13 @@ else
     exit -1
 fi
 
-
-
-
-
 ####################################################################
 # Install a decent version of golang
 if [ "$(uname -m)" == "x86_64" ] ;
 then
-    GO_PACKAGE="go1.4.2.linux-amd64.tar.gz"
+    GO_PACKAGE="go1.12.1.linux-amd64.tar.gz"
 else
-    GO_PACKAGE="go1.4.2.linux-386.tar.gz"
+    GO_PACKAGE="go1.12.1.linux-386.tar.gz"
 fi
 
 cd /usr/local/
@@ -61,12 +57,9 @@ SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
 /opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py honeymap $SECRET "" "geoloc.events"
 
 cd /opt
-git clone https://github.com/threatstream/honeymap.git
+git clone https://github.com/pwnlandia/honeymap.git
 
 cd /opt/honeymap/server
-export GOPATH=`pwd`
-go get
-go build
 cat > config.json <<EOF
 {
    "host": "localhost",
@@ -93,15 +86,19 @@ autorestart=true
 startsecs=10
 EOF
 
-/opt/hpfeeds/env/bin/pip install GeoIP
+/opt/hpfeeds/env/bin/pip install geoip2
 
 cd /opt/
-wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz && gzip -d GeoLiteCity.dat.gz
-wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCityv6-beta/GeoLiteCityv6.dat.gz && gzip -d GeoLiteCityv6.dat.gz
-wget http://download.maxmind.com/download/geoip/database/asnum/GeoIPASNum.dat.gz && gzip -d GeoIPASNum.dat.gz
-
+mkdir GeoLite2-City
+wget https://github.com/pwnlandia/geolite2/raw/master/GeoLite2-City.tar.gz -O GeoLite2-City.tar.gz 
+tar xvf GeoLite2-City.tar.gz -C GeoLite2-City --strip-components 1
+mv GeoLite2-City/GeoLite2-City.mmdb ./
+mkdir GeoLite2-ASN
+wget https://github.com/pwnlandia/geolite2/raw/master/GeoLite2-ASN.tar.gz -O GeoLite2-ASN.tar.gz 
+tar xvf GeoLite2-ASN.tar.gz -C GeoLite2-ASN --strip-components 1
+mv GeoLite2-ASN/GeoLite2-ASN.mmdb ./
 SECRET=`python -c 'import uuid;print str(uuid.uuid4()).replace("-","")'`
-/opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py geoloc $SECRET "geoloc.events" amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,cowrie.sessions,conpot.events,snort.alerts,kippo.alerts,cowrie.alerts,wordpot.events,shockpot.events,p0f.events,suricata.events,elastichoney.events
+/opt/hpfeeds/env/bin/python /opt/hpfeeds/broker/add_user.py geoloc $SECRET "geoloc.events" amun.events,dionaea.connections,dionaea.capture,glastopf.events,beeswarm.hive,kippo.sessions,cowrie.sessions,conpot.events,snort.alerts,kippo.alerts,cowrie.alerts,wordpot.events,shockpot.events,p0f.events,suricata.events,elastichoney.events,drupot.events,agave.events
 
 cat > /opt/hpfeeds/geoloc.json <<EOF
 {
@@ -123,7 +120,9 @@ cat > /opt/hpfeeds/geoloc.json <<EOF
         "shockpot.events",
         "p0f.events",
         "suricata.events",
-        "elastichoney.events"
+        "elastichoney.events",
+        "drupot.events",
+        "agave.events"
     ],
     "GEOLOC_CHAN": "geoloc.events"
 }

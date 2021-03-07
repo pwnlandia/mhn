@@ -1,4 +1,4 @@
-from flask.ext.security import login_required
+from flask_security import login_required
 from flask_security.core import current_user
 from flask_security.decorators import roles_accepted
 

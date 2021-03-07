@@ -14,7 +14,7 @@ hostname=$(hostname)
 
 if [ -f /etc/debian_version ]; then
     OS=Debian  # XXX or Ubuntu??
-    sudo apt-get install -y curl
+    sudo apt-get install -y curl python
 
 elif [ -f /etc/redhat-release ]; then
     OS=RHEL

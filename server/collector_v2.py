@@ -28,6 +28,8 @@ DEFAULT_CHANNELS = [
     "snort.alerts",
     "suricata.events",
     "wordpot.events",
+    "drupot.events",
+    "agave.events",
 ]
 
 def ensure_user_permissions(ident, secret, publish, subscribe):
@@ -64,8 +66,8 @@ def main():
         RCHANNEL='mhn-community-v2.events',
         RIDENT='mhn-server',
         RSECRET='mhn-secret',
-        IP_GEO_DB="/opt/GeoLiteCity.dat",
-        IP_ASN_DB="/opt/GeoIPASNum.dat",
+        IP_GEO_DB="/opt/GeoLite2-City.mmdb",
+        IP_ASN_DB="/opt/GeoLite2-ASN.mmdb",
     )
 
     if len(sys.argv) > 1:

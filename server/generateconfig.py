@@ -17,6 +17,11 @@ import argparse
 el = string.ascii_letters + string.digits
 rand_str = lambda n: ''.join(choice(el) for _ in range(n))
 
+def get_pub_ip():
+    sock = urlopen('http://icanhazip.com/')
+    ip = sock.read().rstrip()
+    sock.close()
+    return ip
 
 def generate_config():
     # Check if config file already exists
@@ -24,7 +29,7 @@ def generate_config():
         print('config.py already exists')
         sys.exit()
 
-    pub_ip = json.load(urlopen('http://httpbin.org/ip'))['origin']
+    pub_ip = get_pub_ip()
     default_base_url = 'http://{}'.format(pub_ip)
     default_honeymap_url = '{}:3000'.format(default_base_url)
     default_log_path = '/var/log/mhn/mhn.log'
@@ -125,7 +130,9 @@ def generate_config():
         if server_base_url.endswith('/'):
             server_base_url = server_base_url[:-1]
 
-        default_honeymap_url = '{}:3000'.format(server_base_url)
+        server_base_url = server_base_url if server_base_url.strip() else default_base_url
+
+	default_honeymap_url = '{}:3000'.format(server_base_url)
         honeymap_url = raw_input('Honeymap url ["{}"]: '.format(default_honeymap_url))
         if honeymap_url.endswith('/'):
             honeymap_url = honeymap_url[:-1]
@@ -148,7 +155,6 @@ def generate_config():
 
         log_file_path = raw_input('Path for log file ["{}"]: '.format(default_log_path))
 
-    server_base_url = server_base_url if server_base_url.strip() else default_base_url
     honeymap_url = honeymap_url if honeymap_url.strip() else default_honeymap_url
     log_file_path = log_file_path if log_file_path else default_log_path
 

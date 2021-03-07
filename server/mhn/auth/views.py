@@ -2,7 +2,7 @@ import hashlib
 import random
 
 from flask import Blueprint, request, jsonify
-from flask.ext.mail import Message
+from flask_mail import Message
 from sqlalchemy.exc import IntegrityError
 from flask_security.utils import (
         login_user as login, verify_and_update_password,
@@ -124,7 +124,7 @@ def change_passwd():
     if password != password_repeat:
         # Password do not match.
         return error_response(errors.AUTH_PASSWD_MATCH, 400)
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         # No need to check password hash object or email.
         user = current_user
     else:

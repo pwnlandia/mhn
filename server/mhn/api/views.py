@@ -296,6 +296,13 @@ def get_intel_feed():
 
     extra['ne__protocol'] = 'pcap'
     results = Clio().session._tops(['source_ip', 'honeypot', 'protocol', 'destination_port'], top=limit, hours_ago=hours_ago, **extra)
+    for r in results:
+        if 'protocol' not in r:
+            if r['destination_port'] == 3389:
+                r['protocol'] = 'RDP'
+            else:
+                r['protocol'] = ''
+
     results = [r for r in results if r['protocol'] != 'ftpdatalisten']
 
     cache = {}
@@ -414,7 +421,7 @@ def get_script():
     if request.args.get('script_id'):
         script = DeployScript.query.get(request.args.get('script_id'))
     else:
-        script = DeployScript.query.order_by(DeployScript.date.desc()).first()
+        return error_response(errors.API_RESOURCE_NOT_FOUND, 404)
     if request.args.get('text') in ['1', 'true']:
         resp = make_response(script.script)
         resp.headers['Content-Disposition'] = "attachment; filename=deploy.sh"

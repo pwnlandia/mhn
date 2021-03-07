@@ -46,7 +46,7 @@ def check_page():
 
 @ui.route('/login/', methods=['GET'])
 def login_user():
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         return redirect(url_for('ui.dashboard'))
     return render_template('security/login_user.html')
 

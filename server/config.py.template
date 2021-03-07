@@ -33,6 +33,7 @@ MAIL_DEBUG = DEBUG
 # Other settings.
 FEED_AUTH_REQUIRED = False
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(_basedir, 'mhn.db')
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 SECURITY_PASSWORD_HASH = 'bcrypt'
 SECURITY_PASSWORD_SALT = SECRET_KEY
 SECURITY_LOGIN_URL = '/ui/login/'
@@ -48,7 +49,7 @@ CELERYBEAT_SCHEDULE = {
 }
 SNORT_RULES_SOURCE = {
     'name': 'Emerging Threats',
-    'uri': 'http://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz'
+    'uri': 'https://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz'
 }
 HONEYPOT_CHANNELS = {
     'dionaea': [
@@ -70,4 +71,6 @@ HONEYPOT_CHANNELS = {
     'p0f': ['p0f.events'],
     'suricata': ['suricata.events'],
     'elastichoney': ['elastichoney.events'],
+    'drupot': ['drupot.events'],
+    'agave': ['agave.events'],
 }

@@ -1,25 +1,40 @@
 #!/bin/bash
 
+INTERFACE=$(basename -a /sys/class/net/e*)
+
+
 set -e
 set -x
 
 if [ $# -ne 2 ]
     then
-        echo "Wrong number of arguments supplied."
-        echo "Usage: $0 <server_url> <deploy_key>."
+        if [ $# -eq 3 ]
+          then
+            INTERFACE=$3
+          else
+            echo "Wrong number of arguments supplied."
+            echo "Usage: $0 <server_url> <deploy_key>."
+            exit 1
+        fi
+
+fi
+
+compareint=$(echo "$INTERFACE" | wc -w)
+
+
+if [ "$INTERFACE" = "e*" ] || [ "$compareint" -ne 1 ]
+    then
+        echo "No Interface selectable, please provide manually."
+        echo "Usage: $0 <server_url> <deploy_key> <INTERFACE>"
         exit 1
 fi
+
 
 server_url=$1
 deploy_key=$2
 
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "p0f"
-
-apt-get update
-apt-get -y install git supervisor libpcap-dev libjansson-dev gcc
+apt update
+apt install -y git supervisor libpcap-dev libjansson-dev gcc
 
 # install p0f
 cd /opt
@@ -29,6 +44,17 @@ git checkout origin/hpfeeds
 ./build.sh
 useradd -d /var/empty/p0f -M -r -s /bin/nologin p0f-user || true
 mkdir -p -m 755 /var/empty/p0f
+
+# Register the sensor with the MHN server.
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "p0f"
+
+# Note: This will change the interface and the ip in the p0f config
+sed -i "/INTERFACE=/c\INTERFACE=$INTERFACE" /opt/p0f/p0f_wrapper.sh
+sed -i "/MY_ADDRESS=/c\MY_ADDRESS=\$(ip -f inet -o addr show \$INTERFACE|head -n 1|cut -d\\\  -f 7 | cut -d/ -f 1)" /opt/p0f/p0f_wrapper.sh
+
 
 cat > /etc/supervisor/conf.d/p0f.conf <<EOF
 [program:p0f]

@@ -1,17 +1,18 @@
 from urlparse import urljoin
 
 from flask import Flask, request, jsonify, abort, url_for, session
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.security import Security, SQLAlchemyUserDatastore
-from flask.ext.security.utils import encrypt_password as encrypt
-from flask.ext.mail import Mail
+from flask_sqlalchemy import SQLAlchemy
+from flask_security import Security, SQLAlchemyUserDatastore
+from flask_security.utils import encrypt_password as encrypt
+from flask_mail import Mail
 from werkzeug.contrib.atom import AtomFeed
 import xmltodict
 import uuid
 import random
 import string
-from flask_wtf.csrf import CsrfProtect
-csrf = CsrfProtect()
+from flask_wtf.csrf import CSRFProtect
+
+csrf = CSRFProtect()
 
 db = SQLAlchemy()
 # After defining `db`, import auth models due to
@@ -92,7 +93,7 @@ def get_feed():
     from mhn.common.clio import Clio
     from mhn.auth import current_user
     authfeed = mhn.config['FEED_AUTH_REQUIRED']
-    if authfeed and not current_user.is_authenticated():
+    if authfeed and not current_user.is_authenticated:
         abort(404)
     feed = AtomFeed('MHN HpFeeds Report', feed_url=request.url,
                     url=request.url_root)
@@ -136,28 +137,25 @@ def create_clean_db():
         #|-- deploy_dionaea.sh
         #|-- deploy_snort.sh
         #|-- deploy_kippo.sh
-        deployscripts = {
-            'Ubuntu - Conpot': path.abspath('../scripts/deploy_conpot.sh'),
-            'Ubuntu - Dionaea': path.abspath('../scripts/deploy_dionaea.sh'),
-            'Ubuntu - Snort': path.abspath('../scripts/deploy_snort.sh'),
-            'Ubuntu - cowrie': path.abspath('../scripts/deploy_cowrie.sh'),
-            'Ubuntu/Raspberry Pi - Kippo': path.abspath('../scripts/deploy_kippo.sh'),
-            'Ubuntu - Amun': path.abspath('../scripts/deploy_amun.sh'),
-            'Ubuntu - Glastopf': path.abspath('../scripts/deploy_glastopf.sh'),
-            'Ubuntu - Wordpot': path.abspath('../scripts/deploy_wordpot.sh'),
-            'Ubuntu - Shockpot': path.abspath('../scripts/deploy_shockpot.sh'),
-            'Ubuntu - p0f': path.abspath('../scripts/deploy_p0f.sh'),
-            'Ubuntu - Suricata': path.abspath('../scripts/deploy_suricata.sh'),
-            'Ubuntu - ElasticHoney': path.abspath('../scripts/deploy_elastichoney.sh'),
-            'Raspberry Pi - Dionaea': path.abspath('../scripts/deploy_raspberrypi.sh'),
-            'Ubuntu - Dionaea with HTTP': path.abspath('../scripts/deploy_dionaea_http.sh'),
-            'Ubuntu - Kippo as vulnerable Juniper Netscreen': path.abspath('../scripts/deploy_kippo_as_juniper.sh'),
-            'Ubuntu - Shockpot Sinkhole': path.abspath('../scripts/deploy_shockpot_sinkhole.sh'),
-            'Redhat/Centos - Kippo': path.abspath('../scripts/deploy_kippo-centos.sh'),
-        }
-        for honeypot, deploypath in deployscripts.iteritems():
+        deployscripts = [
+            ['Ubuntu - Conpot', '../scripts/deploy_conpot.sh'],
+            ['Ubuntu/Raspberry Pi - Drupot', '../scripts/deploy_drupot.sh'],
+            ['Ubuntu/Raspberry Pi - Magenpot', '../scripts/deploy_magenpot.sh'],
+            ['Ubuntu - Wordpot', '../scripts/deploy_wordpot.sh'],
+            ['Ubuntu - Shockpot', '../scripts/deploy_shockpot.sh'],
+            ['Ubuntu - p0f', '../scripts/deploy_p0f.sh'],
+            ['Ubuntu - Suricata', '../scripts/deploy_suricata.sh'],
+            ['Ubuntu - Glastopf', '../scripts/deploy_glastopf.sh'],
+            ['Ubuntu - ElasticHoney', '../scripts/deploy_elastichoney.sh'],
+            ['Ubuntu - Amun', '../scripts/deploy_amun.sh'],
+            ['Ubuntu - Snort', '../scripts/deploy_snort.sh'],
+            ['Ubuntu - Cowrie', '../scripts/deploy_cowrie.sh'],
+            ['Ubuntu/Raspberry Pi - Dionaea', '../scripts/deploy_dionaea.sh'],
+            ['Ubuntu - Shockpot Sinkhole', '../scripts/deploy_shockpot_sinkhole.sh'],
+        ]
+        for honeypot, deploypath in reversed(deployscripts):
 
-            with open(deploypath, 'r') as deployfile:
+            with open(path.abspath(deploypath), 'r') as deployfile:
                 initdeploy = DeployScript()
                 initdeploy.script = deployfile.read()
                 initdeploy.notes = 'Initial deploy script for {}'.format(honeypot)

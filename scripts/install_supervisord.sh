@@ -15,7 +15,11 @@ elif [ -f /etc/redhat-release ]; then
     export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:$PATH
     #install python2.7 if it isn't installed
     if  [ ! -f /usr/local/bin/python2.7 ]; then
-        $SCRIPTDIR/install_python2.7.sh
+        $SCRIPTS/install_python2.7.sh
+    fi
+
+    if  [ ! -f /usr/local/bin/pip2.7 ]; then
+        $SCRIPTS/install_python2.7.sh
     fi
 
     #use python2.7/pip2.7

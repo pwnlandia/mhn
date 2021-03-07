@@ -15,7 +15,7 @@ def deploy_auth(view):
     """
     @wraps(view)
     def wrapped_view(*args, **kwargs):
-        if current_user and current_user.is_authenticated():
+        if current_user and current_user.is_authenticated:
             return view(*args, **kwargs)
         elif 'deploy_key' in request.json:
             server_key = current_app.config['DEPLOY_KEY']
@@ -33,7 +33,7 @@ def sensor_auth(view):
     """
     @wraps(view)
     def wrapped_view(*args, **kwargs):
-        if current_user and current_user.is_authenticated():
+        if current_user and current_user.is_authenticated:
             return view(*args, **kwargs)
         elif request.authorization:
             auth = request.authorization
@@ -50,7 +50,7 @@ def token_auth(view):
     """
     @wraps(view)
     def wrapped_view(*args, **kwargs):
-        if current_user and current_user.is_authenticated():
+        if current_user and current_user.is_authenticated:
             return view(*args, **kwargs)
 
         api_key = request.args.get('api_key', '')

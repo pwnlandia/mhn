@@ -1,25 +1,38 @@
 #!/bin/bash
 
-INTERFACE=eth0
+INTERFACE=$(basename -a /sys/class/net/e*)
+
 
 set -e
 set -x
 
 if [ $# -ne 2 ]
     then
-        echo "Wrong number of arguments supplied."
-        echo "Usage: $0 <server_url> <deploy_key>."
+        if [ $# -eq 3 ]
+          then
+            INTERFACE=$3
+          else
+            echo "Wrong number of arguments supplied."
+            echo "Usage: $0 <server_url> <deploy_key>."
+            exit 1
+        fi
+
+fi
+
+compareint=$(echo "$INTERFACE" | wc -w)
+
+
+if [ "$INTERFACE" = "e*" ] || [ "$compareint" -ne 1 ]
+    then
+        echo "No Interface selectable, please provide manually."
+        echo "Usage: $0 <server_url> <deploy_key> <INTERFACE>"
         exit 1
 fi
+
 
 server_url=$1
 deploy_key=$2
 
-wget $server_url/static/registration.txt -O registration.sh
-chmod 755 registration.sh
-# Note: this will export the HPF_* variables
-. ./registration.sh $server_url $deploy_key "snort"
- 
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libpcap-dev libjansson-dev libpcre3-dev libdnet-dev libdumbnet-dev libdaq-dev flex bison python-pip git make automake libtool zlib1g-dev
 
@@ -30,7 +43,7 @@ pip install virtualenv
 
 cd /tmp
 rm -rf libev*
-wget https://github.com/threatstream/hpfeeds/releases/download/libev-4.15/libev-4.15.tar.gz
+wget https://github.com/pwnlandia/hpfeeds/releases/download/libev-4.15/libev-4.15.tar.gz
 tar zxvf libev-4.15.tar.gz 
 cd libev-4.15
 ./configure && make && make install
@@ -38,7 +51,7 @@ ldconfig
 
 cd /tmp
 rm -rf hpfeeds
-git clone https://github.com/threatstream/hpfeeds.git
+git clone https://github.com/pwnlandia/hpfeeds.git
 cd hpfeeds/appsupport/libhpfeeds
 autoreconf --install
 ./configure && make && make install 
@@ -50,6 +63,12 @@ export CPPFLAGS=-I/include
 cd snort
 ./configure --prefix=/opt/snort && make && make install 
 
+# Register the sensor with the MHN server.
+wget $server_url/static/registration.txt -O registration.sh
+chmod 755 registration.sh
+# Note: this will export the HPF_* variables
+. ./registration.sh $server_url $deploy_key "snort"
+
 mkdir -p /opt/snort/etc /opt/snort/rules /opt/snort/lib/snort_dynamicrules /opt/snort/lib/snort_dynamicpreprocessor /var/log/snort/
 cd etc
 cp snort.conf classification.config reference.config threshold.conf unicode.map /opt/snort/etc/
@@ -60,6 +79,7 @@ cd /opt/snort/etc/
 # out prefix is /opt/snort not /usr/local...
 sed -i 's#/usr/local/#/opt/snort/#' snort.conf 
 
+
 # disable all the built in rules
 sed -i -r 's,include \$RULE_PATH/(.*),# include $RULE_PATH/\1,' snort.conf
 
@@ -69,9 +89,10 @@ sed -i 's,# include $RULE_PATH/local.rules,include $RULE_PATH/local.rules,' snor
 # enable hpfeeds
 sed -i "s/# hpfeeds/# hpfeeds\noutput log_hpfeeds: host $HPF_HOST, ident $HPF_IDENT, secret $HPF_SECRET, channel snort.alerts, port $HPF_PORT/" snort.conf 
 
+#Set HOME_NET
 
-IP=$(ifconfig $INTERFACE | grep 'inet addr' | cut -f2 -d: | awk '{print $1}')
-sed -i "s/ipvar HOME_NET any/ipvar HOME_NET $IP/" snort.conf
+IP=$(ip -f inet -o addr show $INTERFACE|head -n 1|cut -d\  -f 7 | cut -d/ -f 1)
+sed -i "/ipvar HOME_NET/c\ipvar HOME_NET $IP" /opt/snort/etc/snort.conf
 
 # Installing snort rules.
 # mhn.rules will be used as local.rules.

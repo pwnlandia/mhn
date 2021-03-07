@@ -5,7 +5,7 @@ server/mhn/static/mhn.rules
 server/mhn.log
 server/mhn/mhn.log
 
-
+*.swp
 *.log.*
 
 *test-mhn.db
