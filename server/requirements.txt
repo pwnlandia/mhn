@@ -9,7 +9,7 @@ Flask-Security==3.0.0
 Flask-Testing==0.7.1
 Flask-WTF==0.14.2
 bcrypt==3.2.0
-python-dateutil==2.2
+python-dateutil==2.8.1
 celery==5.0.5
 redis==3.5.3
 requests==2.25.1
