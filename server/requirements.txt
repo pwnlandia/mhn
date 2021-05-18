@@ -1,6 +1,6 @@
 Werkzeug==0.16.1
 argparse==1.2.1
-Flask==0.12.4
+Flask==1.0
 Flask-Login==0.3.2
 Flask-Mail==0.9.1
 Flask-Migrate==1.8.1
