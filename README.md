@@ -32,7 +32,7 @@ It also allows system administrators to:
 
 ## Installation
 
-- The MHN server is supported on Ubuntu 18.04, Ubuntu 16.04, and Centos 6.9.  
+- The MHN server is supported on Ubuntu 18.04, Ubuntu 16.04, Centos 6.9 and Centos 7.  
 - Other versions of Linux may work but are generally not tested or supported.
 
 Note: if you run into trouble during the install, please checkout the [troubleshooting guide](https://github.com/Pwnlandia/MHN/wiki/MHN-Troubleshooting-Guide) on the wiki.  If you only want to experiment with MHN on some virtual machines, please check out the [Getting up and Running with Vagrant](https://github.com/Pwnlandia/mhn/wiki/Getting-up-and-running-using-Vagrant) guide on the wiki.

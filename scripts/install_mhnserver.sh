@@ -51,6 +51,7 @@ $VIRTUALENV  -p $PYTHON env
 
 pip install -r server/requirements.txt
 if [ -f /etc/redhat-release ]; then
+    pip uninstall -y pysqlite
     pip install pysqlite==2.8.1
     service redis start
 fi
@@ -92,16 +93,16 @@ cat > $NGINXCONFIG <<EOF
 server {
     listen       80;
     server_name  _;
-    
-    location / { 
-        try_files \$uri @mhnserver; 
+
+    location / {
+        try_files \$uri @mhnserver;
     }
-    
+
     root /opt/www;
 
     location @mhnserver {
       include uwsgi_params;
-      uwsgi_pass unix:/tmp/uwsgi.sock;
+      uwsgi_pass unix:/run/uwsgi.sock;
     }
 
     location  /static {
@@ -111,9 +112,9 @@ server {
 EOF
 
 
-cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF 
+cat > /etc/supervisor/conf.d/mhn-uwsgi.conf <<EOF
 [program:mhn-uwsgi]
-command=$MHN_HOME/env/bin/uwsgi -s /tmp/uwsgi.sock -w mhn:mhn -H $MHN_HOME/env --chmod-socket=666 -b 40960
+command=$MHN_HOME/env/bin/uwsgi -s /run/uwsgi.sock -w mhn:mhn -H $MHN_HOME/env --chmod-socket=666 -b 40960
 directory=$MHN_HOME/server
 stdout_logfile=/var/log/mhn/mhn-uwsgi.log
 stderr_logfile=/var/log/mhn/mhn-uwsgi.err
@@ -122,7 +123,7 @@ autorestart=true
 startsecs=10
 EOF
 
-cat > /etc/supervisor/conf.d/mhn-celery-worker.conf <<EOF 
+cat > /etc/supervisor/conf.d/mhn-celery-worker.conf <<EOF
 [program:mhn-celery-worker]
 command=$MHN_HOME/env/bin/celery worker -A mhn.tasks --loglevel=INFO
 directory=$MHN_HOME/server
@@ -137,7 +138,7 @@ EOF
 touch /var/log/mhn/mhn-celery-worker.log /var/log/mhn/mhn-celery-worker.err
 chown $NGINXUG /var/log/mhn/mhn-celery-worker.*
 
-cat > /etc/supervisor/conf.d/mhn-celery-beat.conf <<EOF 
+cat > /etc/supervisor/conf.d/mhn-celery-beat.conf <<EOF
 [program:mhn-celery-beat]
 command=$MHN_HOME/env/bin/celery beat -A mhn.tasks --loglevel=INFO
 directory=$MHN_HOME/server
@@ -160,7 +161,7 @@ cat > $MHN_HOME/server/collector.json <<EOF
 }
 EOF
 
-cat > /etc/supervisor/conf.d/mhn-collector.conf <<EOF 
+cat > /etc/supervisor/conf.d/mhn-collector.conf <<EOF
 [program:mhn-collector]
 command=$MHN_HOME/env/bin/python collector_v2.py collector.json
 directory=$MHN_HOME/server
@@ -175,4 +176,31 @@ touch $MHN_HOME/server/mhn.log
 chown $NGINXUG -R $MHN_HOME/server/*
 
 supervisorctl update
-/etc/init.d/nginx restart
+
+if [ -f /etc/redhat-release ] &&  grep -q -i "release 7" /etc/redhat-release; then
+    if ! systemctl status firewalld ; then
+	if ! command -v firewall-cmd ; then
+	    echo "Firewalld not installed"
+	    echo -e "Install it? (y/n)"
+	    read PROMPT
+            if [ "$PROMPT" == "y" -o "$PROMPT" == "Y" ]
+	    then
+		yum install firewalld
+	    else
+		exit
+	    fi
+	fi
+	systemctl start firewalld
+    fi
+    firewall-cmd --zone=public --add-service=http --permanent
+    firewall-cmd --zone=public --add-service=https --permanent
+    firewall-cmd --zone=public --add-port=10000/tcp --permanent
+    firewall-cmd --zone=public --add-port=3000/tcp --permanent
+    firewall-cmd --reload
+    perl -0777pe 's/\s*server {.*}\s*#\s*}//gs' /etc/nginx/nginx.conf > /tmp/nginx.conf
+    \mv /tmp/nginx.conf /etc/nginx/nginx.conf
+    systemctl enable nginx
+    systemctl start nginx
+else
+    /etc/init.d/nginx restart
+fi
