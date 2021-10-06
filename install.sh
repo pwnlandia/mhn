@@ -6,6 +6,16 @@ then
     exit 1
 fi
 
+if [ $1 -eq "0" ]
+then
+    echo "Running in unattended mode. Assuming config.py exists"
+    MHN_SEVER_SCRIPT="./install_mhnserver_unattended.sh"
+elif [ $1 -eq "1" ]
+then
+    echo "Running in attended mode (config.py not created)"
+    MHN_SEVER_SCRIPT="./install_mhnserver.sh"
+fi
+
 set -e
 set -x
 
@@ -62,7 +72,7 @@ echo "[`date`] ========= Installing Honeymap ========="
  ./install_honeymap.sh
 
 echo "[`date`] ========= Installing MHN Server ========="
- ./install_mhnserver.sh
+ $MHN_SERVER_SCRIPT
 
 echo "[`date`] ========= MHN Server Install Finished ========="
 echo ""
