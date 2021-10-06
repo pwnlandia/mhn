@@ -6,12 +6,12 @@ then
     exit 1
 fi
 
-if [ $1 -eq "0" ]
+if [[ $# -eq "1" && $1 -eq "0" ]]
 then
     echo "Running in unattended mode. Assuming config.py exists. Splunk, ELK and UFW will be skipped."
     MHN_SERVER_SCRIPT="install_mhnserver_unattended.sh"
     UNATTENDED=true
-elif [ $1 -eq "1" ]
+elif [[ $# -eq "1" && $1 -eq "1" ]]
 then
     echo "Running in attended mode (config.py not created)"
     MHN_SERVER_SCRIPT="install_mhnserver.sh"
