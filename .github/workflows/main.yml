@@ -31,5 +31,11 @@ jobs:
       - name: Show Vagrant version
         run: vagrant --version
 
-      - name: Run vagrant up
-        run: vagrant up
+      - name: Run Ubuntu 16.04
+        run: vagrant up ubuntu1604
+      
+      - name: Run Ubuntu 18.04
+        run: vagrant up ubuntu1804
+
+      - name: Run CentOS 6
+        run: vagrant up centos6
