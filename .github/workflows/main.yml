@@ -13,18 +13,23 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-18.04
+  vagrant-up:
+    runs-on: macos-10.15
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: sudo bash ./install.sh
+      - name: Cache Vagrant boxes
+        uses: actions/cache@v2
+        with:
+          path: ~/.vagrant.d/boxes
+          key: ${{ runner.os }}-vagrant-${{ hashFiles('Vagrantfile') }}
+          restore-keys: |
+            ${{ runner.os }}-vagrant-
+
+      - name: Show Vagrant version
+        run: vagrant --version
+
+      - name: Run vagrant up
+        run: vagrant up
