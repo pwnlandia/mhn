@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  install-mhn:
+  install-mhn-dependencies:
     runs-on: ubuntu-18.04
 
     steps:
@@ -31,7 +31,7 @@ jobs:
           sudo apt install -y python-pip
           sudo pip install --upgrade pip
           sudo apt install apt-transport-https -y
-          sudo apt intall build-essential -y
+          sudo apt install build-essential -y
         
       - name: Install hpfeeds
         run: sudo bash /opt/mhn/scripts/install_hpfeeds.sh
