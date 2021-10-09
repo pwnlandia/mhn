@@ -24,6 +24,7 @@ Vagrant.configure("2") do |config|
 
 		centos6.vm.box = "generic/centos6"
 
+		centos6.vm.provision :shell, inline: 'sudo yum install git'
 		centos6.vm.provision :shell, inline: 'sudo git clone https://github.com/pwnlandia/mhn.git /opt/mhn/'
 		centos6.vm.provision :shell, inline: 'sudo bash /opt/mhn/install.sh'
 	end
