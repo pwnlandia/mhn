@@ -33,7 +33,9 @@ jobs:
           sudo apt install apt-transport-https -y
           sudo apt install build-essential -y
           sudo apt remove mongo* -y
-        
+        # Default mongodb install needs to be removed:
+        # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu1804-README.md#databases
+
       - name: Install hpfeeds
         run: |
           cd /opt/mhn/scripts/
