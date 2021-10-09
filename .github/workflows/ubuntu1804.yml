@@ -1,0 +1,43 @@
+name: CI - Ubuntu 18.04
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: 
+      - hacktoberfest/gh-actions-ubuntu1804
+  pull_request:
+    branches:
+      - hacktoberfest/gh-actions-ubuntu1804
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  install-mhn:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: sudo mkdir /opt/mhn/
+
+      - name: Clone latest MHN
+        run: sudo git clone https://github.com/pwnlandia/mhn.git /opt/mhn/
+      
+      - name: Install MHN dependencies
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          sudo apt install -y python-pip
+          sudo pip install --upgrade pip
+          sudo apt install apt-transport-https -y
+          sudo apt intall build-essential -y
+        
+      - name: Install hpfeeds
+        run: sudo bash /opt/mhn/scripts/install_hpfeeds.sh
+      
+      - name: Install mnemosyne
+        run: sudo bash /opt/mhn/scripts/install_mnemosyne.sh
+      
+      - name: Install honeymap
+        run: sudo bash /opt/mhn/scripts/install_honeymap.sh
