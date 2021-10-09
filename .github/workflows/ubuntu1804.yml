@@ -20,12 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Create MHN dir
-        run: sudo mkdir /opt/mhn/
-
       - name: Clone latest MHN
         run: |
-          cd /opt/mhn/
+          cd /opt/
           sudo git clone https://github.com/pwnlandia/mhn.git
       
       - name: Install MHN dependencies
