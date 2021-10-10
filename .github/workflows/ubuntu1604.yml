@@ -1,12 +1,14 @@
-name: CI - Ubuntu 16.04
+name: Ubuntu 16.04
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ hacktoberfest/gh-actions-test ]
+    branches: 
+      - hacktoberfest/add-gh-actions
   pull_request:
-    branches: [ hacktoberfest/gh-actions-test ]
+    branches: 
+      - hacktoberfest/add-gh-actions
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
