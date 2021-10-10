@@ -1,8 +1,8 @@
 # https://github.com/jonashackt/vagrant-github-actions
 Vagrant.configure("2") do |config|
 
-    # Prevent SharedFoldersEnableSymlinksCreate errors
-    config.vm.synced_folder ".", "/vagrant", disabled: true
+  # Prevent SharedFoldersEnableSymlinksCreate errors
+  config.vm.synced_folder ".", "/vagrant", disabled: true
 
 	config.vm.define "ubuntu1604" do |ubuntu1604|
 
@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 		ubuntu1604.vm.provision :shell, inline: 'sudo bash /opt/mhn/install.sh'
 	end
 
-    config.vm.define "ubuntu1804" do |ubuntu1804|
+  config.vm.define "ubuntu1804" do |ubuntu1804|
 
 		ubuntu1804.vm.box = "generic/ubuntu1804"
 
