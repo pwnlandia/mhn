@@ -30,4 +30,4 @@ jobs:
         run: vagrant --version
      
       - name: Run CentOS 6
-        run: vagrant up centos6
+        run: vagrant up centos6 --provision-with dependencies

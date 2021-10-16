@@ -32,4 +32,4 @@ jobs:
         run: vagrant --version
 
       - name: Run Ubuntu 16.04
-        run: vagrant up ubuntu1604
+        run: vagrant up ubuntu1604 --provision-with dependencies
