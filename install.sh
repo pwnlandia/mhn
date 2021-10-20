@@ -16,6 +16,9 @@ then
     echo "Running in attended mode (config.py not created)"
     MHN_SERVER_SCRIPT="install_mhnserver.sh"
     UNATTENDED=false
+else
+    MHN_SERVER_SCRIPT="install_mhnserver.sh"
+    UNATTENDED=false
 fi
 
 set -e
