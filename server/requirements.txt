@@ -10,7 +10,7 @@ Flask-Testing==0.7.1
 Flask-WTF==0.14.2
 bcrypt==3.1.4
 python-dateutil==2.2
-celery==4.3.0
+celery==5.2.2
 redis==3.2.1
 requests==2.21.0
 xmltodict==0.12.0
