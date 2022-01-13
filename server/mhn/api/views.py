@@ -57,6 +57,7 @@ def get_sensors():
     return resp
 
 @api.route('/sensor/<uuid>/', methods=['PUT'])
+@token_auth
 @csrf.exempt
 def update_sensor(uuid):
     sensor = Sensor.query.filter_by(uuid=uuid).first_or_404()
