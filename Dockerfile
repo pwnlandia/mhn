@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:18.04
 MAINTAINER threatstream
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
