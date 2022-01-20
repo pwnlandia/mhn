@@ -27,11 +27,6 @@ sed -i 's/ip: 127.0.0.1/ip: 0.0.0.0/g' conf/amun.conf
 sed -i 's/    vuln-http,/#   vuln-http,/g' conf/amun.conf
 sed -i $'s/log_modules:/log_modules:\\\n    log-hpfeeds/g' conf/amun.conf
 
-# Modify Ubuntu to accept more open files
-echo "104854" > /proc/sys/fs/file-max
-ulimit -Hn 104854
-ulimit -n 104854
-
 # Register the sensor with the MHN server.
 wget $server_url/static/registration.txt -O registration.sh
 chmod 755 registration.sh
