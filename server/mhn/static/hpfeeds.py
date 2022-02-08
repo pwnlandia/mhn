@@ -28,6 +28,9 @@
 from dionaea.core import ihandler, incident, g_dionaea, connection
 from dionaea.util import sha512file
 
+
+import socket
+import fcntl
 import os
 import logging
 import struct
@@ -70,6 +73,10 @@ DCECHAN = 'dionaea.dcerpcrequests'
 SCPROFCHAN = 'dionaea.shellcodeprofiles'
 UNIQUECHAN = 'mwbinary.dionaea.sensorunique'
 
+
+def get_ip_address(ifname):
+    buscarip = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(buscarip.fileno(),0x8915,struct.pack('256s', bytes(ifname[:15], 'utf-8')))[20:24])
 
 class BadClient(Exception):
     pass
@@ -266,6 +273,7 @@ class hpfeedihandler(ihandler):
             if self.ownip:
                 return self.ownip
             else:
+                return (get_ip_address('eth0')) #En caso de no resolver IP retorna la ip de la interfaz ETH0
                 raise Exception('Own IP not yet resolved!')
         return icd.con.local.host
 
