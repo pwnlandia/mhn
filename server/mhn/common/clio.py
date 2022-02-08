@@ -90,6 +90,11 @@ class ResourceMixin(object):
                 '$gte': datetime.datetime.utcnow() - datetime.timedelta(hours=int(dirty['hours_ago']))
             }
 
+        if 'payload' in dirty and 'payload' in clean:
+            queryObj = 'payload.' + dirty.get('column')
+            clean[queryObj] = dirty.get('payload')
+            del clean['payload']
+
         return clean
 
     @classmethod

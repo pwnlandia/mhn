@@ -15,23 +15,36 @@
             </div>
             <form id="payload-filter" action="" method="get">
                 <div class="row">
-                    <div class="small-4 columns">
+                    <div class="small-3 columns">
                         <label>Payload</label>
                     </div>
-                    <div class="small-4 pull-4 columns">
+                    <div class="small-3 columns">
+                        <label>Field</label>
+                    </div>
+                    <div class="small-4 columns">
                         <label>Regex Term</label>
+                    </div>
+                    <div class="small-2 columns">
+                        <label></label>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="small-4 columns">
-                        <select name="channel">
+                    <div class="small-3 columns">
+                        <select onchange="document.getElementById('payload').value = '';" name="channel">
                             {% for c in channel_list %}
                             <option {% if c  == channel %}selected{% endif %} value="{{ c }}">{{ c }}</option>
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="small-3 columns">
+                        <select name="column">
+                            {% for c in columns %}
+                            <option {% if c  == column %}selected{% endif %} value="{{ c }}">{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                    </div> 
                     <div class="small-4 columns">
-                        <input type="text" name="payload" value="{{ payload }}" placeholder="pcre regex" />
+                        <input type="text" id='payload' name="payload" value="{{ payload }}" placeholder="pcre regex" />
                     </div>
                     <div class="small-2 columns">
                         <input class="tiny button" type="submit" value="GO" />
