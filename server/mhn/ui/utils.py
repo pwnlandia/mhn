@@ -76,13 +76,13 @@ def _get_flag_ip(ipaddr):
     Defaults to static immge: '/static/img/unknown.png'
     """
     flag_path = '/static/img/flags-iso/shiny/64/{}.png'
-    geo_api = 'https://geospray.threatstream.com/ip/{}'
+    geo_api = 'https://geospray.threatstream.com/ip/{}' 
     try:
         # Using threatstream's geospray API to get
         # the country code for this IP address.
         r = requests.get(geo_api.format(ipaddr))
         ccode = r.json()['countryCode']
-    except Exception:
+    except Exception:                 
         app.logger.warning("Could not determine flag for ip: {}".format(ipaddr))
         return constants.DEFAULT_FLAG_URL
     else:
