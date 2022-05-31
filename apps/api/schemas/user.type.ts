@@ -1,9 +1,21 @@
-import { Static, Type } from "@sinclair/typebox";
+import { Static, Type } from '@sinclair/typebox'
 
-const User = Type.Object({
-  username: Type.String(),
-  email: Type.Optional(Type.String({ format: "email" })),
-  password: Type.String(),
-});
+export const userType = Type.Object({
+    username: Type.String(),
+    email: Type.Optional(Type.String({ format: 'email' })),
+    password: Type.String(),
+})
 
-type UserType = Static<typeof User>;
+export type UserType = Static<typeof userType>
+
+export const userQueryType = Type.Object({
+    Querystring: userType,
+})
+
+export type UserQueryType = Static<typeof userQueryType>
+
+export const createUserQueryType = Type.Object({
+    Body: userType,
+})
+
+export type CreateUserQueryType = Static<typeof createUserQueryType>

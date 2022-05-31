@@ -1,18 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-
-interface IQuerystring {
-    username: string
-    password: string
-}
-
-interface IHeaders {
-    'h-Custom': string
-}
+import { UserType } from '../schemas/user.type'
 
 export const getIndex = async (
     request: FastifyRequest<{
-        Querystring: IQuerystring
-        Headers: IHeaders
+        Querystring: UserType
     }>,
     reply: FastifyReply
 ) => {
@@ -20,12 +11,13 @@ export const getIndex = async (
     const customHeader = request.headers['h-Custom']
     // do something with request data
 
-    return (
-        'logged in as ' +
-        username +
-        ' with ' +
-        password +
-        ' and header ' +
-        customHeader
-    )
+    reply.send({
+        hello:
+            'logged in as ' +
+            username +
+            ' with ' +
+            password +
+            ' and footer ' +
+            customHeader,
+    })
 }
