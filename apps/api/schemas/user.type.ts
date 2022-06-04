@@ -8,6 +8,13 @@ export const userType = Type.Object({
 
 export type UserType = Static<typeof userType>
 
+export const userOutputType = Type.Object({
+    username: Type.String(),
+    email: Type.Optional(Type.String({ format: 'email' })),
+})
+
+export type UserOutputType = Static<typeof userOutputType>
+
 export const userQueryType = Type.Object({
     Querystring: userType,
 })

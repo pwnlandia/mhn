@@ -4,7 +4,11 @@ import {
     RawServerDefault,
     RouteOptions,
 } from 'fastify'
-import { CreateUserQueryType, userType } from '../schemas/user.type'
+import {
+    CreateUserQueryType,
+    userOutputType,
+    userType,
+} from '../schemas/user.type'
 import { createUser } from '../controllers/user'
 
 const create: RouteOptions<
@@ -14,9 +18,12 @@ const create: RouteOptions<
     CreateUserQueryType
 > = {
     method: 'POST',
-    url: '/user',
+    url: '/api/user',
     schema: {
         body: userType,
+        response: {
+            201: userOutputType, // Trims out password field.
+        },
     },
     handler: createUser,
 }
