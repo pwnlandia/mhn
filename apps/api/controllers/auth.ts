@@ -1,13 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { AuthInterfaceType } from '../schemas/auth.type'
-import { passwordsMatch } from '../services/auth.service'
+import { getJWT, passwordsMatch } from '../services/auth.service'
 import * as userService from '../services/user.service'
-import * as jwt from 'jwt-simple'
-
-const secret = Buffer.from(
-    'fe bb ee ab 66 46 95 86 d5 09 4a 07 92 0b 25 22',
-    'hex'
-).toString()
 
 export const auth = async (
     request: FastifyRequest<AuthInterfaceType>,
@@ -44,8 +38,7 @@ export const auth = async (
         }
         // Authorized
 
-        const payload = { username: username } // TODO: Add expiry
-        const token = jwt.encode(payload, secret) // TODO: Add refresh capabilities
+        const token = getJWT(user.username)
         reply.statusCode = 200
         reply.send(token)
         return
