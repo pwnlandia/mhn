@@ -44,8 +44,8 @@ export const auth = async (
         }
         // Authorized
 
-        const payload = { username: username }
-        const token = jwt.encode(payload, secret)
+        const payload = { username: username } // TODO: Add expiry
+        const token = jwt.encode(payload, secret) // TODO: Add refresh capabilities
         reply.statusCode = 200
         reply.send(token)
         return
