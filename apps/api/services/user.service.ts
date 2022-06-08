@@ -11,3 +11,7 @@ export const create = async (userInput: UserType): Promise<User> => {
         },
     })
 }
+
+export const getByUsername = async (username: string): Promise<User | null> => {
+    return prisma.user.findUnique({ where: { username: username } })
+}

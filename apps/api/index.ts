@@ -1,5 +1,6 @@
 import fastify from 'fastify'
 import indexRoutes from './routes'
+import authRoutes from './routes/auth.routes'
 import userRoutes from './routes/user.routes'
 
 const server = fastify()
@@ -9,6 +10,10 @@ indexRoutes.forEach(function (route) {
 })
 
 userRoutes.forEach(function (route) {
+    server.route(route)
+})
+
+authRoutes.forEach(function (route) {
     server.route(route)
 })
 
