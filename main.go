@@ -31,6 +31,8 @@ func main() {
 	flag.BoolVar(&secretReset, "secret-reset", false, "reset the JWT secret - invalidates all API sessions")
 	flag.Parse()
 
+	fmt.Printf("Running on port %d\n", port)
+
 	// Open our database file.
 	db, err := bolt.Open(dbFile, 0666, nil)
 	if err != nil {
@@ -40,7 +42,6 @@ func main() {
 
 	if secretReset {
 		resetSecret(db)
-
 	}
 
 	initSecret(db)
@@ -102,13 +103,19 @@ func newAPIHandler(db *bolt.DB) api.Handler {
 		log.Fatal(err)
 	}
 
+	srepo, err := boltdb.NewScriptRepository(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	crepo, err := boltdb.NewConfigRepository(db)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	us := service.NewUserService(urepo)
+	ss := service.NewScriptService(srepo)
 	cs := service.NewConfigService(crepo, us)
 
-	return api.NewHandler(Version, us, cs)
+	return api.NewHandler(Version, us, ss, cs)
 }

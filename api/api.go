@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/pwnlandia/mhn/auth"
 	"github.com/pwnlandia/mhn/config"
+	"github.com/pwnlandia/mhn/script"
 	"github.com/pwnlandia/mhn/user"
 )
 
@@ -30,6 +31,7 @@ type Handler interface {
 
 type apiHandler struct {
 	userHandler   UserHandler
+	scriptHandler ScriptHandler
 	midHandler    MiddlewareHandler
 	authHandler   AuthHandler
 	configHandler ConfigHandler
@@ -37,14 +39,15 @@ type apiHandler struct {
 }
 
 // NewHandler creates a new apiHandler with given UserService and ConfigService.
-func NewHandler(version string, us user.Service, cs config.Service) Handler {
+func NewHandler(version string, us user.Service, ss script.Service, cs config.Service) Handler {
 	// TODO: Make RBAC persistent if needed.
 	rbac := auth.InitRBAC()
 	uh := NewUserHandler(us)
+	sh := NewScriptHandler(ss)
 	mh := NewMiddlewareHandler(cs, rbac)
 	ah := NewAuthHandler(cs, us)
 	ch := NewConfigHandler(cs)
-	return &apiHandler{userHandler: uh, midHandler: mh, authHandler: ah, configHandler: ch, Version: version}
+	return &apiHandler{userHandler: uh, scriptHandler: sh, midHandler: mh, authHandler: ah, configHandler: ch, Version: version}
 }
 
 // Status returns the current version of the server.
@@ -77,6 +80,7 @@ func (h *apiHandler) router() *mux.Router {
 			h.userHandler.Get(),
 		)).Methods("GET")
 
+	// TODO: Add a POST request that takes a name and optional password to create a new user.
 	r.HandleFunc("/api/user/",
 		h.midHandler.Permission(
 			auth.PermUserWrite,
@@ -99,6 +103,43 @@ func (h *apiHandler) router() *mux.Router {
 		h.midHandler.Permission(
 			auth.PermUserWrite,
 			h.userHandler.Delete(),
+		)).Methods("DELETE")
+
+	// api/script
+	r.HandleFunc("/api/script/",
+		h.midHandler.Permission(
+			auth.PermUserRead,
+			h.scriptHandler.Get(),
+		)).Methods("GET")
+
+	r.HandleFunc("/api/script/{id}",
+		h.midHandler.Permission(
+			auth.PermUserRead,
+			h.scriptHandler.Get(),
+		)).Methods("GET")
+
+	r.HandleFunc("/api/script/",
+		h.midHandler.Permission(
+			auth.PermUserWrite,
+			h.scriptHandler.Put(),
+		)).Methods("PUT") // Funnel bad request for proper response.
+
+	r.HandleFunc("/api/script/{id}",
+		h.midHandler.Permission(
+			auth.PermUserWrite,
+			h.scriptHandler.Put(),
+		)).Methods("PUT")
+
+	r.HandleFunc("/api/script/",
+		h.midHandler.Permission(
+			auth.PermUserWrite,
+			h.scriptHandler.Delete(),
+		)).Methods("DELETE")
+
+	r.HandleFunc("/api/script/{id}",
+		h.midHandler.Permission(
+			auth.PermUserWrite,
+			h.scriptHandler.Delete(),
 		)).Methods("DELETE")
 
 	return r

@@ -104,7 +104,6 @@ func (h *userHandler) Delete() http.HandlerFunc {
 
 		// If it doesn't already exist, return 404.
 		if u == nil {
-			w.WriteHeader(http.StatusNotFound)
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			return
 		}
