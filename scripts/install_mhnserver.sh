@@ -9,9 +9,9 @@ MHN_HOME=$SCRIPTDIR/..
 if [ -f /etc/debian_version ]; then
     OS=Debian  # XXX or Ubuntu??
     INSTALLER='apt-get'
-    REPOPACKAGES='git build-essential python-pip python-dev redis-server libgeoip-dev nginx libsqlite3-dev'
-    PYTHON=`which python`
-    PIP=`which pip`
+    REPOPACKAGES='git build-essential python3-pip python3-dev redis-server libgeoip-dev nginx libsqlite3-dev'
+    PYTHON=`which python3`
+    PIP=`which pip3`
     $PIP install virtualenv
     VIRTUALENV=`which virtualenv`
 
@@ -21,17 +21,17 @@ elif [ -f /etc/redhat-release ]; then
     INSTALLER='yum'
     REPOPACKAGES='epel-release git GeoIP-devel wget redis nginx'
 
-    if  [ ! -f /usr/local/bin/python2.7 ]; then
-        $SCRIPTDIR/install_python2.7.sh
+    if  [ ! -f /usr/local/bin/python3.8 ]; then
+        $SCRIPTDIR/install_python3.8.sh
     fi
 
-    #use python2.7
-    PYTHON=/usr/local/bin/python2.7
-    PIP=/usr/local/bin/pip2.7
+    #use python3.8
+    PYTHON=/usr/local/bin/python3.8
+    PIP=/usr/local/bin/pip3.8
     $PIP install virtualenv
     VIRTUALENV=/usr/local/bin/virtualenv
 
-    #install supervisor from pip2.7
+    #install supervisor from pip3.8
     $PIP install supervisor
 
 else
@@ -64,10 +64,10 @@ echo "==========================================================="
 echo "  MHN Configuration"
 echo "==========================================================="
 
-python generateconfig.py
+python3 generateconfig.py
 
 echo -e "\nInitializing database, please be patient. This can take several minutes"
-python initdatabase.py
+python3 initdatabase.py
 cd $MHN_HOME
 
 mkdir -p /opt/www
