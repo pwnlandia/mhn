@@ -12,7 +12,7 @@ bcrypt==3.2.0
 python-dateutil==2.8.1
 celery==5.0.5
 redis==3.5.3
-requests==2.25.1
+requests==2.31.0
 xmltodict==0.12.0
 uWSGI==2.0.19.1
 pymongo==3.7.2
