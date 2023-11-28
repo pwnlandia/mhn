@@ -14,7 +14,7 @@ celery==5.0.5
 redis==3.5.3
 requests==2.25.1
 xmltodict==0.12.0
-uWSGI==2.0.18
+uWSGI==2.0.19.1
 pymongo==3.7.2
 hpfeeds-threatstream==1.1
 pygal==2.4.0
