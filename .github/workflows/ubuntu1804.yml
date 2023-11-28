@@ -1,0 +1,52 @@
+name: Ubuntu 18.04
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: 
+      - master
+  pull_request:
+    branches:
+      - master
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  install-mhn-dependencies:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Clone latest MHN
+        run: |
+          cd /opt/
+          sudo git clone https://github.com/pwnlandia/mhn.git
+      
+      - name: Install MHN dependencies
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          sudo apt install -y python-pip
+          sudo pip install --upgrade pip
+          sudo apt install apt-transport-https -y
+          sudo apt install build-essential -y
+          sudo apt remove mongo* -y
+        # Default mongodb install needs to be removed:
+        # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu1804-README.md#databases
+
+      - name: Install hpfeeds
+        run: |
+          cd /opt/mhn/scripts/
+          sudo ./install_hpfeeds.sh
+      
+      - name: Install mnemosyne
+        run: |
+          cd /opt/mhn/scripts/
+          sudo ./install_mnemosyne.sh
+      
+      - name: Install honeymap
+        run: |
+          cd /opt/mhn/scripts/
+          sudo ./install_honeymap.sh

@@ -1,13 +1,17 @@
 Modern Honey Network
+
+[![Centos 6](https://github.com/pwnlandia/mhn/actions/workflows/centos6.yml/badge.svg)](https://github.com/pwnlandia/mhn/actions/workflows/centos6.yml)
+[![Ubuntu 16.04](https://github.com/pwnlandia/mhn/actions/workflows/ubuntu1604.yml/badge.svg)](https://github.com/pwnlandia/mhn/actions/workflows/ubuntu1604.yml)
+[![Ubuntu 18.04](https://github.com/pwnlandia/mhn/actions/workflows/ubuntu1804.yml/badge.svg)](https://github.com/pwnlandia/mhn/actions/workflows/ubuntu1804.yml)
 ====================
 
 MHN is a centralized server for management and data collection of honeypots. MHN
 allows you to deploy sensors quickly and to collect data immediately, viewable
 from a neat web interface. Honeypot deploy scripts include several common
 honeypot technologies, including [Snort](https://snort.org/),
-[Cowrie](http://www.micheloosterhof.com/cowrie/),
-[Dionaea](https://www.edgis-security.org/single-post/dionaea-malware-honeypot), and
-[glastopf](https://github.com/glastopf/), among others.
+[Cowrie](https://www.cowrie.org/),
+[Dionaea](https://dionaea.readthedocs.io/en/latest/), and
+[glastopf](https://github.com/mushorg/glastopf), among others.
 
 For questions regarding troubleshooting your installation, please review the
 [MHN Troubleshooting

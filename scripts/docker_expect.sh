@@ -33,4 +33,6 @@ expect "Would you like to integrate with Splunk?"
 send "n\r"
 expect "Would you like to install ELK?"
 send "n\r"
+expect "Would you like to add MHN rules to UFW?"
+send "n\r"
 expect EOF
