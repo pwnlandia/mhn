@@ -9,9 +9,9 @@ MHN_HOME=$SCRIPTDIR/..
 if [ -f /etc/debian_version ]; then
     OS=Debian  # XXX or Ubuntu??
     INSTALLER='apt-get'
-    REPOPACKAGES='git build-essential python-pip python-dev redis-server libgeoip-dev nginx libsqlite3-dev'
-    PYTHON=`which python`
-    PIP=`which pip`
+    REPOPACKAGES='git build-essential python3-pip python3-dev redis-server libgeoip-dev nginx libsqlite3-dev'
+    PYTHON=`which python3`
+    PIP=`which pip3`
     $PIP install virtualenv
     VIRTUALENV=`which virtualenv`
 
@@ -49,7 +49,7 @@ MHN_HOME=`pwd`
 $VIRTUALENV  -p $PYTHON env
 . env/bin/activate
 
-pip install -r server/requirements.txt
+pip3 install -r server/requirements.txt
 if [ -f /etc/redhat-release ]; then
     pip install pysqlite==2.8.1
     service redis start
@@ -64,10 +64,10 @@ echo "==========================================================="
 echo "  MHN Configuration"
 echo "==========================================================="
 
-python generateconfig.py
+python3 generateconfig.py
 
 echo -e "\nInitializing database, please be patient. This can take several minutes"
-python initdatabase.py
+python3 initdatabase.py
 cd $MHN_HOME
 
 mkdir -p /opt/www
