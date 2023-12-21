@@ -1,4 +1,4 @@
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from flask import Flask, request, jsonify, abort, url_for, session
 from flask_sqlalchemy import SQLAlchemy
