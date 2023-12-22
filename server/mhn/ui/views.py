@@ -262,7 +262,7 @@ def graph_top_attackers():
     bar_chart.title = "Kippo/Cowrie Top Attackers"
     clio=Clio()
     top_attackers = top_kippo_cowrie_attackers(clio)
-    print top_attackers    
+    print(top_attackers)
     for attacker in top_attackers:
         bar_chart.add(str(attacker['source_ip']), attacker['count'])
 

@@ -1,5 +1,5 @@
 import json
-from StringIO import StringIO
+from io import StringIO
 import csv
 
 from uuid import uuid1

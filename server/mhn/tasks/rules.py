@@ -4,7 +4,7 @@ from datetime import datetime
 try:
     from StringIO import cStringIO as StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import BytesIO
 
 from flask import current_app as app
 import requests
@@ -42,7 +42,7 @@ def fetch_sources():
                 tmpdir = '/tmp/{}-{}/'.format(src.name,
                                               datetime.utcnow().isoformat())
                 os.mkdir(tmpdir)
-                ziprules = StringIO()
+                ziprules = BytesIO()
                 for chunk in resp.iter_content():
                     ziprules.write(chunk)
                 ziprules.seek(0)

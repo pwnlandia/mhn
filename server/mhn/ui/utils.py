@@ -29,7 +29,7 @@ def is_RFC1918_addr(ip):
             if ip_masked == net:
                 return True
     except Exception as e:
-        print 'Error ({}) on is_RFC1918_addr: {}'.format(e, ip)
+        print('Error ({}) on is_RFC1918_addr: {}'.format(e, ip))
 
     return False
 
@@ -51,7 +51,7 @@ def get_sensor_name(sensor_id):
                 sensor_name = s.hostname
                 sensor_cache.set(sensor_id, sensor_name)
                 break
-    print 'Name: %s' % sensor_name
+    print('Name: %s' % sensor_name)
     return sensor_name
 
 def _get_flag_ip_localdb(ipaddr):

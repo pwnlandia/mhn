@@ -303,7 +303,7 @@ class Session(ResourceMixin):
 
         result = self.collection.aggregate(query)
         res = list(result)
-	def format_result(r):
+        def format_result(r):
             result = dict(r['_id'])
             result['count'] = r['count']
             return result

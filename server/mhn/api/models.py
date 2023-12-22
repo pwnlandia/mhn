@@ -191,8 +191,8 @@ class Rule(db.Model, APIModel):
                     update({'is_active': False}, False)
             cnt += 1
             if cnt % 500 == 0:
-                print 'Imported {} rules so far...'.format(cnt)
-        print 'Finished Importing {} rules.  Committing data'.format(cnt)
+                print('Imported {} rules so far...'.format(cnt))
+        print('Finished Importing {} rules.  Committing data'.format(cnt))
         db.session.commit()
 
 

@@ -7,19 +7,19 @@ from flask.ext.migrate import Migrate, MigrateCommand
 try:
     import config
 except ImportError:
-    print 'It seems like this is the first time running the server.'
-    print 'First let us generate a proper configuration file.'
+    print('It seems like this is the first time running the server.')
+    print('First let us generate a proper configuration file.')
     try:
         from generateconfig import generate_config
         generate_config()
         import config
         from mhn import create_clean_db
-        print 'Initializing database "{}".'.format(config.SQLALCHEMY_DATABASE_URI)
+        print('Initializing database "{}".'.format(config.SQLALCHEMY_DATABASE_URI))
         create_clean_db()
     except Exception as e:
-        print e
-        print 'An error ocurred. Please fix the errors and try again.'
-        print 'Deleting "config.py" file.'
+        print(e)
+        print('An error ocurred. Please fix the errors and try again.')
+        print('Deleting "config.py" file.')
         try:
             os.remove('config.py')
             os.remove('config.pyc')
