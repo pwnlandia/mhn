@@ -10,7 +10,7 @@ if [ -f /etc/debian_version ]; then
     OS=Debian  # XXX or Ubuntu??
     INSTALLER='apt-get'
     REPOPACKAGES='git build-essential python3-pip python3-dev redis-server libgeoip-dev nginx libsqlite3-dev'
-    PYTHON=`which python3`
+    PYTHON=`which python3.7`
     PIP=`which pip3`
     $PIP install virtualenv
     VIRTUALENV=`which virtualenv`
@@ -48,7 +48,7 @@ MHN_HOME=`pwd`
 
 $VIRTUALENV  -p $PYTHON env
 . env/bin/activate
-
+pip3 install --upgrade setuptools==57.5.0
 pip3 install -r server/requirements.txt
 if [ -f /etc/redhat-release ]; then
     pip install pysqlite==2.8.1
