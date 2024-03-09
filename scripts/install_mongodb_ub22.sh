@@ -5,7 +5,7 @@
 set -e
 set -x
 
-sudo apt-get install gnupg curl
+sudo apt-get install gnupg curl -y
 
 if [ ! -f "/usr/share/keyrings/mongodb-server-7.0.gpg" ]; then
   curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | \
