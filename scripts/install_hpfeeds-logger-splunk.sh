@@ -4,7 +4,7 @@ set -e
 set -x
 
 apt-get update
-apt-get install -y git python-pip python-dev libgeoip-dev
+apt-get install -y git python-pip python2-dev libgeoip-dev
 pip install virtualenv
 
 SCRIPTS=`dirname $0`

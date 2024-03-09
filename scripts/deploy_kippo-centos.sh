@@ -21,7 +21,7 @@ chmod 755 registration.sh
 yum -y install epel-release 
 #yum -y update
 
-yum -y install rpm-build python-devel openssl python-pyasn1 python-twisted git python-pip  gcc
+yum -y install rpm-build python2-devel openssl python-pyasn1 python-twisted git python-pip  gcc
 #supervisor is supervisor 2
 pip install meld3==1.0.0 supervisor
 

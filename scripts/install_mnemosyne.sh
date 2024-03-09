@@ -10,7 +10,7 @@ if [ -f /etc/debian_version ]; then
     OS=Debian  # XXX or Ubuntu??
 
     apt-get update
-    apt-get install -y git python-pip python-dev supervisor
+    apt-get install -y git python-pip python2-dev supervisor
     pip install virtualenv
 
     INSTALLER='apt-get'

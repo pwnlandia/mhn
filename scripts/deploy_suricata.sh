@@ -33,7 +33,7 @@ server_url=$1
 deploy_key=$2
 
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libpcap-dev libjansson-dev libpcre3-dev libdnet-dev libdumbnet-dev libdaq-dev flex bison python-pip git make automake libtool zlib1g-dev python-dev libnetfilter-queue-dev libnetfilter-queue1 libnfnetlink-dev libnfnetlink0 libyaml-dev libmagic-dev autoconf libpcre3 libpcre3-dbg libnet1-dev libyaml-0-2 pkg-config zlib1g libcap-ng-dev libcap-ng0
+DEBIAN_FRONTEND=noninteractive apt-get -y install build-essential libpcap-dev libjansson-dev libpcre3-dev libdnet-dev libdumbnet-dev libdaq-dev flex bison python-pip git make automake libtool zlib1g-dev python2-dev libnetfilter-queue-dev libnetfilter-queue1 libnfnetlink-dev libnfnetlink0 libyaml-dev libmagic-dev autoconf libpcre3 libpcre3-dbg libnet1-dev libyaml-0-2 pkg-config zlib1g libcap-ng-dev libcap-ng0
 
 pip install --upgrade distribute
 pip install pyyaml
