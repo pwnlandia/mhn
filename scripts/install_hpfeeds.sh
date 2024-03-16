@@ -13,7 +13,11 @@ if [ -f /etc/debian_version ]; then
 
     PYTHON=`which python`
     PIP=`which pip`
-    $PIP install virtualenv
+    if [ "$(lsb_release -r -s)" == "14.04" ]; then
+        $PIP install virtualenv --ignore-installed six
+    else
+        $PIP install virtualenv
+    fi
     VIRTUALENV=`which virtualenv`
 
 elif [ -f /etc/redhat-release ]; then
