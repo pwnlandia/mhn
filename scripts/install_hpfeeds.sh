@@ -9,7 +9,7 @@ MHN_HOME=$SCRIPTS/..
 if [ -f /etc/debian_version ]; then
     apt-get -y update
     # this needs to be installed before calling "which pip", otherwise that command fails
-    apt-get -y install libffi-dev build-essential python-pip python-dev git libssl-dev supervisor
+    apt-get -y install libffi-dev build-essential python-pip python2-dev git libssl-dev supervisor
 
     PYTHON=`which python`
     PIP=`which pip`

@@ -17,7 +17,7 @@ server_url=$1
 deploy_key=$2
 
 apt-get update
-apt-get -y install python-dev git supervisor authbind openssl python-virtualenv build-essential python-gmpy2 libgmp-dev libmpfr-dev libmpc-dev libssl-dev python-pip libffi-dev
+apt-get -y install python2-dev git supervisor authbind openssl python-virtualenv build-essential python-gmpy2 libgmp-dev libmpfr-dev libmpc-dev libssl-dev python-pip libffi-dev
 
 pip install -U supervisor
 /etc/init.d/supervisor start || true
