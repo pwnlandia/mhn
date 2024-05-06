@@ -1,4 +1,4 @@
-Werkzeug==0.16.1
+Werkzeug==3.0.3
 argparse==1.2.1
 Flask==0.12.4
 Flask-Login==0.3.2
