@@ -21,7 +21,8 @@ $(document).ready(function() {
             var sensorObj = {
                 name: $('#name').val(),
                 hostname: $('#hostname').val(),
-                honeypot: $('#honeypot').val()
+                honeypot: $('#honeypot').val(),
+                ip: $('#ip').val()
             };
 
             $('#alert-row').hide();
@@ -385,7 +386,7 @@ $(document).ready(function() {
                         $('#error-txt').html(resp.responseJSON.error);
                         $('#msg-container').show();
                     }
-                });    
+                });
             } else {
                 $('#alert-text').removeClass('success').addClass('warning');
                 $('#error-txt').html('Not a valid email address');

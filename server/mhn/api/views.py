@@ -35,7 +35,11 @@ def create_sensor():
     else:
         sensor = Sensor(**request.json)
         sensor.uuid = str(uuid1())
-        sensor.ip = request.remote_addr
+        try:
+            if request.json['ip'] == "":
+                sensor.ip = request.remote_addr
+        except KeyError:
+            sensor.ip = request.remote_addr
         Clio().authkey.new(**sensor.new_auth_dict()).post()
         try:
             db.session.add(sensor)
