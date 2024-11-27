@@ -16,6 +16,21 @@ jobs:
       run:
         working-directory: ./api
 
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testing
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -28,5 +43,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run Prisma Migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/testing?schema=public'
+
       - name: Run Jest tests
         run: npm test
+        env:
+          DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/testing?schema=public'

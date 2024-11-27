@@ -36,6 +36,7 @@ module.exports.options = options;
 
 // Start the Fastify server
 const start = async () => {
+  // Set logger options based on environment
   const envToLogger: EnvToLogger = {
     development: {
       transport: {
@@ -51,6 +52,7 @@ const start = async () => {
   };
   const fastify = require('fastify')({
     logger: envToLogger[process.env.NODE_ENV || 'development'],
+    ignoreTrailingSlash: true, // Ignore trailing slashes at the end of URLs
   });
 
   try {
