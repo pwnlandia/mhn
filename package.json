@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "prettier": "^3.4.1"
+  },
+  "scripts": {
+    "api:install": "cd api && npm install",
+    "api:build": "npm run api:install && cd api && npx tsc",
+    "api:test": "cd api && npm test",
+    "api:dev": "cd api && npm run dev",
+    "api:clean": "cd api && rm -rf dist node_modules",
+    "api:full-build": "npm run api:clean && npm run api:install && npm run api:build",
+    "api:ci": "npm run api:install && npm run api:build && npm run api:test"
+  }
+}
