@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { getAllUserNames } from '../services/user.service';
-import { createUser } from '../services/user.service';
+import { getAllUserNames, createUser } from '../services/user.service';
+import { CreateUserBody } from '../types/user.types';
 
 export async function getUsersHandler(
   request: FastifyRequest,
@@ -12,12 +12,14 @@ export async function getUsersHandler(
     reply.status(500).send({ error: 'An error occurred' });
   }
 }
+
 export async function createUserHandler(
-  request: FastifyRequest,
+  request: FastifyRequest<{ Body: CreateUserBody }>,
   reply: FastifyReply,
 ) {
   try {
-    const user = await createUser();
+    const { name, email, password } = request.body;
+    const user = await createUser(name, email, password);
     reply.status(201).send(user);
   } catch (error) {
     reply.status(500).send({ error: 'An error occurred' });
