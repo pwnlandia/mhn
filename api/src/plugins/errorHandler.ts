@@ -37,13 +37,15 @@ function errorHandler(fastify: FastifyInstance, opts: any, done: () => void) {
       return reply.status(400).send({
         error: 'Validation Error',
         details: error.validation.map((err) => ({
-          field: err.params.missingProperty || err.params.propertyName,
           message: customErrorMessage(err),
         })),
       });
     }
 
-    reply.status(500).send({ error: error.message });
+    if (error.statusCode) {
+      return reply.status(error.statusCode).send({ error: error.message });
+    }
+    return reply.status(500).send({ error: error.message });
   });
 
   done();

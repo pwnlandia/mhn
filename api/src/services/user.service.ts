@@ -3,6 +3,13 @@ import bcrypt from 'bcrypt';
 
 const SALT_ROUNDS = 10; // Industry standard
 
+export class UserExistsError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'UserExistsError';
+  }
+}
+
 export async function getAllUserNames() {
   const users = await prisma.user.findMany({
     select: {
@@ -18,6 +25,18 @@ export async function createUser(
   email: string,
   password: string,
 ) {
+  // Check if user exists by name or email
+  const existingUser = await prisma.user.findFirst({
+    where: {
+      OR: [{ name }, { email }],
+    },
+  });
+
+  if (existingUser) {
+    const field = existingUser.name === name ? 'name' : 'email';
+    throw new UserExistsError(`User with this ${field} already exists`);
+  }
+
   // Hash password before storing
   const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
