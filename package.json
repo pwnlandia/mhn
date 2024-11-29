@@ -5,6 +5,7 @@
   },
   "scripts": {
     "postinstall": "npm run api:install",
+    "clean": "rm -rf dist node_modules && npm run api:clean",
     "api:install": "cd api && npm install",
     "api:build": "npm run api:install && cd api && npx tsc",
     "api:test": "cd api && npm test",
