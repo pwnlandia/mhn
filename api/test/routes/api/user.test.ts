@@ -1,17 +1,31 @@
 // test/api/user.test.ts
+jest.mock('../../../src/lib/prisma', () => {
+  const { mockDeep } = jest.requireActual('jest-mock-extended');
+  return {
+    prisma: mockDeep(),
+  };
+});
+jest.mock('bcrypt');
+
 import Fastify, { FastifyInstance } from 'fastify';
 import sensible from '@fastify/sensible';
 import rootRoutes from '../../../src/routes';
 import errorHandler from '../../../src/plugins/errorHandler';
+import { DeepMockProxy } from 'jest-mock-extended';
+import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../src/lib/prisma';
 
 describe('User API Routes', () => {
   let app: FastifyInstance;
+  const prismaMock = prisma as DeepMockProxy<PrismaClient>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   beforeAll(async () => {
     app = Fastify();
     await app.register(sensible);
-
-    // Register routes with API prefix and error handler
     await app.register(
       async (fastify) => {
         await fastify.register(errorHandler);
@@ -19,7 +33,6 @@ describe('User API Routes', () => {
       },
       { prefix: '/api' },
     );
-
     await app.ready();
   });
 
@@ -34,9 +47,34 @@ describe('User API Routes', () => {
       password: 'password123',
     };
 
-    // TODO: Add test for valid user creation
+    it('should create a new user successfully', async () => {
+      prismaMock.user.findFirst.mockResolvedValue(null);
+      prismaMock.user.create.mockResolvedValue({
+        id: 1,
+        ...validUser,
+      });
+
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/user',
+        payload: validUser,
+      });
+
+      expect(response.statusCode).toBe(201);
+      const responseBody = JSON.parse(response.payload);
+      expect(responseBody).toMatchObject({
+        id: 1,
+        name: validUser.name,
+        email: validUser.email,
+      });
+      expect(responseBody).not.toHaveProperty('password');
+    });
 
     test('should reject user with conflicting name', async () => {
+      prismaMock.user.findFirst.mockResolvedValue({
+        id: 1,
+        ...validUser,
+      });
       // Try to create another user with the same name
       const response = await app.inject({
         method: 'POST',
@@ -91,6 +129,7 @@ describe('User API Routes', () => {
   });
 
   describe('GET /api/user', () => {
+    prismaMock.user.findMany.mockResolvedValue([]);
     test('should return list of user names', async () => {
       const response = await app.inject({
         method: 'GET',
