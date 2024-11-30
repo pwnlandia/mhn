@@ -13,10 +13,40 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U api_user -d mydb']
+      test: ['CMD-SHELL', 'pg_isready -U api_user -d agave']
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
+    networks:
+      - api-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api
+    environment:
+      - DATABASE_URL=postgresql://api_user:randompassword@postgres:5432/agave
+      - NODE_ENV=production
+      - PORT=3000
+      - FASTIFY_LOG_LEVEL=debug
+      - HOST=0.0.0.0
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "npx prisma migrate deploy && 
+             node dist/app.js"
+    restart: unless-stopped
+    networks:
+      - api-network
+
+networks:
+  api-network:
+    driver: bridge
 
 volumes:
   postgres_data:

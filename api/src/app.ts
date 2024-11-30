@@ -50,21 +50,21 @@ const start = async () => {
     production: true,
     test: false,
   };
+
   const fastify = require('fastify')({
     logger: envToLogger[process.env.NODE_ENV || 'development'],
-    ignoreTrailingSlash: true, // Ignore trailing slashes at the end of URLs
+    ignoreTrailingSlash: true,
   });
 
   try {
-    await fastify.register(require('./app')).after(() => {
-      fastify.listen({ port: 3000 }, (err: Error, address: string) => {
-        if (err) {
-          fastify.log.error(err);
-          process.exit(1);
-        }
-        fastify.log.info(`Server listening on ${address}`);
-      });
+    await fastify.register(require('./app'));
+
+    const address = await fastify.listen({
+      port: process.env.PORT || 3000,
+      host: '0.0.0.0',
     });
+
+    fastify.log.info(`Server listening on ${address}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
