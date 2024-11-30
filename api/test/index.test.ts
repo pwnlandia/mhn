@@ -1,7 +1,7 @@
 // test/root.test.ts
 import Fastify, { FastifyInstance } from 'fastify';
 import sensible from '@fastify/sensible';
-import rootRoutes from '../../src/routes/index';
+import rootRoutes from '../src/routes/index';
 
 describe('Root Routes', () => {
   let app: FastifyInstance;

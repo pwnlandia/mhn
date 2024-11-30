@@ -1,5 +1,5 @@
 // test/api/user.test.ts
-jest.mock('../../../src/lib/prisma', () => {
+jest.mock('../src/lib/prisma', () => {
   const { mockDeep } = jest.requireActual('jest-mock-extended');
   return {
     prisma: mockDeep(),
@@ -9,11 +9,11 @@ jest.mock('bcrypt');
 
 import Fastify, { FastifyInstance } from 'fastify';
 import sensible from '@fastify/sensible';
-import rootRoutes from '../../../src/routes';
-import errorHandler from '../../../src/plugins/errorHandler';
+import rootRoutes from '../src/routes';
+import errorHandler from '../src/plugins/errorHandler';
 import { DeepMockProxy } from 'jest-mock-extended';
 import { PrismaClient } from '@prisma/client';
-import { prisma } from '../../../src/lib/prisma';
+import { prisma } from '../src/lib/prisma';
 
 describe('User API Routes', () => {
   let app: FastifyInstance;
